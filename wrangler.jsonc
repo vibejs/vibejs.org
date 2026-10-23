@@ -3,6 +3,9 @@
 {
   "name": "vibejs-org",
   "compatibility_date": "2026-10-01",
+  // The workers.dev address stays on as a fallback; per-version preview URLs stay off.
+  "workers_dev": true,
+  "preview_urls": false,
   // Needs the vibejs.org zone active on the same Cloudflare account; deploy creates the DNS
   // records and certificates.
   "routes": [
