@@ -3,6 +3,12 @@
 {
   "name": "vibejs-org",
   "compatibility_date": "2026-10-01",
+  // Needs the vibejs.org zone active on the same Cloudflare account; deploy creates the DNS
+  // records and certificates.
+  "routes": [
+    { "pattern": "vibejs.org", "custom_domain": true },
+    { "pattern": "www.vibejs.org", "custom_domain": true },
+  ],
   "assets": {
     "directory": "./ui/dist",
     "not_found_handling": "single-page-application",
