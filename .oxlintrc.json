@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import", "vitest"],
+  "categories": { "correctness": "error" },
+  "overrides": [
+    {
+      "files": ["ui/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@usevibejs/server",
+                "message": "UI code runs in the browser; share contracts instead."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@usevibejs/server/*", "node:*"],
+                "message": "UI code runs in the browser; share contracts instead."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

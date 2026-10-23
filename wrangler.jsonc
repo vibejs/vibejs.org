@@ -1,0 +1,10 @@
+// Cloudflare Workers static assets: `pnpm build`, then `wrangler deploy`.
+// Unknown paths serve index.html, so the router handles /v0/... on a fresh load.
+{
+  "name": "vibejs-org",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./ui/dist",
+    "not_found_handling": "single-page-application",
+  },
+}

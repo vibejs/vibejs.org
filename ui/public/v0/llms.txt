@@ -1,0 +1,63 @@
+# vibe.js
+
+> vibe.js: npm scope `@usevibejs`, CLI `vibejs` (never `vibe`). Not monday.com Vibe (`@vibe/*`), not the `@vibe.js/*` packages (a different project), not the npm packages `vibejs` or `vibe.js`.
+
+Offline docs for the installed version: `node_modules/@usevibejs/cli/dist/docs/`. Explain an error code with `vibejs explain VIBE####`.
+
+- [vibe.js](https://vibejs.org/v0/): A full-stack TypeScript framework where the UI, the server and the contract between them are type-checked end to end.
+
+## Guides
+
+- [CLI and AI agents](https://vibejs.org/v0/guides/ai-agents): How vibejs answers coding agents with JSON, keeps their rules in AGENTS.md, serves the docs offline and exposes its commands as MCP tools.
+- [Coming from NestJS](https://vibejs.org/v0/guides/coming-from-nestjs): The NestJS idioms you know, their vibe.js form, and the error that points you there when the old form slips in.
+- [Coming from Vue](https://vibejs.org/v0/guides/coming-from-vue): What carries over from Vue 3 to vibe.js, the Vue idioms that change and the error code that reports each one, the APIs that behave differently, and what vibe.js leaves out.
+- [Coming from vue-router and Vue Test Utils](https://vibejs.org/v0/guides/coming-from-vue-router): The vue-router and Vue Test Utils idioms you know, their vibe.js form, and the error that points you there when the old form slips in.
+- [Editor setup](https://vibejs.org/v0/guides/editors): Type checking, hover, go to definition and diagnostics in .vibe files in VS Code, Neovim and other LSP editors, the known limitations, and how to fix a setup that shows no types.
+- [Extending vibe.js](https://vibejs.org/v0/guides/extending): Package reusable features as UI plugins and composables, and as configurable server modules, middleware, guards, interceptors, filters and metadata.
+- [Getting started](https://vibejs.org/v0/guides/getting-started): Create a vibe.js app, run it, check it, and set up your editor and coding agent.
+- [Tutorial](https://vibejs.org/v0/guides/tutorial): Build a users API and a page that lists the users, find a template type error with vibejs check, then build, serve and develop the app.
+
+## UI
+
+- [UI essentials](https://vibejs.org/v0/ui/): Write a .vibe component, mount the app, handle errors and warnings, and find the pages on reactivity, templates, components, lifecycle and provide/inject.
+- [Components](https://vibejs.org/v0/ui/components): Import components, declare props, events, slots and models with the define macros, pass attributes through, and expose values to template refs.
+- [Data loading](https://vibejs.org/v0/ui/data): Load data with useAsync, keep it in sync with the route, abort stale requests, narrow typed API results and share state between components.
+- [Lifecycle](https://vibejs.org/v0/ui/lifecycle): The lifecycle hooks of a component, the order in which they run, and how errors travel through onErrorCaptured to app.config.errorHandler.
+- [Provide and inject](https://vibejs.org/v0/ui/provide-inject): Pass values to every descendant of a component or to the whole app with provide and inject, typed by an InjectionKey.
+- [Reactivity](https://vibejs.org/v0/ui/reactivity): Reactive state with ref, shallowRef, reactive, readonly and computed; side effects with watch and watchEffect; effect scopes, nextTick and shared state in composables.
+- [Routing](https://vibejs.org/v0/ui/routing): Declare typed routes, render them with RouterView and RouterLink, read the route, guard navigations, load pages lazily and control scrolling.
+- [Template syntax](https://vibejs.org/v0/ui/template-syntax): Interpolation, attribute bindings and spreads, class and style values, events and modifiers, conditions, keyed lists, v-show, v-model, template refs and dynamic components.
+- [Testing components](https://vibejs.org/v0/ui/testing): Test .vibe components and composables in Vitest with mount, wrappers, CSS selectors, events, props and the router.
+
+## Server
+
+- [Server](https://vibejs.org/v0/server/): The layout of a vibe.js server application, how it is created, served and shut down, and what is deployed.
+- [Configuration](https://vibejs.org/v0/server/configuration): Typed environment config, logging, CORS, cookies, request limits, shutdown and the TypeScript setup of a vibe.js server.
+- [Contracts](https://vibejs.org/v0/server/contracts): Declare an API once with defineContract, serve it from a controller, call it from the UI with createClient and generate OpenAPI from it.
+- [Controllers and handlers](https://vibejs.org/v0/server/handlers): Serve a contract with @Controller and @Handle, read the typed ctx, raise declared errors and fix TS1241 on @Handle.
+- [Modules and providers](https://vibejs.org/v0/server/modules): Modules, providers, field injection with inject(), tokens, exports, global modules and lifecycle hooks.
+- [Middleware, guards, interceptors and filters](https://vibejs.org/v0/server/pipeline): The request pipeline of a vibe.js server, the run order of its enhancers, typed metadata and global enhancers.
+- [Testing the server](https://vibejs.org/v0/server/testing): Test modules in process with Test.createTestingModule, replace providers, call routes through the typed client and check the graph with inspect().
+
+## CLI
+
+- [CLI reference](https://vibejs.org/v0/cli/): Every vibejs command, its options and examples.
+- [vibejs agents](https://vibejs.org/v0/cli/agents): Write the vibe.js rules into AGENTS.md and CLAUDE.md, the vibejs-* skills into .agents/skills and .claude/skills, and the vibejs server into .mcp.json.
+- [vibejs build](https://vibejs.org/v0/cli/build): Build the UI into ui/dist and the server into server/dist/main.js.
+- [vibejs check](https://vibejs.org/v0/cli/check): Type-check, lint, format-check and test the project with coverage, concurrently.
+- [vibejs components](https://vibejs.org/v0/cli/components): List the .vibe components with their props, models and types, without running them.
+- [vibejs dev](https://vibejs.org/v0/cli/dev): Serve the UI and the backend on one port, restarting the backend on server changes.
+- [vibejs di](https://vibejs.org/v0/cli/di): Show the modules and providers of the backend, without constructing any provider.
+- [vibejs docs](https://vibejs.org/v0/cli/docs): Look up a VIBE code, open a docs page by path, or search the bundled docs, offline.
+- [vibejs errors](https://vibejs.org/v0/cli/errors): List the unresolved build errors and the latest runtime errors from .vibejs/dev.log.
+- [vibejs explain](https://vibejs.org/v0/cli/explain): Explain a VIBE error code from the bundled catalog, offline.
+- [vibejs generate](https://vibejs.org/v0/cli/generate): Add a resource, a component or a page with its tests, and register it.
+- [vibejs logs](https://vibejs.org/v0/cli/logs): Show the newest .vibejs/dev.log entries, filtered by level, source, text and time.
+- [vibejs mcp](https://vibejs.org/v0/cli/mcp): Serve the --json commands to coding agents as MCP tools over stdio.
+- [vibejs request](https://vibejs.org/v0/cli/request): Call an API route: through the running dev server, or in process when none runs.
+- [vibejs routes](https://vibejs.org/v0/cli/routes): List the API routes and the UI routes, without starting a server or running UI code.
+
+## Optional
+
+- [Error codes](https://vibejs.org/v0/errors/): every VIBE error code with its message and fixes
+- [Full docs](https://vibejs.org/v0/llms-full.txt): every page, error pages included, in one file

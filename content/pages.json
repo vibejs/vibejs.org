@@ -1,0 +1,1407 @@
+{
+  "pages": [
+    {
+      "path": "cli/agents",
+      "title": "vibejs agents",
+      "description": "Write the vibe.js rules into AGENTS.md and CLAUDE.md, the vibejs-* skills into .agents/skills and .claude/skills, and the vibejs server into .mcp.json."
+    },
+    {
+      "path": "cli/build",
+      "title": "vibejs build",
+      "description": "Build the UI into ui/dist and the server into server/dist/main.js."
+    },
+    {
+      "path": "cli/check",
+      "title": "vibejs check",
+      "description": "Type-check, lint, format-check and test the project with coverage, concurrently."
+    },
+    {
+      "path": "cli/components",
+      "title": "vibejs components",
+      "description": "List the .vibe components with their props, models and types, without running them."
+    },
+    {
+      "path": "cli/dev",
+      "title": "vibejs dev",
+      "description": "Serve the UI and the backend on one port, restarting the backend on server changes."
+    },
+    {
+      "path": "cli/di",
+      "title": "vibejs di",
+      "description": "Show the modules and providers of the backend, without constructing any provider."
+    },
+    {
+      "path": "cli/docs",
+      "title": "vibejs docs",
+      "description": "Look up a VIBE code, open a docs page by path, or search the bundled docs, offline."
+    },
+    {
+      "path": "cli/errors",
+      "title": "vibejs errors",
+      "description": "List the unresolved build errors and the latest runtime errors from .vibejs/dev.log."
+    },
+    {
+      "path": "cli/explain",
+      "title": "vibejs explain",
+      "description": "Explain a VIBE error code from the bundled catalog, offline."
+    },
+    {
+      "path": "cli/generate",
+      "title": "vibejs generate",
+      "description": "Add a resource, a component or a page with its tests, and register it."
+    },
+    {
+      "path": "cli/index",
+      "title": "CLI reference",
+      "description": "Every vibejs command, its options and examples."
+    },
+    {
+      "path": "cli/logs",
+      "title": "vibejs logs",
+      "description": "Show the newest .vibejs/dev.log entries, filtered by level, source, text and time."
+    },
+    {
+      "path": "cli/mcp",
+      "title": "vibejs mcp",
+      "description": "Serve the --json commands to coding agents as MCP tools over stdio."
+    },
+    {
+      "path": "cli/request",
+      "title": "vibejs request",
+      "description": "Call an API route: through the running dev server, or in process when none runs."
+    },
+    {
+      "path": "cli/routes",
+      "title": "vibejs routes",
+      "description": "List the API routes and the UI routes, without starting a server or running UI code."
+    },
+    {
+      "path": "errors/VIBE1001",
+      "title": "Missing template block"
+    },
+    {
+      "path": "errors/VIBE1002",
+      "title": "Second template block"
+    },
+    {
+      "path": "errors/VIBE1003",
+      "title": "Second script setup block"
+    },
+    {
+      "path": "errors/VIBE1004",
+      "title": "Script block without setup"
+    },
+    {
+      "path": "errors/VIBE1005",
+      "title": "Script language is not TypeScript"
+    },
+    {
+      "path": "errors/VIBE1006",
+      "title": "Block with a src attribute"
+    },
+    {
+      "path": "errors/VIBE1007",
+      "title": "CSS module style"
+    },
+    {
+      "path": "errors/VIBE1008",
+      "title": "Template language"
+    },
+    {
+      "path": "errors/VIBE1009",
+      "title": "Unknown style language"
+    },
+    {
+      "path": "errors/VIBE1010",
+      "title": "Unknown block attribute"
+    },
+    {
+      "path": "errors/VIBE1011",
+      "title": "Unknown root block"
+    },
+    {
+      "path": "errors/VIBE1012",
+      "title": "Text outside of a block"
+    },
+    {
+      "path": "errors/VIBE1013",
+      "title": "Generic script"
+    },
+    {
+      "path": "errors/VIBE1101",
+      "title": "CDATA section in HTML"
+    },
+    {
+      "path": "errors/VIBE1102",
+      "title": "Duplicate attribute"
+    },
+    {
+      "path": "errors/VIBE1105",
+      "title": "End of file after `<`"
+    },
+    {
+      "path": "errors/VIBE1106",
+      "title": "End of file in a CDATA section"
+    },
+    {
+      "path": "errors/VIBE1107",
+      "title": "End of file in a comment"
+    },
+    {
+      "path": "errors/VIBE1109",
+      "title": "End of file in a tag"
+    },
+    {
+      "path": "errors/VIBE1113",
+      "title": "Missing attribute value"
+    },
+    {
+      "path": "errors/VIBE1114",
+      "title": "End tag without a name"
+    },
+    {
+      "path": "errors/VIBE1117",
+      "title": "Unexpected character in an attribute name"
+    },
+    {
+      "path": "errors/VIBE1118",
+      "title": "Unexpected character in an unquoted attribute value"
+    },
+    {
+      "path": "errors/VIBE1119",
+      "title": "Attribute name starting with `=`"
+    },
+    {
+      "path": "errors/VIBE1121",
+      "title": "Processing instruction in HTML"
+    },
+    {
+      "path": "errors/VIBE1122",
+      "title": "Unexpected `/` in a tag"
+    },
+    {
+      "path": "errors/VIBE1123",
+      "title": "End tag without a start tag"
+    },
+    {
+      "path": "errors/VIBE1124",
+      "title": "Element without an end tag"
+    },
+    {
+      "path": "errors/VIBE1125",
+      "title": "Unclosed interpolation"
+    },
+    {
+      "path": "errors/VIBE1126",
+      "title": "Directive without a name"
+    },
+    {
+      "path": "errors/VIBE1127",
+      "title": "Dynamic argument without `]`"
+    },
+    {
+      "path": "errors/VIBE1201",
+      "title": "Invalid expression"
+    },
+    {
+      "path": "errors/VIBE1202",
+      "title": "Invalid event handler"
+    },
+    {
+      "path": "errors/VIBE1203",
+      "title": "Invalid parameters"
+    },
+    {
+      "path": "errors/VIBE2001",
+      "title": "Unknown component"
+    },
+    {
+      "path": "errors/VIBE2002",
+      "title": "Component tag not in PascalCase"
+    },
+    {
+      "path": "errors/VIBE2003",
+      "title": "Unknown element"
+    },
+    {
+      "path": "errors/VIBE2004",
+      "title": "Template without a directive"
+    },
+    {
+      "path": "errors/VIBE2005",
+      "title": "Text inside a table or select element"
+    },
+    {
+      "path": "errors/VIBE2006",
+      "title": "Component without a dynamic is"
+    },
+    {
+      "path": "errors/VIBE2007",
+      "title": "Unknown identifier"
+    },
+    {
+      "path": "errors/VIBE2008",
+      "title": "Instance access"
+    },
+    {
+      "path": "errors/VIBE2009",
+      "title": "is attribute"
+    },
+    {
+      "path": "errors/VIBE2010",
+      "title": "Reserved local name"
+    },
+    {
+      "path": "errors/VIBE2011",
+      "title": "Script or style in a template"
+    },
+    {
+      "path": "errors/VIBE2012",
+      "title": "Attribute on a template"
+    },
+    {
+      "path": "errors/VIBE2101",
+      "title": "Condition without expression"
+    },
+    {
+      "path": "errors/VIBE2102",
+      "title": "Branch without v-if"
+    },
+    {
+      "path": "errors/VIBE2103",
+      "title": "v-if and v-for on one element"
+    },
+    {
+      "path": "errors/VIBE2104",
+      "title": "v-else with a value"
+    },
+    {
+      "path": "errors/VIBE2201",
+      "title": "v-for without expression"
+    },
+    {
+      "path": "errors/VIBE2202",
+      "title": "Malformed v-for"
+    },
+    {
+      "path": "errors/VIBE2203",
+      "title": "v-for without key"
+    },
+    {
+      "path": "errors/VIBE2204",
+      "title": "Key on a child of template v-for"
+    },
+    {
+      "path": "errors/VIBE2301",
+      "title": "v-on without expression"
+    },
+    {
+      "path": "errors/VIBE2302",
+      "title": "v-on with an object"
+    },
+    {
+      "path": "errors/VIBE2303",
+      "title": "Dynamic event name"
+    },
+    {
+      "path": "errors/VIBE2304",
+      "title": "Unknown event modifier"
+    },
+    {
+      "path": "errors/VIBE2305",
+      "title": "Modifier on a component event"
+    },
+    {
+      "path": "errors/VIBE2401",
+      "title": "v-bind without value"
+    },
+    {
+      "path": "errors/VIBE2402",
+      "title": "Unknown v-bind modifier"
+    },
+    {
+      "path": "errors/VIBE2501",
+      "title": "v-model without expression"
+    },
+    {
+      "path": "errors/VIBE2502",
+      "title": "v-model target not assignable"
+    },
+    {
+      "path": "errors/VIBE2503",
+      "title": "v-model on a template local"
+    },
+    {
+      "path": "errors/VIBE2504",
+      "title": "v-model on a prop"
+    },
+    {
+      "path": "errors/VIBE2505",
+      "title": "v-model on a constant"
+    },
+    {
+      "path": "errors/VIBE2506",
+      "title": "v-model on an unsupported element"
+    },
+    {
+      "path": "errors/VIBE2507",
+      "title": "v-model with a dynamic type"
+    },
+    {
+      "path": "errors/VIBE2508",
+      "title": "v-model on a file input"
+    },
+    {
+      "path": "errors/VIBE2509",
+      "title": "v-model argument"
+    },
+    {
+      "path": "errors/VIBE2510",
+      "title": "Unknown v-model modifier"
+    },
+    {
+      "path": "errors/VIBE2511",
+      "title": "Value next to v-model"
+    },
+    {
+      "path": "errors/VIBE2601",
+      "title": "Misplaced v-slot"
+    },
+    {
+      "path": "errors/VIBE2602",
+      "title": "Mixed v-slot usage"
+    },
+    {
+      "path": "errors/VIBE2603",
+      "title": "Duplicate slot"
+    },
+    {
+      "path": "errors/VIBE2604",
+      "title": "Extraneous default slot content"
+    },
+    {
+      "path": "errors/VIBE2605",
+      "title": "Dynamic slot name"
+    },
+    {
+      "path": "errors/VIBE2606",
+      "title": "v-for on a slot"
+    },
+    {
+      "path": "errors/VIBE2607",
+      "title": "Dynamic slot outlet name"
+    },
+    {
+      "path": "errors/VIBE2608",
+      "title": "Unsupported attribute on slot"
+    },
+    {
+      "path": "errors/VIBE2701",
+      "title": "Template ref without useTemplateRef"
+    },
+    {
+      "path": "errors/VIBE2702",
+      "title": "Invalid function ref"
+    },
+    {
+      "path": "errors/VIBE2703",
+      "title": "Directive without value"
+    },
+    {
+      "path": "errors/VIBE2704",
+      "title": "Directive on an element with children"
+    },
+    {
+      "path": "errors/VIBE2705",
+      "title": "v-show without value"
+    },
+    {
+      "path": "errors/VIBE2706",
+      "title": "Element directive on a non-element"
+    },
+    {
+      "path": "errors/VIBE2901",
+      "title": "Teleport is not supported"
+    },
+    {
+      "path": "errors/VIBE2902",
+      "title": "KeepAlive is not supported"
+    },
+    {
+      "path": "errors/VIBE2903",
+      "title": "Transition is not supported"
+    },
+    {
+      "path": "errors/VIBE2904",
+      "title": "TransitionGroup is not supported"
+    },
+    {
+      "path": "errors/VIBE2905",
+      "title": "Suspense is not supported"
+    },
+    {
+      "path": "errors/VIBE2906",
+      "title": "v-memo is not supported"
+    },
+    {
+      "path": "errors/VIBE2907",
+      "title": "v-once is not supported"
+    },
+    {
+      "path": "errors/VIBE2908",
+      "title": "Custom directive"
+    },
+    {
+      "path": "errors/VIBE2909",
+      "title": "v-cloak is not supported"
+    },
+    {
+      "path": "errors/VIBE2910",
+      "title": "Lifecycle listener"
+    },
+    {
+      "path": "errors/VIBE3001",
+      "title": "Value export"
+    },
+    {
+      "path": "errors/VIBE3002",
+      "title": "Top-level await"
+    },
+    {
+      "path": "errors/VIBE3003",
+      "title": "Invalid script"
+    },
+    {
+      "path": "errors/VIBE3004",
+      "title": "Misplaced macro"
+    },
+    {
+      "path": "errors/VIBE3005",
+      "title": "Macro called twice"
+    },
+    {
+      "path": "errors/VIBE3006",
+      "title": "withDefaults"
+    },
+    {
+      "path": "errors/VIBE3007",
+      "title": "Reserved name"
+    },
+    {
+      "path": "errors/VIBE3008",
+      "title": "Macro imported or declared"
+    },
+    {
+      "path": "errors/VIBE3009",
+      "title": "Binding shadows a prop"
+    },
+    {
+      "path": "errors/VIBE3010",
+      "title": "Namespace or import alias"
+    },
+    {
+      "path": "errors/VIBE3101",
+      "title": "Runtime props declaration"
+    },
+    {
+      "path": "errors/VIBE3102",
+      "title": "Missing type argument"
+    },
+    {
+      "path": "errors/VIBE3103",
+      "title": "Unknown prop names"
+    },
+    {
+      "path": "errors/VIBE3104",
+      "title": "Rest element in props"
+    },
+    {
+      "path": "errors/VIBE3105",
+      "title": "Default reads a script binding"
+    },
+    {
+      "path": "errors/VIBE3106",
+      "title": "Assignment to a prop"
+    },
+    {
+      "path": "errors/VIBE3107",
+      "title": "Destructured prop passed by value"
+    },
+    {
+      "path": "errors/VIBE3108",
+      "title": "Unsupported props pattern"
+    },
+    {
+      "path": "errors/VIBE3201",
+      "title": "Runtime events declaration"
+    },
+    {
+      "path": "errors/VIBE3202",
+      "title": "Events type is not a record of tuples"
+    },
+    {
+      "path": "errors/VIBE3203",
+      "title": "Events type from another file"
+    },
+    {
+      "path": "errors/VIBE3311",
+      "title": "Runtime slots declaration"
+    },
+    {
+      "path": "errors/VIBE3321",
+      "title": "Unsupported defineModel call"
+    },
+    {
+      "path": "errors/VIBE3322",
+      "title": "Duplicate model"
+    },
+    {
+      "path": "errors/VIBE3331",
+      "title": "Unsupported component options"
+    },
+    {
+      "path": "errors/VIBE4001",
+      "title": "CSS syntax error"
+    },
+    {
+      "path": "errors/VIBE4002",
+      "title": "Slot content selector"
+    },
+    {
+      "path": "errors/VIBE4003",
+      "title": "Binding in CSS"
+    },
+    {
+      "path": "errors/VIBE4004",
+      "title": "Deprecated deep selector"
+    },
+    {
+      "path": "errors/VIBE4005",
+      "title": "Malformed :deep() or :global()"
+    },
+    {
+      "path": "errors/VIBE4901",
+      "title": "Component imported on the server"
+    },
+    {
+      "path": "errors/VIBE4902",
+      "title": "Package version mismatch"
+    },
+    {
+      "path": "errors/VIBE5001",
+      "title": "Value cannot be made reactive"
+    },
+    {
+      "path": "errors/VIBE5002",
+      "title": "Mutation of a readonly target"
+    },
+    {
+      "path": "errors/VIBE5003",
+      "title": "Write to a readonly computed"
+    },
+    {
+      "path": "errors/VIBE5004",
+      "title": "toRefs on a non-reactive object"
+    },
+    {
+      "path": "errors/VIBE5005",
+      "title": "Run on a stopped effect scope"
+    },
+    {
+      "path": "errors/VIBE5006",
+      "title": "Cleanup registered with no owner"
+    },
+    {
+      "path": "errors/VIBE5007",
+      "title": "Invalid watch source"
+    },
+    {
+      "path": "errors/VIBE5101",
+      "title": "Too many recursive updates"
+    },
+    {
+      "path": "errors/VIBE5102",
+      "title": "Unhandled error"
+    },
+    {
+      "path": "errors/VIBE5201",
+      "title": "Attributes not inherited"
+    },
+    {
+      "path": "errors/VIBE5202",
+      "title": "Undeclared event"
+    },
+    {
+      "path": "errors/VIBE5203",
+      "title": "Prop mutation"
+    },
+    {
+      "path": "errors/VIBE5204",
+      "title": "Async setup"
+    },
+    {
+      "path": "errors/VIBE5205",
+      "title": "Setup-only API called outside setup"
+    },
+    {
+      "path": "errors/VIBE5206",
+      "title": "Injection not found"
+    },
+    {
+      "path": "errors/VIBE5207",
+      "title": "Invalid dynamic component"
+    },
+    {
+      "path": "errors/VIBE5208",
+      "title": "Template ref misuse"
+    },
+    {
+      "path": "errors/VIBE5301",
+      "title": "Unsupported app API"
+    },
+    {
+      "path": "errors/VIBE5302",
+      "title": "App already mounted"
+    },
+    {
+      "path": "errors/VIBE5303",
+      "title": "Mount target not found"
+    },
+    {
+      "path": "errors/VIBE5304",
+      "title": "Invalid or repeated plugin"
+    },
+    {
+      "path": "errors/VIBE5305",
+      "title": "Unmount before mount"
+    },
+    {
+      "path": "errors/VIBE5401",
+      "title": "Invalid v-for source"
+    },
+    {
+      "path": "errors/VIBE5402",
+      "title": "Duplicate keys in v-for"
+    },
+    {
+      "path": "errors/VIBE5501",
+      "title": "HMR record missing"
+    },
+    {
+      "path": "errors/VIBE5900",
+      "title": "Tooling module executed"
+    },
+    {
+      "path": "errors/VIBE6001",
+      "title": "Unknown content mapper option"
+    },
+    {
+      "path": "errors/VIBE6002",
+      "title": "UTF-16 positions not offered"
+    },
+    {
+      "path": "errors/VIBE6010",
+      "title": "Unused @vibe-expect-error directive"
+    },
+    {
+      "path": "errors/VIBE6090",
+      "title": "Internal content mapper error"
+    },
+    {
+      "path": "errors/VIBE6101",
+      "title": "TypeScript 7 extension missing"
+    },
+    {
+      "path": "errors/VIBE6102",
+      "title": "Untrusted workspace"
+    },
+    {
+      "path": "errors/VIBE7101",
+      "title": "Invalid route path"
+    },
+    {
+      "path": "errors/VIBE7102",
+      "title": "Duplicate route name"
+    },
+    {
+      "path": "errors/VIBE7103",
+      "title": "Unsupported router option"
+    },
+    {
+      "path": "errors/VIBE7104",
+      "title": "Missing route param"
+    },
+    {
+      "path": "errors/VIBE7105",
+      "title": "Unknown route name"
+    },
+    {
+      "path": "errors/VIBE7106",
+      "title": "No route matches"
+    },
+    {
+      "path": "errors/VIBE7107",
+      "title": "Guard with a next parameter"
+    },
+    {
+      "path": "errors/VIBE7108",
+      "title": "Redirect loop"
+    },
+    {
+      "path": "errors/VIBE7109",
+      "title": "Lazy route component failed to load"
+    },
+    {
+      "path": "errors/VIBE7110",
+      "title": "Lazy loader returned no component"
+    },
+    {
+      "path": "errors/VIBE7111",
+      "title": "No router installed"
+    },
+    {
+      "path": "errors/VIBE7112",
+      "title": "Route guard outside a RouterView"
+    },
+    {
+      "path": "errors/VIBE7113",
+      "title": "Route name not matched"
+    },
+    {
+      "path": "errors/VIBE7114",
+      "title": "External link in RouterLink"
+    },
+    {
+      "path": "errors/VIBE7115",
+      "title": "RouterView with slot content"
+    },
+    {
+      "path": "errors/VIBE7116",
+      "title": "Scroll target not found"
+    },
+    {
+      "path": "errors/VIBE7117",
+      "title": "Web history without a window"
+    },
+    {
+      "path": "errors/VIBE7118",
+      "title": "Invalid param value"
+    },
+    {
+      "path": "errors/VIBE7201",
+      "title": "No element matches the selector"
+    },
+    {
+      "path": "errors/VIBE7202",
+      "title": "Missing element used"
+    },
+    {
+      "path": "errors/VIBE7203",
+      "title": "Event name with a modifier"
+    },
+    {
+      "path": "errors/VIBE7204",
+      "title": "Element without a value"
+    },
+    {
+      "path": "errors/VIBE7205",
+      "title": "Wrapper used after unmount"
+    },
+    {
+      "path": "errors/VIBE7206",
+      "title": "Unsupported mount option"
+    },
+    {
+      "path": "errors/VIBE7207",
+      "title": "Several root elements"
+    },
+    {
+      "path": "errors/VIBE7208",
+      "title": "Attach target not found"
+    },
+    {
+      "path": "errors/VIBE7301",
+      "title": "useAsync called with no owner scope"
+    },
+    {
+      "path": "errors/VIBE8001",
+      "title": "Not in a vibe.js project"
+    },
+    {
+      "path": "errors/VIBE8003",
+      "title": "Missing required input"
+    },
+    {
+      "path": "errors/VIBE8004",
+      "title": "Unknown command or option"
+    },
+    {
+      "path": "errors/VIBE8005",
+      "title": "Required tool missing or too old"
+    },
+    {
+      "path": "errors/VIBE8008",
+      "title": "Unknown error code"
+    },
+    {
+      "path": "errors/VIBE8010",
+      "title": "Overwrite needs consent"
+    },
+    {
+      "path": "errors/VIBE8101",
+      "title": "Target not an empty directory"
+    },
+    {
+      "path": "errors/VIBE8102",
+      "title": "Invalid package name"
+    },
+    {
+      "path": "errors/VIBE8103",
+      "title": "Install failed"
+    },
+    {
+      "path": "errors/VIBE8104",
+      "title": "Missing or invalid arguments"
+    },
+    {
+      "path": "errors/VIBE8201",
+      "title": "Project layout incomplete"
+    },
+    {
+      "path": "errors/VIBE8202",
+      "title": "Invalid app module"
+    },
+    {
+      "path": "errors/VIBE8203",
+      "title": "Backend failed to start"
+    },
+    {
+      "path": "errors/VIBE8204",
+      "title": "Port in use"
+    },
+    {
+      "path": "errors/VIBE8205",
+      "title": "Empty base path"
+    },
+    {
+      "path": "errors/VIBE8301",
+      "title": "Unreadable tool output"
+    },
+    {
+      "path": "errors/VIBE8302",
+      "title": "File not fully covered"
+    },
+    {
+      "path": "errors/VIBE8303",
+      "title": "File not formatted"
+    },
+    {
+      "path": "errors/VIBE8304",
+      "title": "Build failed"
+    },
+    {
+      "path": "errors/VIBE8401",
+      "title": "Generated files differ"
+    },
+    {
+      "path": "errors/VIBE8402",
+      "title": "Register by hand"
+    },
+    {
+      "path": "errors/VIBE8403",
+      "title": "Invalid generator name"
+    },
+    {
+      "path": "errors/VIBE8501",
+      "title": "App module failed to load"
+    },
+    {
+      "path": "errors/VIBE8502",
+      "title": "Request failed"
+    },
+    {
+      "path": "errors/VIBE8503",
+      "title": "Invalid request input"
+    },
+    {
+      "path": "errors/VIBE8504",
+      "title": "Routes file not statically readable"
+    },
+    {
+      "path": "errors/VIBE8601",
+      "title": "Malformed agent rules markers"
+    },
+    {
+      "path": "errors/VIBE8602",
+      "title": "Invalid .mcp.json"
+    },
+    {
+      "path": "errors/VIBE9001",
+      "title": "Invalid route path"
+    },
+    {
+      "path": "errors/VIBE9002",
+      "title": "Duplicate path param"
+    },
+    {
+      "path": "errors/VIBE9003",
+      "title": "Not a route"
+    },
+    {
+      "path": "errors/VIBE9004",
+      "title": "Body on a GET route"
+    },
+    {
+      "path": "errors/VIBE9091",
+      "title": "Missing path param"
+    },
+    {
+      "path": "errors/VIBE9101",
+      "title": "inject() outside an injection context"
+    },
+    {
+      "path": "errors/VIBE9102",
+      "title": "No provider"
+    },
+    {
+      "path": "errors/VIBE9103",
+      "title": "Circular dependency"
+    },
+    {
+      "path": "errors/VIBE9104",
+      "title": "Constructor parameters"
+    },
+    {
+      "path": "errors/VIBE9105",
+      "title": "Provider creation failed"
+    },
+    {
+      "path": "errors/VIBE9106",
+      "title": "Async provider not ready"
+    },
+    {
+      "path": "errors/VIBE9107",
+      "title": "Invalid provider"
+    },
+    {
+      "path": "errors/VIBE9201",
+      "title": "Not a module"
+    },
+    {
+      "path": "errors/VIBE9202",
+      "title": "Module import cycle"
+    },
+    {
+      "path": "errors/VIBE9203",
+      "title": "Invalid export"
+    },
+    {
+      "path": "errors/VIBE9204",
+      "title": "Shutdown hooks failed"
+    },
+    {
+      "path": "errors/VIBE9301",
+      "title": "Legacy decorators required"
+    },
+    {
+      "path": "errors/VIBE9302",
+      "title": "Missing @Controller"
+    },
+    {
+      "path": "errors/VIBE9303",
+      "title": "Route not handled"
+    },
+    {
+      "path": "errors/VIBE9304",
+      "title": "Route handled twice"
+    },
+    {
+      "path": "errors/VIBE9305",
+      "title": "Foreign route"
+    },
+    {
+      "path": "errors/VIBE9306",
+      "title": "Contract served twice"
+    },
+    {
+      "path": "errors/VIBE9307",
+      "title": "Static method"
+    },
+    {
+      "path": "errors/VIBE9401",
+      "title": "Route conflict"
+    },
+    {
+      "path": "errors/VIBE9402",
+      "title": "Shutdown timeout"
+    },
+    {
+      "path": "errors/VIBE9403",
+      "title": "Already listening"
+    },
+    {
+      "path": "errors/VIBE9404",
+      "title": "Wildcard origin with credentials"
+    },
+    {
+      "path": "errors/VIBE9405",
+      "title": "Invalid base path"
+    },
+    {
+      "path": "errors/VIBE9501",
+      "title": "Response violates the contract"
+    },
+    {
+      "path": "errors/VIBE9502",
+      "title": "Undeclared error code"
+    },
+    {
+      "path": "errors/VIBE9503",
+      "title": "Unhandled error"
+    },
+    {
+      "path": "errors/VIBE9504",
+      "title": "Invalid cookie name"
+    },
+    {
+      "path": "errors/VIBE9505",
+      "title": "Invalid raw result"
+    },
+    {
+      "path": "errors/VIBE9601",
+      "title": "Invalid configuration"
+    },
+    {
+      "path": "errors/VIBE9602",
+      "title": "Asynchronous config schema"
+    },
+    {
+      "path": "errors/VIBE9701",
+      "title": "Unused provider override"
+    },
+    {
+      "path": "errors/VIBE9801",
+      "title": "Unconvertible schema"
+    },
+    {
+      "path": "errors/VIBE9802",
+      "title": "Schema name collision"
+    },
+    {
+      "path": "errors/VIBE9803",
+      "title": "Invalid error status"
+    },
+    {
+      "path": "errors/index",
+      "title": "Error codes"
+    },
+    {
+      "path": "guides/ai-agents",
+      "title": "CLI and AI agents",
+      "description": "How vibejs answers coding agents with JSON, keeps their rules in AGENTS.md, serves the docs offline and exposes its commands as MCP tools."
+    },
+    {
+      "path": "guides/coming-from-nestjs",
+      "title": "Coming from NestJS",
+      "description": "The NestJS idioms you know, their vibe.js form, and the error that points you there when the old form slips in."
+    },
+    {
+      "path": "guides/coming-from-vue-router",
+      "title": "Coming from vue-router and Vue Test Utils",
+      "description": "The vue-router and Vue Test Utils idioms you know, their vibe.js form, and the error that points you there when the old form slips in."
+    },
+    {
+      "path": "guides/coming-from-vue",
+      "title": "Coming from Vue",
+      "description": "What carries over from Vue 3 to vibe.js, the Vue idioms that change and the error code that reports each one, the APIs that behave differently, and what vibe.js leaves out."
+    },
+    {
+      "path": "guides/editors",
+      "title": "Editor setup",
+      "description": "Type checking, hover, go to definition and diagnostics in .vibe files in VS Code, Neovim and other LSP editors, the known limitations, and how to fix a setup that shows no types."
+    },
+    {
+      "path": "guides/extending",
+      "title": "Extending vibe.js",
+      "description": "Package reusable features as UI plugins and composables, and as configurable server modules, middleware, guards, interceptors, filters and metadata."
+    },
+    {
+      "path": "guides/getting-started",
+      "title": "Getting started",
+      "description": "Create a vibe.js app, run it, check it, and set up your editor and coding agent."
+    },
+    {
+      "path": "guides/tutorial",
+      "title": "Tutorial",
+      "description": "Build a users API and a page that lists the users, find a template type error with vibejs check, then build, serve and develop the app."
+    },
+    {
+      "path": "index",
+      "title": "vibe.js",
+      "description": "A full-stack TypeScript framework where the UI, the server and the contract between them are type-checked end to end."
+    },
+    {
+      "path": "server/configuration",
+      "title": "Configuration",
+      "description": "Typed environment config, logging, CORS, cookies, request limits, shutdown and the TypeScript setup of a vibe.js server."
+    },
+    {
+      "path": "server/contracts",
+      "title": "Contracts",
+      "description": "Declare an API once with defineContract, serve it from a controller, call it from the UI with createClient and generate OpenAPI from it."
+    },
+    {
+      "path": "server/handlers",
+      "title": "Controllers and handlers",
+      "description": "Serve a contract with @Controller and @Handle, read the typed ctx, raise declared errors and fix TS1241 on @Handle."
+    },
+    {
+      "path": "server/index",
+      "title": "Server",
+      "description": "The layout of a vibe.js server application, how it is created, served and shut down, and what is deployed."
+    },
+    {
+      "path": "server/modules",
+      "title": "Modules and providers",
+      "description": "Modules, providers, field injection with inject(), tokens, exports, global modules and lifecycle hooks."
+    },
+    {
+      "path": "server/pipeline",
+      "title": "Middleware, guards, interceptors and filters",
+      "description": "The request pipeline of a vibe.js server, the run order of its enhancers, typed metadata and global enhancers."
+    },
+    {
+      "path": "server/testing",
+      "title": "Testing the server",
+      "description": "Test modules in process with Test.createTestingModule, replace providers, call routes through the typed client and check the graph with inspect()."
+    },
+    {
+      "path": "ui/components",
+      "title": "Components",
+      "description": "Import components, declare props, events, slots and models with the define macros, pass attributes through, and expose values to template refs."
+    },
+    {
+      "path": "ui/data",
+      "title": "Data loading",
+      "description": "Load data with useAsync, keep it in sync with the route, abort stale requests, narrow typed API results and share state between components."
+    },
+    {
+      "path": "ui/index",
+      "title": "UI essentials",
+      "description": "Write a .vibe component, mount the app, handle errors and warnings, and find the pages on reactivity, templates, components, lifecycle and provide/inject."
+    },
+    {
+      "path": "ui/lifecycle",
+      "title": "Lifecycle",
+      "description": "The lifecycle hooks of a component, the order in which they run, and how errors travel through onErrorCaptured to app.config.errorHandler."
+    },
+    {
+      "path": "ui/provide-inject",
+      "title": "Provide and inject",
+      "description": "Pass values to every descendant of a component or to the whole app with provide and inject, typed by an InjectionKey."
+    },
+    {
+      "path": "ui/reactivity",
+      "title": "Reactivity",
+      "description": "Reactive state with ref, shallowRef, reactive, readonly and computed; side effects with watch and watchEffect; effect scopes, nextTick and shared state in composables."
+    },
+    {
+      "path": "ui/routing",
+      "title": "Routing",
+      "description": "Declare typed routes, render them with RouterView and RouterLink, read the route, guard navigations, load pages lazily and control scrolling."
+    },
+    {
+      "path": "ui/template-syntax",
+      "title": "Template syntax",
+      "description": "Interpolation, attribute bindings and spreads, class and style values, events and modifiers, conditions, keyed lists, v-show, v-model, template refs and dynamic components."
+    },
+    {
+      "path": "ui/testing",
+      "title": "Testing components",
+      "description": "Test .vibe components and composables in Vitest with mount, wrappers, CSS selectors, events, props and the router."
+    }
+  ],
+  "sidebar": [
+    {
+      "text": "Getting started",
+      "items": [
+        {
+          "text": "Getting started",
+          "link": "/guides/getting-started"
+        },
+        {
+          "text": "Tutorial",
+          "link": "/guides/tutorial"
+        },
+        {
+          "text": "Editor setup",
+          "link": "/guides/editors"
+        }
+      ]
+    },
+    {
+      "text": "UI",
+      "items": [
+        {
+          "text": "Components",
+          "link": "/ui/components"
+        },
+        {
+          "text": "Data loading",
+          "link": "/ui/data"
+        },
+        {
+          "text": "UI essentials",
+          "link": "/ui/"
+        },
+        {
+          "text": "Lifecycle",
+          "link": "/ui/lifecycle"
+        },
+        {
+          "text": "Provide and inject",
+          "link": "/ui/provide-inject"
+        },
+        {
+          "text": "Reactivity",
+          "link": "/ui/reactivity"
+        },
+        {
+          "text": "Routing",
+          "link": "/ui/routing"
+        },
+        {
+          "text": "Template syntax",
+          "link": "/ui/template-syntax"
+        },
+        {
+          "text": "Testing components",
+          "link": "/ui/testing"
+        }
+      ]
+    },
+    {
+      "text": "Server",
+      "items": [
+        {
+          "text": "Configuration",
+          "link": "/server/configuration"
+        },
+        {
+          "text": "Contracts",
+          "link": "/server/contracts"
+        },
+        {
+          "text": "Controllers and handlers",
+          "link": "/server/handlers"
+        },
+        {
+          "text": "Server",
+          "link": "/server/"
+        },
+        {
+          "text": "Modules and providers",
+          "link": "/server/modules"
+        },
+        {
+          "text": "Middleware, guards, interceptors and filters",
+          "link": "/server/pipeline"
+        },
+        {
+          "text": "Testing the server",
+          "link": "/server/testing"
+        }
+      ]
+    },
+    {
+      "text": "CLI and AI agents",
+      "items": [
+        {
+          "text": "CLI and AI agents",
+          "link": "/guides/ai-agents"
+        },
+        {
+          "text": "vibejs agents",
+          "link": "/cli/agents"
+        },
+        {
+          "text": "vibejs build",
+          "link": "/cli/build"
+        },
+        {
+          "text": "vibejs check",
+          "link": "/cli/check"
+        },
+        {
+          "text": "vibejs components",
+          "link": "/cli/components"
+        },
+        {
+          "text": "vibejs dev",
+          "link": "/cli/dev"
+        },
+        {
+          "text": "vibejs di",
+          "link": "/cli/di"
+        },
+        {
+          "text": "vibejs docs",
+          "link": "/cli/docs"
+        },
+        {
+          "text": "vibejs errors",
+          "link": "/cli/errors"
+        },
+        {
+          "text": "vibejs explain",
+          "link": "/cli/explain"
+        },
+        {
+          "text": "vibejs generate",
+          "link": "/cli/generate"
+        },
+        {
+          "text": "CLI reference",
+          "link": "/cli/"
+        },
+        {
+          "text": "vibejs logs",
+          "link": "/cli/logs"
+        },
+        {
+          "text": "vibejs mcp",
+          "link": "/cli/mcp"
+        },
+        {
+          "text": "vibejs request",
+          "link": "/cli/request"
+        },
+        {
+          "text": "vibejs routes",
+          "link": "/cli/routes"
+        }
+      ]
+    },
+    {
+      "text": "Guides",
+      "items": [
+        {
+          "text": "Coming from NestJS",
+          "link": "/guides/coming-from-nestjs"
+        },
+        {
+          "text": "Coming from Vue",
+          "link": "/guides/coming-from-vue"
+        },
+        {
+          "text": "Coming from vue-router and Vue Test Utils",
+          "link": "/guides/coming-from-vue-router"
+        },
+        {
+          "text": "Extending vibe.js",
+          "link": "/guides/extending"
+        }
+      ]
+    }
+  ]
+}

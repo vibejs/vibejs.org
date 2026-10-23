@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["es2024", "dom"],
+    "types": ["vite/client"],
+    "verbatimModuleSyntax": true,
+    "noEmit": true
+  },
+  "contentMappers": [
+    {
+      "package": "@usevibejs/language-tools",
+      "extensions": [".vibe"]
+    }
+  ],
+  "include": ["src"]
+}

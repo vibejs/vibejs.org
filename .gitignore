@@ -1,0 +1,19 @@
+# Dependencies and build output
+node_modules/
+dist/
+coverage/
+.vitest/
+.tsbuild/
+.vite/
+.wrangler/
+
+# Local tooling state
+.vibejs/
+.claude/settings.local.json
+.DS_Store
+*.log
+
+# Secrets
+.env
+.env.*
+!.env.example

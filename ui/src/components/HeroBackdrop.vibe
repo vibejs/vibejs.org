@@ -1,0 +1,17 @@
+<script setup lang="ts">
+import DotField from './DotField.vibe';
+</script>
+
+<template>
+  <div class="pointer-events-none absolute inset-y-0 left-1/2 -z-10 w-screen -translate-x-1/2 overflow-hidden" aria-hidden="true">
+    <!-- A soft light that drifts slowly behind the headline. -->
+    <div
+      class="animate-aurora absolute -top-56 left-1/2 h-[36rem] w-[36rem] -translate-x-1/2 rounded-full opacity-70 blur-3xl dark:opacity-50"
+      style="background: radial-gradient(closest-side, color-mix(in oklch, var(--foreground) 10%, transparent), transparent)"
+    ></div>
+    <!-- The dot field, faded out toward the bottom and the sides. -->
+    <div class="absolute inset-0 [mask-image:radial-gradient(ellipse_80%_70%_at_50%_20%,#000_35%,transparent_100%)]">
+      <DotField />
+    </div>
+  </div>
+</template>

@@ -1,0 +1,57 @@
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from '@usevibejs/ui';
+
+// The steps of `vibejs check`, as a passing run of a new app reports them.
+const STEPS = [
+  { name: 'types', detail: '0 errors' },
+  { name: 'lint', detail: '0 problems' },
+  { name: 'format', detail: 'formatted' },
+  { name: 'tests', detail: '16 passed' },
+  { name: 'coverage', detail: '100% per file' },
+];
+
+const done = ref(0);
+let timers: ReturnType<typeof setTimeout>[] = [];
+
+function run() {
+  timers.forEach(clearTimeout);
+  done.value = 0;
+  timers = STEPS.map((_, index) => setTimeout(() => (done.value = index + 1), 900 + index * 420));
+}
+onMounted(run);
+onBeforeUnmount(() => timers.forEach(clearTimeout));
+</script>
+
+<template>
+  <div class="bg-card/95 text-card-foreground rounded-xl border p-4 font-mono text-[12.5px] shadow-lg backdrop-blur">
+    <div class="text-muted-foreground mb-2 flex items-center justify-between">
+      <span>$ vibejs check</span>
+      <button
+        type="button"
+        class="hover:text-foreground rounded px-1.5 font-sans text-[11px]"
+        :disabled="done < STEPS.length"
+        @click="run"
+      >
+        Run again
+      </button>
+    </div>
+    <ul class="grid gap-1.5" aria-live="polite">
+      <li v-for="(step, index) in STEPS" :key="step.name" class="flex items-center gap-2">
+        <span
+          v-if="index < done"
+          class="animate-pop bg-highlight text-highlight-foreground inline-flex size-4 shrink-0 items-center justify-center rounded-full"
+          aria-hidden="true"
+        >
+          <svg viewBox="0 0 24 24" class="size-3 fill-none stroke-current stroke-[3]">
+            <path d="m5 12 5 5 9-10" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <span v-else class="border-muted-foreground/40 size-4 shrink-0 animate-pulse rounded-full border" aria-hidden="true"></span>
+        <span class="w-16 shrink-0">{{ step.name }}</span>
+        <span :class="index < done ? 'text-muted-foreground truncate' : 'text-muted-foreground/40 truncate'">
+          {{ index < done ? step.detail : 'running…' }}
+        </span>
+      </li>
+    </ul>
+  </div>
+</template>

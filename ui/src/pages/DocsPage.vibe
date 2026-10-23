@@ -1,0 +1,174 @@
+<script setup lang="ts">
+import { computed, nextTick, ref, useAsync, useTemplateRef, watch } from '@usevibejs/ui';
+import { RouterLink, useRoute, useRouter } from '@usevibejs/ui/router';
+import { contentPath, findPage, loadPage, sidebar } from '../docs.ts';
+
+const route = useRoute('docs');
+const router = useRouter();
+const menu = useTemplateRef<HTMLDialogElement>('menu');
+const menuOpen = ref(false);
+
+const path = computed(() => contentPath(route.params.path ?? []));
+const page = computed(() => findPage(path.value));
+const { data, loading } = useAsync(async () => {
+  const load = loadPage(path.value);
+  return load ? await load : null;
+});
+
+const groups = [
+  ...sidebar,
+  { text: 'Reference', items: [{ text: 'Error codes', link: '/v0/errors/' }] },
+];
+const links = groups.flatMap((group) => group.items);
+const here = computed(() => route.path.replace(/\/$/, '') || '/v0');
+const isHere = (link: string) => link.replace(/\/$/, '') === here.value;
+const index = computed(() => links.findIndex((item) => isHere(item.link)));
+const prev = computed(() => (index.value > 0 ? links[index.value - 1] : undefined));
+const next = computed(() => (index.value >= 0 ? links[index.value + 1] : undefined));
+const group = computed(() => groups.find((g) => g.items.some((item) => isHere(item.link)))?.text ?? 'Docs');
+const headings = computed(() => data.value?.headings ?? []);
+
+const navClass = (link: string, large = false) => [
+  'block rounded-md px-3 transition-colors',
+  large ? 'py-2.5 text-base' : 'py-1.5 text-sm',
+  isHere(link) ? 'bg-accent text-accent-foreground font-medium' : 'text-muted-foreground hover:text-foreground',
+];
+
+watch(menuOpen, (open) => {
+  const el = menu.value;
+  if (open && el && !el.open) el.showModal();
+  else if (!open && el?.open) el.close();
+});
+watch(
+  () => route.path,
+  () => {
+    menuOpen.value = false;
+  },
+);
+// Once a page renders, honor a #hash in the URL that pointed into it.
+watch(data, async () => {
+  await nextTick();
+  if (route.hash) document.getElementById(decodeURIComponent(route.hash.slice(1)))?.scrollIntoView();
+});
+
+/** Links inside the rendered Markdown navigate in the app instead of loading the page again. */
+function onArticleClick(event: MouseEvent) {
+  const anchor = (event.target as HTMLElement).closest('a');
+  if (!anchor || event.defaultPrevented || event.button !== 0) return;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const href = anchor.getAttribute('href');
+  if (!href || !href.startsWith('/') || href.endsWith('.txt')) return;
+  event.preventDefault();
+  void router.push(href);
+}
+
+function onMenuClick(event: MouseEvent) {
+  if (event.target === menu.value) menuOpen.value = false;
+}
+</script>
+
+<template>
+  <div class="mx-auto max-w-screen-xl lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10 lg:px-6 xl:grid-cols-[15rem_minmax(0,1fr)_13rem]">
+    <div class="bg-background/80 sticky top-14 z-20 border-b px-4 py-2 backdrop-blur lg:hidden">
+      <button
+        type="button"
+        class="flex h-11 w-full items-center gap-3 rounded-md text-left"
+        :aria-expanded="menuOpen"
+        @click="menuOpen = true"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 shrink-0 fill-none stroke-current stroke-2">
+          <path d="M4 7h16M4 12h16M4 17h10" stroke-linecap="round" />
+        </svg>
+        <span class="flex min-w-0 items-center gap-1.5 text-sm">
+          <span class="text-muted-foreground shrink-0">{{ group }}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="text-muted-foreground size-3.5 shrink-0 fill-none stroke-current stroke-2">
+            <path d="m9 6 6 6-6 6" />
+          </svg>
+          <span class="truncate font-medium">{{ page?.title ?? 'Docs' }}</span>
+        </span>
+      </button>
+    </div>
+
+    <aside class="sticky top-14 hidden max-h-[calc(100dvh-3.5rem)] overflow-y-auto py-8 lg:block" aria-label="Docs">
+      <nav class="grid gap-6">
+        <div v-for="g in groups" :key="g.text">
+          <p class="mb-1 px-3 text-sm font-semibold">{{ g.text }}</p>
+          <RouterLink
+            v-for="item in g.items"
+            :key="item.link"
+            :to="item.link"
+            :class="navClass(item.link)"
+            :aria-current="isHere(item.link) ? 'page' : undefined"
+          >
+            {{ item.text }}
+          </RouterLink>
+        </div>
+      </nav>
+    </aside>
+
+    <dialog
+      ref="menu"
+      class="text-foreground fixed inset-x-0 top-auto bottom-0 m-0 h-auto max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-black/50"
+      aria-label="Docs pages"
+      @close="menuOpen = false"
+      @click="onMenuClick"
+    >
+      <div class="bg-background flex max-h-[85dvh] flex-col rounded-t-2xl border-t pb-[env(safe-area-inset-bottom)]">
+        <div class="bg-muted mx-auto mt-2 h-1.5 w-12 rounded-full" aria-hidden="true"></div>
+        <div class="flex items-center justify-between px-5 pt-3 pb-2">
+          <p class="text-base font-semibold">Docs</p>
+          <button type="button" class="hover:bg-accent rounded-md border px-3 py-1.5 text-sm" @click="menuOpen = false">
+            Close
+          </button>
+        </div>
+        <nav class="grid gap-5 overflow-y-auto overscroll-contain px-2 pb-6">
+          <div v-for="g in groups" :key="g.text">
+            <p class="text-muted-foreground mb-1 px-3 text-xs font-medium">{{ g.text }}</p>
+            <RouterLink v-for="item in g.items" :key="item.link" :to="item.link" :class="navClass(item.link, true)">
+              {{ item.text }}
+            </RouterLink>
+          </div>
+        </nav>
+      </div>
+    </dialog>
+
+    <main class="min-w-0 px-4 pt-6 pb-16 sm:px-6 lg:px-0 lg:pt-10">
+      <div v-if="!page" class="py-10">
+        <h1 class="text-2xl font-semibold tracking-tight">This page does not exist.</h1>
+        <p class="text-muted-foreground mt-2">
+          There is no docs page at <code class="font-mono text-sm [overflow-wrap:anywhere]">{{ route.path }}</code>.
+          <RouterLink to="/v0/" class="text-foreground font-medium underline underline-offset-4">Go to the docs home</RouterLink>.
+        </p>
+      </div>
+      <div v-else-if="loading && !data" class="grid max-w-3xl gap-3 py-2" aria-busy="true" aria-label="Loading">
+        <div class="bg-muted h-9 w-2/3 animate-pulse rounded-md"></div>
+        <div class="bg-muted h-4 w-full animate-pulse rounded"></div>
+        <div class="bg-muted h-4 w-5/6 animate-pulse rounded"></div>
+      </div>
+      <article v-else-if="data" class="doc" @click="onArticleClick" v-html="data.html"></article>
+
+      <nav v-if="page && (prev || next)" class="mt-14 grid max-w-3xl grid-cols-2 gap-3" aria-label="Previous and next page">
+        <RouterLink v-if="prev" :to="prev.link" class="hover:bg-accent/50 rounded-lg border p-4 text-sm">
+          <span class="text-muted-foreground block text-xs">Previous</span>
+          <span class="font-medium">{{ prev.text }}</span>
+        </RouterLink>
+        <RouterLink v-if="next" :to="next.link" class="hover:bg-accent/50 col-start-2 rounded-lg border p-4 text-right text-sm">
+          <span class="text-muted-foreground block text-xs">Next</span>
+          <span class="font-medium">{{ next.text }}</span>
+        </RouterLink>
+      </nav>
+    </main>
+
+    <aside v-if="headings.length > 1" class="sticky top-14 hidden max-h-[calc(100dvh-3.5rem)] self-start overflow-y-auto py-10 xl:block" aria-label="On this page">
+      <p class="mb-2 text-sm font-semibold">On this page</p>
+      <a
+        v-for="h in headings"
+        :key="h.id"
+        :href="`#${h.id}`"
+        :class="['text-muted-foreground hover:text-foreground block py-1 text-sm', h.depth === 3 ? 'pl-3' : '']"
+      >
+        {{ h.text }}
+      </a>
+    </aside>
+  </div>
+</template>

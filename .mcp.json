@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "vibejs": {
+      "command": "pnpm",
+      "args": [
+        "exec",
+        "vibejs",
+        "mcp"
+      ]
+    }
+  }
+}

@@ -1,0 +1,113 @@
+<script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref } from '@usevibejs/ui';
+import { RouterLink, RouterView, useRoute } from '@usevibejs/ui/router';
+import SearchDialog from './components/SearchDialog.vibe';
+import { setTheme, theme } from './theme.ts';
+
+const GITHUB = 'https://github.com/vibejs/vibejs';
+const searching = ref(false);
+const route = useRoute();
+const inDocs = computed(() => route.path.startsWith('/v0'));
+const dark = computed(() => theme.value === 'dark');
+
+const navLink = 'rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground';
+const tab =
+  'flex min-h-12 flex-col items-center justify-center gap-1 rounded-lg text-[11px] font-medium text-muted-foreground active:bg-accent';
+
+function onKey(event: KeyboardEvent) {
+  const typing = (event.target as HTMLElement | null)?.closest('input, textarea, [contenteditable]');
+  if ((event.key === 'k' && (event.metaKey || event.ctrlKey)) || (event.key === '/' && !typing)) {
+    event.preventDefault();
+    searching.value = true;
+  }
+}
+onMounted(() => window.addEventListener('keydown', onKey));
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
+</script>
+
+<template>
+  <header
+    class="bg-background/80 sticky top-0 z-30 border-b pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-background/60"
+  >
+    <div class="mx-auto flex h-14 max-w-screen-xl items-center gap-4 px-4 sm:px-6">
+      <RouterLink to="/" class="flex items-center gap-2.5 font-semibold tracking-tight" aria-label="vibe.js home">
+        <img src="/logo.png" alt="" width="28" height="28" class="size-7 rounded-md" />
+        <span>vibe.js</span>
+      </RouterLink>
+      <nav class="ml-2 hidden items-center lg:flex" aria-label="Main">
+        <RouterLink to="/v0/guides/getting-started" :class="navLink">Get started</RouterLink>
+        <RouterLink to="/v0/" :class="navLink">Docs</RouterLink>
+        <RouterLink to="/v0/errors/" :class="navLink">Errors</RouterLink>
+        <a :href="GITHUB" :class="navLink">GitHub</a>
+      </nav>
+      <button
+        type="button"
+        class="border-input bg-muted/40 text-muted-foreground hover:bg-accent ml-auto hidden h-9 w-64 items-center gap-2 rounded-md border px-3 text-sm lg:flex"
+        @click="searching = true"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-none stroke-current stroke-2">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" stroke-linecap="round" />
+        </svg>
+        Search docs…
+        <kbd class="bg-background ml-auto rounded border px-1.5 font-mono text-[11px]">/</kbd>
+      </button>
+      <div class="ml-auto flex items-center gap-1 lg:ml-0">
+      <button
+        type="button"
+        class="text-muted-foreground hover:bg-accent hover:text-foreground inline-flex size-9 items-center justify-center rounded-md"
+        :aria-label="dark ? 'Switch to light mode' : 'Switch to dark mode'"
+        @click="setTheme(dark ? 'light' : 'dark')"
+      >
+        <svg v-if="dark" viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] fill-none stroke-current stroke-2">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke-linecap="round" />
+        </svg>
+        <svg v-else viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] fill-none stroke-current stroke-2">
+          <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <a
+        :href="GITHUB"
+        class="text-muted-foreground hover:text-foreground inline-flex size-9 items-center justify-center rounded-md lg:hidden"
+        aria-label="vibe.js on GitHub"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-current">
+          <path
+            d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"
+          />
+        </svg>
+      </a>
+      </div>
+    </div>
+  </header>
+
+  <RouterView />
+
+  <nav
+    class="bg-background/90 fixed inset-x-0 bottom-0 z-30 grid grid-cols-3 gap-1 border-t px-3 pt-1.5 pb-[max(env(safe-area-inset-bottom),0.5rem)] backdrop-blur lg:hidden"
+    aria-label="Main"
+  >
+    <RouterLink to="/" :class="[tab, route.path === '/' && 'text-foreground']">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
+        <path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z" stroke-linejoin="round" />
+      </svg>
+      Home
+    </RouterLink>
+    <RouterLink to="/v0/" :class="[tab, inDocs && 'text-foreground']">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
+        <path d="M5 4h10l4 4v12H5zM9 12h6M9 16h6" stroke-linejoin="round" stroke-linecap="round" />
+      </svg>
+      Docs
+    </RouterLink>
+    <button type="button" :class="tab" @click="searching = true">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" stroke-linecap="round" />
+      </svg>
+      Search
+    </button>
+  </nav>
+
+  <SearchDialog v-model:open="searching" />
+</template>

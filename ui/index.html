@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>vibe.js: if it compiles, both sides agree</title>
+    <meta
+      name="description"
+      content="vibe.js is a full-stack TypeScript framework: .vibe components, a modular server and typed contracts between them, with tools that speak to people and to coding agents."
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <script>
+      // Applies the saved or system theme before the first paint, so the page never flashes.
+      (() => {
+        let saved = null;
+        try {
+          saved = localStorage.getItem('theme');
+        } catch {}
+        const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
+        document.querySelector('meta[name=theme-color]').content = dark ? '#0a0a0a' : '#ffffff';
+      })();
+    </script>
+    <meta property="og:title" content="vibe.js" />
+    <meta
+      property="og:description"
+      content="Full-stack TypeScript: .vibe components, a modular server and typed contracts, checked end to end."
+    />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <meta property="og:image" content="https://vibejs.org/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Geist+Mono:wght@400..600&display=swap"
+    />
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>vibe.js renders this site in the browser. Turn on JavaScript to read it.</noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

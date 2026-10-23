@@ -1,0 +1,91 @@
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from '@usevibejs/ui';
+import counter from '../snippets/counter.md';
+
+const count = ref(0);
+const writes = ref<number | null>(null);
+const total = ref(0);
+const output = useTemplateRef<HTMLButtonElement>('output');
+const source = useTemplateRef<HTMLDivElement>('source');
+let live: HTMLElement | undefined;
+let fade: ReturnType<typeof setTimeout> | undefined;
+let observer: MutationObserver | undefined;
+
+/** Wraps the first occurrence of `text` in the highlighted source in one span, colors kept. */
+function wrapBinding(root: HTMLElement, text: string): HTMLElement | undefined {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes: Text[] = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+  const all = nodes.map((node) => node.data).join('');
+  let at = all.indexOf(text);
+  if (at < 0) return undefined;
+  const range = document.createRange();
+  let end = at + text.length;
+  for (const node of nodes) {
+    const length = node.data.length;
+    if (at >= 0 && at < length) range.setStart(node, at);
+    if (end <= length) {
+      range.setEnd(node, end);
+      break;
+    }
+    at -= length;
+    end -= length;
+  }
+  const wrap = document.createElement('span');
+  wrap.className = 'binding';
+  wrap.append(range.extractContents());
+  range.insertNode(wrap);
+  return wrap;
+}
+
+// The binding in the source lights up on every change, as the runtime touches that one node.
+watch(count, () => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!live) return;
+  live.classList.remove('flash-off');
+  live.classList.add('flash');
+  // Hold the flash briefly, then let it fade back to the code colors.
+  clearTimeout(fade);
+  fade = setTimeout(() => {
+    live!.classList.add('flash-off');
+    live!.classList.remove('flash');
+  }, 180);
+});
+
+// Counts what the runtime really changes in the button's DOM after each tap.
+onMounted(() => {
+  live = wrapBinding(source.value!, '{{ count }}');
+  observer = new MutationObserver((records) => {
+    writes.value = records.length;
+    total.value += records.length;
+  });
+  observer.observe(output.value!, { characterData: true, childList: true, subtree: true, attributes: true });
+});
+onBeforeUnmount(() => observer?.disconnect());
+</script>
+
+<template>
+  <figure class="bg-card text-card-foreground m-0 overflow-hidden rounded-xl border shadow-sm">
+    <figcaption class="contents">
+      <div class="bg-muted/70 flex items-end border-b px-2 pt-2">
+        <span class="bg-card text-foreground relative -mb-px flex items-center gap-2 rounded-t-lg border border-b-transparent px-3.5 py-2 font-mono text-sm font-semibold [overflow-wrap:anywhere]"><svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 shrink-0 fill-none stroke-current stroke-2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke-linejoin="round" /><path d="M14 3v5h5" stroke-linejoin="round" /></svg>Counter.vibe</span>
+      </div>
+    </figcaption>
+    <div ref="source" class="code-block bg-muted/40" v-html="counter.html"></div>
+    <div class="grid gap-3 border-t p-4">
+      <button
+        ref="output"
+        type="button"
+        class="bg-primary text-primary-foreground h-11 w-full touch-manipulation rounded-md text-sm font-medium tabular-nums shadow-xs transition-transform active:scale-[0.98]"
+        @click="count++"
+      >Tapped {{ count }} times</button>
+      <p class="text-muted-foreground m-0 min-h-10 text-sm" aria-live="polite">
+        <template v-if="writes === null">Tap the button. A MutationObserver counts what changes.</template>
+        <template v-else>
+          <span class="text-foreground font-medium tabular-nums">{{ writes }} DOM {{ writes === 1 ? 'write' : 'writes' }}</span>
+          for that tap, {{ total }} in all. The component's setup ran once.
+        </template>
+      </p>
+    </div>
+  </figure>
+</template>

@@ -1,0 +1,75 @@
+<script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
+import contract from '../snippets/contract.md';
+import server from '../snippets/server.md';
+import ui from '../snippets/ui.md';
+
+const PARTS = [
+  {
+    id: 'contract',
+    label: 'Contract',
+    file: 'contracts/src/todos.contract.ts',
+    html: contract.html,
+    text: 'Declare each route once: its params, body, response and the errors it can return.',
+  },
+  {
+    id: 'server',
+    label: 'Server',
+    file: 'server/src/todos/todos.controller.ts',
+    html: server.html,
+    text: 'Handle every route of the contract. A missing or extra handler stops the app at startup.',
+  },
+  {
+    id: 'ui',
+    label: 'UI',
+    file: 'ui/src/pages/TodosPage.vibe',
+    html: ui.html,
+    text: 'Call the API through a client typed by the same contract, with no code generation step.',
+  },
+] as const;
+type PartId = (typeof PARTS)[number]['id'];
+
+const active = ref<PartId>('contract');
+const part = computed(() => PARTS.find((p) => p.id === active.value)!);
+const tabClass = (id: PartId) => [
+  'h-8 rounded-md text-sm font-medium transition-colors',
+  active.value === id ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
+];
+
+function onKey(event: KeyboardEvent) {
+  if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+  const step = event.key === 'ArrowRight' ? 1 : -1;
+  const index = PARTS.findIndex((p) => p.id === active.value);
+  active.value = PARTS[(index + step + PARTS.length) % PARTS.length]!.id;
+}
+</script>
+
+<template>
+  <div>
+    <div class="bg-muted grid grid-cols-3 gap-1 rounded-lg p-1" role="tablist" aria-label="Parts of an app" @keydown="onKey">
+      <button
+        v-for="p in PARTS"
+        :key="p.id"
+        type="button"
+        role="tab"
+        :id="`tab-${p.id}`"
+        :aria-selected="active === p.id"
+        :aria-controls="`panel-${p.id}`"
+        :tabindex="active === p.id ? 0 : -1"
+        :class="tabClass(p.id)"
+        @click="active = p.id"
+      >
+        {{ p.label }}
+      </button>
+    </div>
+    <div class="mt-4" role="tabpanel" :id="`panel-${part.id}`" :aria-labelledby="`tab-${part.id}`">
+      <p class="text-muted-foreground mb-3 min-h-10 text-sm">{{ part.text }}</p>
+      <div class="bg-card overflow-hidden rounded-xl border shadow-sm">
+        <div class="bg-muted/70 flex items-end border-b px-2 pt-2">
+        <span class="bg-card text-foreground relative -mb-px flex items-center gap-2 rounded-t-lg border border-b-transparent px-3.5 py-2 font-mono text-sm font-semibold [overflow-wrap:anywhere]"><svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 shrink-0 fill-none stroke-current stroke-2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke-linejoin="round" /><path d="M14 3v5h5" stroke-linejoin="round" /></svg>{{ part.file }}</span>
+      </div>
+        <div class="bg-muted/40" v-html="part.html"></div>
+      </div>
+    </div>
+  </div>
+</template>

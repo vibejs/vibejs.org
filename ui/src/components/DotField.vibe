@@ -1,0 +1,142 @@
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, useTemplateRef } from '@usevibejs/ui';
+
+// A field of dots that answers touch and the pointer: a tap sends a ring outward, a hovering
+// pointer lights the dots around it, and an idle field sends a ring of its own now and then.
+const SPACING = 22;
+const RING_SPEED = 0.42; // px per ms
+const RING_WIDTH = 46;
+const RING_LIFE = 2600; // ms
+const HOVER_RADIUS = 130;
+
+const canvas = useTemplateRef<HTMLCanvasElement>('canvas');
+interface Ring {
+  x: number;
+  y: number;
+  start: number;
+}
+let rings: Ring[] = [];
+let pointer: { x: number; y: number } | null = null;
+let frame = 0;
+let visible = true;
+let idleTimer: ReturnType<typeof setInterval> | undefined;
+let color = '0 0 0';
+let cleanup: (() => void)[] = [];
+
+function readColor() {
+  // The foreground token as an rgb triple, so dots follow the light and dark themes.
+  const probe = document.createElement('span');
+  probe.style.color = 'var(--foreground)';
+  document.body.append(probe);
+  const rgb = getComputedStyle(probe).color.match(/[\d.]+/g) ?? ['0', '0', '0'];
+  probe.remove();
+  color = rgb.slice(0, 3).join(' ');
+}
+
+function draw(now: number) {
+  const el = canvas.value;
+  if (!el) return;
+  const ctx = el.getContext('2d')!;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const width = el.clientWidth;
+  const height = el.clientHeight;
+  if (el.width !== Math.round(width * dpr) || el.height !== Math.round(height * dpr)) {
+    el.width = Math.round(width * dpr);
+    el.height = Math.round(height * dpr);
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  rings = rings.filter((ring) => now - ring.start < RING_LIFE);
+
+  const offsetX = (width % SPACING) / 2;
+  for (let y = SPACING / 2; y < height; y += SPACING) {
+    for (let x = offsetX; x < width; x += SPACING) {
+      let energy = 0;
+      for (const ring of rings) {
+        const age = now - ring.start;
+        const distance = Math.hypot(x - ring.x, y - ring.y);
+        const wave = Math.exp(-Math.abs(distance - age * RING_SPEED) / RING_WIDTH);
+        energy += wave * (1 - age / RING_LIFE);
+      }
+      if (pointer) {
+        const distance = Math.hypot(x - pointer.x, y - pointer.y);
+        if (distance < HOVER_RADIUS) energy += (1 - distance / HOVER_RADIUS) ** 2 * 0.9;
+      }
+      energy = Math.min(energy, 1);
+      const radius = 0.9 + energy * 1.9;
+      ctx.fillStyle = `rgb(${color} / ${0.13 + energy * 0.75})`;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+function loop(now: number) {
+  draw(now);
+  frame = visible ? requestAnimationFrame(loop) : 0;
+}
+
+function local(event: PointerEvent) {
+  const box = canvas.value!.getBoundingClientRect();
+  return { x: event.clientX - box.left, y: event.clientY - box.top };
+}
+
+onMounted(() => {
+  const el = canvas.value!;
+  const host = el.parentElement!.parentElement!;
+  readColor();
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) {
+    draw(performance.now());
+    return;
+  }
+  const onDown = (event: PointerEvent) => rings.push({ ...local(event), start: performance.now() });
+  const onMove = (event: PointerEvent) => {
+    if (event.pointerType === 'mouse') pointer = local(event);
+  };
+  const onLeave = () => (pointer = null);
+  host.addEventListener('pointerdown', onDown);
+  host.addEventListener('pointermove', onMove);
+  host.addEventListener('pointerleave', onLeave);
+
+  const themeObserver = new MutationObserver(readColor);
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  // Pause while the hero is off screen.
+  const viewObserver = new IntersectionObserver(([entry]) => {
+    visible = entry!.isIntersecting;
+    if (visible && !frame) frame = requestAnimationFrame(loop);
+  });
+  viewObserver.observe(el);
+
+  // An opening ring from the top of the field, then one every few seconds while idle.
+  rings.push({ x: el.clientWidth * 0.5, y: 40, start: performance.now() + 300 });
+  idleTimer = setInterval(() => {
+    if (!visible || rings.length) return;
+    rings.push({
+      x: el.clientWidth * (0.15 + Math.random() * 0.7),
+      y: el.clientHeight * (0.1 + Math.random() * 0.5),
+      start: performance.now(),
+    });
+  }, 3200);
+  frame = requestAnimationFrame(loop);
+
+  cleanup = [
+    () => host.removeEventListener('pointerdown', onDown),
+    () => host.removeEventListener('pointermove', onMove),
+    () => host.removeEventListener('pointerleave', onLeave),
+    () => themeObserver.disconnect(),
+    () => viewObserver.disconnect(),
+  ];
+});
+
+onBeforeUnmount(() => {
+  cancelAnimationFrame(frame);
+  clearInterval(idleTimer);
+  cleanup.forEach((stop) => stop());
+});
+</script>
+
+<template>
+  <canvas ref="canvas" class="absolute inset-0 size-full" aria-hidden="true"></canvas>
+</template>

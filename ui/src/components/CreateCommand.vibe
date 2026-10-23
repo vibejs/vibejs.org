@@ -1,0 +1,69 @@
+<script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
+
+const COMMANDS = {
+  pnpm: 'pnpm create vibejs my-app',
+  npm: 'npm create vibejs@latest my-app',
+  yarn: 'yarn create vibejs my-app',
+  bun: 'bun create vibejs my-app',
+} as const;
+type Manager = keyof typeof COMMANDS;
+
+const managers = Object.keys(COMMANDS) as Manager[];
+const manager = ref<Manager>('pnpm');
+const copied = ref(false);
+const command = computed(() => COMMANDS[manager.value]);
+let timer: ReturnType<typeof setTimeout> | undefined;
+
+const managerClass = (name: Manager) => [
+  'h-8 rounded-md px-2.5 font-mono text-xs transition-colors',
+  manager.value === name
+    ? 'bg-background text-foreground shadow-sm'
+    : 'text-muted-foreground hover:text-foreground',
+];
+
+async function copy() {
+  await navigator.clipboard.writeText(command.value);
+  copied.value = true;
+  clearTimeout(timer);
+  timer = setTimeout(() => (copied.value = false), 1600);
+}
+</script>
+
+<template>
+  <div class="bg-muted/50 rounded-xl border">
+    <div class="flex items-center gap-1 border-b p-1.5" role="radiogroup" aria-label="Package manager">
+      <button
+        v-for="name in managers"
+        :key="name"
+        type="button"
+        role="radio"
+        :aria-checked="manager === name"
+        :class="managerClass(name)"
+        @click="manager = name"
+      >
+        {{ name }}
+      </button>
+    </div>
+    <div class="flex items-center gap-2 py-2 pr-2 pl-4">
+      <code class="min-w-0 flex-1 overflow-x-auto font-mono text-sm whitespace-nowrap [scrollbar-width:none]">
+        <span class="text-muted-foreground select-none">$ </span>{{ command }}
+      </code>
+      <button
+        type="button"
+        class="bg-background hover:bg-accent inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium shadow-xs"
+        :aria-label="copied ? 'Copied' : `Copy ${command}`"
+        @click="copy"
+      >
+        <svg v-if="!copied" viewBox="0 0 24 24" aria-hidden="true" class="size-3.5 fill-none stroke-current stroke-2">
+          <rect x="9" y="9" width="11" height="11" rx="2" />
+          <path d="M5 15V5a1 1 0 0 1 1-1h10" />
+        </svg>
+        <svg v-else viewBox="0 0 24 24" aria-hidden="true" class="size-3.5 fill-none stroke-current stroke-2">
+          <path d="m5 12 5 5 9-10" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span aria-live="polite">{{ copied ? 'Copied' : 'Copy' }}</span>
+      </button>
+    </div>
+  </div>
+</template>
