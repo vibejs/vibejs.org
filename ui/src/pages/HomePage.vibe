@@ -147,6 +147,17 @@ const FACTS = [1, 2, 3, 4] as const;
       </RouterLink>
     </section>
 
+    <section :class="section" aria-labelledby="vibecn-title">
+      <div class="bg-card flex flex-col gap-6 rounded-2xl border p-6 shadow-xs sm:p-10 md:flex-row md:items-center md:gap-10">
+        <img src="/vibecn.webp" alt="" width="64" height="64" class="size-16 shrink-0" />
+        <div class="flex-1">
+          <h2 id="vibecn-title" :class="heading">{{ t('home.vibecn.title') }}</h2>
+          <p :class="lede">{{ t('home.vibecn.text') }}</p>
+        </div>
+        <a href="https://vibecn.dev" :class="[outline, 'shrink-0']">{{ t('home.vibecn.cta') }}</a>
+      </div>
+    </section>
+
     <section class="bg-muted/50 my-6 rounded-2xl border px-5 py-10 sm:px-10 sm:py-14" aria-labelledby="start-title">
       <h2 id="start-title" :class="heading">{{ t('home.start.title') }}</h2>
       <p class="text-muted-foreground mt-2 text-sm">{{ t('home.start.requirements') }}</p>
@@ -166,6 +177,7 @@ const FACTS = [1, 2, 3, 4] as const;
         <a href="https://www.npmjs.com/org/usevibejs" class="hover:underline">npm</a>
         <RouterLink :to="lp('/v0/errors/')" class="hover:underline">{{ t('footer.errors') }}</RouterLink>
         <a href="/v0/llms.txt" class="hover:underline">llms.txt</a>
+        <a href="https://vibecn.dev" class="hover:underline">vibecn</a>
       </nav>
     </footer>
   </main>

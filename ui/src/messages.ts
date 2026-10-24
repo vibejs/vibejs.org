@@ -63,6 +63,10 @@ const en = {
   'home.agents.f4.text':
     '<code>vibejs g resource todos</code> writes the contract, the module and their tests.',
   'home.agents.link': 'CLI and AI agents',
+  'home.vibecn.title': 'Components that look the part.',
+  'home.vibecn.text':
+    'vibecn ports shadcn/ui to vibe.js: accessible components you copy into your app as .vibe source and shape to fit.',
+  'home.vibecn.cta': 'Browse vibecn',
   'home.start.title': 'Start a project.',
   'home.start.requirements': 'Node.js 24.15 or newer, with pnpm, npm, yarn or bun.',
   'home.start.cta': 'Get started',
@@ -219,6 +223,10 @@ const tr: Messages = {
   'home.agents.f4.text':
     '<code>vibejs g resource todos</code> sözleşmeyi, modülü ve testlerini tek seferde yazar.',
   'home.agents.link': 'CLI ve yapay zekâ ajanları',
+  'home.vibecn.title': 'Bileşenler de hazır.',
+  'home.vibecn.text':
+    'vibecn, shadcn/ui’ı vibe.js’e taşır: uygulamana .vibe kaynağı olarak kopyalayıp istediğin gibi şekillendirdiğin erişilebilir bileşenler.',
+  'home.vibecn.cta': 'vibecn’e göz at',
   'home.start.title': 'Projeni başlat.',
   'home.start.requirements': 'Node.js 24.15 ya da üstü; pnpm, npm, yarn veya bun.',
   'home.start.cta': 'Başla',
@@ -367,6 +375,10 @@ const ar: Messages = {
   'home.agents.f4.text':
     'يكتب <code>vibejs g resource todos</code> العقد والوحدة واختباراتهما دفعة واحدة.',
   'home.agents.link': 'واجهة الأوامر ووكلاء الذكاء الاصطناعي',
+  'home.vibecn.title': 'مكوّنات جاهزة للواجهة.',
+  'home.vibecn.text':
+    'ينقل vibecn مكتبة shadcn/ui إلى vibe.js: مكوّنات سهلة الوصول تنسخها إلى تطبيقك كمصدر .vibe وتعدّلها كما تشاء.',
+  'home.vibecn.cta': 'تصفّح vibecn',
   'home.start.title': 'ابدأ مشروعك.',
   'home.start.requirements': 'تحتاج Node.js 24.15 أو أحدث، مع pnpm أو npm أو yarn أو bun.',
   'home.start.cta': 'ابدأ',
