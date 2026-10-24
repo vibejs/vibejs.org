@@ -55,57 +55,46 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
         <RouterLink :to="lp('/v0/guides/getting-started')" :class="navLink">{{ t('nav.getStarted') }}</RouterLink>
         <RouterLink :to="lp('/v0/')" :class="navLink">{{ t('nav.docs') }}</RouterLink>
         <RouterLink :to="lp('/v0/errors/')" :class="navLink">{{ t('nav.errors') }}</RouterLink>
-        <a :href="GITHUB" :class="navLink">GitHub</a>
       </nav>
-      <button
-        type="button"
-        class="border-input bg-muted/40 text-muted-foreground hover:bg-accent ms-auto hidden h-9 w-64 items-center gap-2 rounded-md border px-3 text-sm lg:flex"
-        @click="searching = true"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-none stroke-current stroke-2">
-          <circle cx="11" cy="11" r="7" />
-          <path d="m20 20-3.5-3.5" stroke-linecap="round" />
-        </svg>
-        {{ t('nav.searchDocs') }}
-        <kbd class="bg-background ms-auto rounded border px-1.5 font-mono text-[11px]">/</kbd>
-      </button>
-      <div class="ms-auto flex items-center gap-1 lg:ms-0">
-      <label class="relative">
-        <span class="sr-only">{{ t('nav.language') }}</span>
-        <select
-          ref="picker"
-          class="text-muted-foreground hover:bg-accent hover:text-foreground h-9 cursor-pointer appearance-none rounded-md bg-transparent ps-2 pe-6 text-sm font-medium"
-          @change="switchLocale"
+      <div class="ms-auto flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-1 lg:flex-none">
+        <button
+          type="button"
+          :aria-label="t('nav.searchDocs')"
+          class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-accent hover:text-foreground gap-2 text-sm whitespace-nowrap sm:h-8 sm:w-full sm:max-w-56 sm:min-w-0 sm:shrink sm:justify-start sm:border sm:bg-muted/40 sm:px-3 sm:text-muted-foreground sm:hover:bg-muted lg:w-56 xl:w-64 xl:max-w-none"
+          @click="searching = true"
         >
-          <option v-for="l in LOCALES" :key="l.code" :value="l.code">{{ l.name }}</option>
-        </select>
-        <svg viewBox="0 0 24 24" aria-hidden="true" class="text-muted-foreground pointer-events-none absolute end-1.5 top-1/2 size-3.5 -translate-y-1/2 fill-none stroke-current stroke-2"><path d="m6 9 6 6 6-6" /></svg>
-      </label>
-      <button
-        type="button"
-        class="text-muted-foreground hover:bg-accent hover:text-foreground inline-flex size-9 items-center justify-center rounded-md"
-        :aria-label="dark ? t('theme.toLight') : t('theme.toDark')"
-        @click="setTheme(dark ? 'light' : 'dark')"
-      >
-        <svg v-if="dark" viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] fill-none stroke-current stroke-2">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke-linecap="round" />
-        </svg>
-        <svg v-else viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] fill-none stroke-current stroke-2">
-          <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" stroke-linejoin="round" />
-        </svg>
-      </button>
-      <a
-        :href="GITHUB"
-        class="text-muted-foreground hover:text-foreground inline-flex size-9 items-center justify-center rounded-md lg:hidden"
-        :aria-label="t('nav.githubLabel')"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-current">
-          <path
-            d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"
-          />
-        </svg>
-      </a>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 shrink-0 fill-none stroke-current stroke-2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <span class="hidden truncate sm:inline">{{ t('nav.searchDocs') }}</span>
+          <kbd class="pointer-events-none ms-auto hidden h-5 min-w-5 items-center justify-center rounded-sm bg-muted px-1 font-sans text-xs font-medium text-muted-foreground select-none sm:inline-flex">⌘K</kbd>
+        </button>
+        <label class="relative">
+          <span class="sr-only">{{ t('nav.language') }}</span>
+          <select
+            ref="picker"
+            class="text-muted-foreground hover:bg-accent hover:text-foreground h-8 cursor-pointer appearance-none rounded-md bg-transparent ps-2 pe-6 text-sm font-medium"
+            @change="switchLocale"
+          >
+            <option v-for="l in LOCALES" :key="l.code" :value="l.code">{{ l.name }}</option>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="text-muted-foreground pointer-events-none absolute end-1.5 top-1/2 size-3.5 -translate-y-1/2 fill-none stroke-current stroke-2"><path d="m6 9 6 6 6-6" /></svg>
+        </label>
+        <a :href="GITHUB" class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-accent hover:text-foreground" :aria-label="t('nav.githubLabel')">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-current"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z" /></svg>
+        </a>
+        <button
+          type="button"
+          class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+          :aria-label="dark ? t('theme.toLight') : t('theme.toDark')"
+          @click="setTheme(dark ? 'light' : 'dark')"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round">
+            <template v-if="dark"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></template>
+            <path v-else d="M20.99 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.78 9.79Z" />
+          </svg>
+        </button>
       </div>
     </div>
   </header>
