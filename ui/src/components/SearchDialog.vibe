@@ -2,6 +2,7 @@
 import { computed, ref, useTemplateRef, watch } from '@usevibejs/ui';
 import { useRouter } from '@usevibejs/ui/router';
 import { search } from '../docs.ts';
+import { locale, localePath, t } from '../i18n.ts';
 
 const open = defineModel<boolean>('open', { default: () => false });
 const dialog = useTemplateRef<HTMLDialogElement>('dialog');
@@ -10,8 +11,8 @@ const query = ref('');
 const active = ref(0);
 const router = useRouter();
 
-const hits = computed(() => search(query.value));
-const href = (path: string) => `/v0/${path.replace(/(^|\/)index$/, '$1')}`;
+const hits = computed(() => search(query.value, locale.value));
+const href = (path: string) => localePath(`/v0/${path.replace(/(^|\/)index$/, '$1')}`, locale.value);
 const hitClass = (index: number) => [
   'flex flex-col gap-0.5 rounded-md px-3 py-2.5',
   index === active.value ? 'bg-accent text-accent-foreground' : '',
@@ -58,7 +59,7 @@ function onBackdrop(event: MouseEvent) {
   <dialog
     ref="dialog"
     class="text-foreground backdrop:bg-black/50 m-0 mx-auto mt-[max(env(safe-area-inset-top),0.75rem)] w-[calc(100vw-1.5rem)] max-w-lg bg-transparent p-0 sm:mt-[12vh]"
-    aria-label="Search the docs"
+    :aria-label="t('search.label')"
     @close="open = false"
     @click="onBackdrop"
   >
@@ -72,7 +73,7 @@ function onBackdrop(event: MouseEvent) {
           ref="input"
           v-model="query"
           type="search"
-          placeholder="Search pages, commands and VIBE codes"
+          :placeholder="t('search.placeholder')"
           aria-label="Search"
           enterkeyhint="go"
           autocomplete="off"
@@ -87,7 +88,7 @@ function onBackdrop(event: MouseEvent) {
           Esc
         </button>
       </div>
-      <ul v-if="hits.length" class="max-h-[60dvh] overflow-y-auto overscroll-contain p-1.5" role="listbox" aria-label="Results">
+      <ul v-if="hits.length" class="max-h-[60dvh] overflow-y-auto overscroll-contain p-1.5" role="listbox" :aria-label="t('search.results')">
         <li v-for="(page, index) in hits" :key="page.path" role="presentation">
           <a
             :href="href(page.path)"
@@ -97,17 +98,12 @@ function onBackdrop(event: MouseEvent) {
             @click.prevent="go(page.path)"
           >
             <span class="text-sm font-medium">{{ page.title }}</span>
-            <span class="text-muted-foreground font-mono text-xs [overflow-wrap:anywhere]">{{ href(page.path) }}</span>
+            <span dir="ltr" class="text-muted-foreground text-start font-mono text-xs [overflow-wrap:anywhere]">{{ href(page.path) }}</span>
           </a>
         </li>
       </ul>
-      <p v-else-if="query" class="text-muted-foreground px-4 py-8 text-center text-sm">
-        No page matches “{{ query }}”.
-      </p>
-      <p v-else class="text-muted-foreground px-4 py-8 text-center text-sm">
-        Try <code class="font-mono">check</code>, <code class="font-mono">contracts</code> or
-        <code class="font-mono">VIBE7101</code>.
-      </p>
+      <p v-else-if="query" class="text-muted-foreground px-4 py-8 text-center text-sm">{{ t('search.noMatch', { query }) }}</p>
+      <p v-else class="text-muted-foreground px-4 py-8 text-center text-sm" v-html="t('search.hint')"></p>
     </div>
   </dialog>
 </template>

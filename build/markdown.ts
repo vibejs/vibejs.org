@@ -63,9 +63,11 @@ export function render(markdown: string, highlighter: Highlighter): DocModule {
     gfm: true,
     renderer: {
       heading({ tokens, depth }: Tokens.Heading) {
-        const html = this.parser.parseInline(tokens);
-        const base = slug(html) || 'section';
-        const count = seen.get(base) ?? 0;
+        // A translated heading keeps the English anchor: `## Rotayı okumak {#reading-the-route}`.
+        const explicit = /\s*\{#([\w-]+)\}\s*$/.exec(this.parser.parseInline(tokens));
+        const html = this.parser.parseInline(tokens).replace(/\s*\{#[\w-]+\}\s*$/, '');
+        const base = explicit?.[1] ?? (slug(html) || 'section');
+        const count = explicit ? 0 : (seen.get(base) ?? 0);
         seen.set(base, count + 1);
         const id = count ? `${base}-${count}` : base;
         if (depth === 2 || depth === 3)
@@ -102,6 +104,11 @@ export function markdown(): Plugin {
   return {
     name: 'vibejs-site-markdown',
     async transform(code, id) {
+      // `page.md?title` is the page's `# ` heading alone, for sidebars and search.
+      if (id.endsWith('.md?title')) {
+        const title = /^# (.+)$/m.exec(code)?.[1]?.trim() ?? '';
+        return { code: `export default ${JSON.stringify(title)};`, map: null };
+      }
       if (!id.endsWith('.md')) return null;
       highlighter ??= createHighlighter({
         themes: Object.values(THEMES),

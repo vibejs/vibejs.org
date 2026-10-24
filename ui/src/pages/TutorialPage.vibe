@@ -4,9 +4,23 @@ import { RouterLink, useRoute } from '@usevibejs/ui/router';
 import CodeEditor from '../tutorial/CodeEditor.vibe';
 import PreviewFrame from '../tutorial/PreviewFrame.vibe';
 import { STEPS } from '../tutorial/steps.ts';
+import { LESSONS } from '../tutorial/lessons.ts';
+import { locale, localePath, t } from '../i18n.ts';
+import type { MessageKey } from '../messages.ts';
 
-const route = useRoute('tutorial');
-const index = computed(() => Math.max(0, STEPS.findIndex((s) => s.slug === (route.params.step ?? STEPS[0]!.slug))));
+const route = useRoute();
+const index = computed(() => {
+  const slug = (route.params as { step?: string }).step ?? STEPS[0]!.slug;
+  return Math.max(0, STEPS.findIndex((s) => s.slug === slug));
+});
+/** A lesson's title and text in the current language, English when it has none. */
+const text = (slug: string) => {
+  const lesson = locale.value === 'en' ? undefined : LESSONS[locale.value][slug];
+  const step = STEPS.find((s) => s.slug === slug)!;
+  return { title: lesson?.title ?? step.title, body: lesson?.body ?? step.body };
+};
+const chapter = computed(() => t(`chapter.${step.value.chapter}` as MessageKey));
+const lp = (path: string) => localePath(path, locale.value);
 const step = computed(() => STEPS[index.value]!);
 const prev = computed(() => STEPS[index.value - 1]);
 const next = computed(() => STEPS[index.value + 1]);
@@ -65,72 +79,71 @@ const button =
       <div class="flex items-center gap-2">
         <RouterLink
           v-if="prev"
-          :to="`/tutorial/${prev.slug}`"
+          :to="lp(`/tutorial/${prev.slug}`)"
           class="text-muted-foreground inline-flex size-9 items-center justify-center rounded-md border"
-          aria-label="Previous step"
+          :aria-label="t('tutorial.prevStep')"
         >
-          <svg viewBox="0 0 24 24" class="size-4 fill-none stroke-current stroke-2"><path d="m15 6-6 6 6 6" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="flip-rtl size-4 fill-none stroke-current stroke-2"><path d="m15 6-6 6 6 6" /></svg>
         </RouterLink>
         <div class="min-w-0 flex-1 text-center">
-          <p class="text-muted-foreground text-xs">{{ step.chapter }}, {{ index + 1 }} of {{ STEPS.length }}</p>
-          <p class="truncate text-sm font-semibold">{{ step.title }}</p>
+          <p class="text-muted-foreground text-xs">{{ t('tutorial.progressShort', { chapter, n: index + 1, total: STEPS.length }) }}</p>
+          <p class="truncate text-sm font-semibold">{{ text(step.slug).title }}</p>
         </div>
         <RouterLink
           v-if="next"
-          :to="`/tutorial/${next.slug}`"
+          :to="lp(`/tutorial/${next.slug}`)"
           class="text-muted-foreground inline-flex size-9 items-center justify-center rounded-md border"
-          aria-label="Next step"
+          :aria-label="t('tutorial.nextStep')"
         >
-          <svg viewBox="0 0 24 24" class="size-4 fill-none stroke-current stroke-2"><path d="m9 6 6 6-6 6" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="flip-rtl size-4 fill-none stroke-current stroke-2"><path d="m9 6 6 6-6 6" /></svg>
         </RouterLink>
       </div>
-      <div class="bg-muted flex gap-1 rounded-lg p-1" role="tablist" aria-label="Panels">
-        <button type="button" role="tab" :aria-selected="panel === 'learn'" :class="segment('learn')" @click="panel = 'learn'">Learn</button>
-        <button type="button" role="tab" :aria-selected="panel === 'code'" :class="segment('code')" @click="panel = 'code'">Code</button>
-        <button type="button" role="tab" :aria-selected="panel === 'result'" :class="segment('result')" @click="panel = 'result'">Result</button>
+      <div class="bg-muted flex gap-1 rounded-lg p-1" role="tablist" :aria-label="t('tutorial.panels')">
+        <button type="button" role="tab" :aria-selected="panel === 'learn'" :class="segment('learn')" @click="panel = 'learn'">{{ t('tutorial.learn') }}</button>
+        <button type="button" role="tab" :aria-selected="panel === 'code'" :class="segment('code')" @click="panel = 'code'">{{ t('tutorial.code') }}</button>
+        <button type="button" role="tab" :aria-selected="panel === 'result'" :class="segment('result')" @click="panel = 'result'">{{ t('tutorial.result') }}</button>
       </div>
     </div>
 
     <div class="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(18rem,24rem)_minmax(0,1fr)_minmax(0,1fr)]">
       <!-- Learn -->
-      <section :class="[...panelClass('learn'), 'overflow-y-auto lg:border-r']" aria-label="Lesson">
+      <section :class="[...panelClass('learn'), 'overflow-y-auto lg:border-e']" :aria-label="t('tutorial.lesson')">
         <div class="flex-1 px-5 py-6">
           <p class="text-muted-foreground hidden text-sm lg:block">
-            <span class="text-foreground font-medium">{{ step.chapter }}</span>, step {{ index + 1 }} of
-            {{ STEPS.length }}
+            {{ t('tutorial.progress', { chapter, n: index + 1, total: STEPS.length }) }}
           </p>
-          <h1 class="mt-1 text-2xl font-semibold tracking-tight">{{ step.title }}</h1>
-          <div class="doc mt-4 text-[15px]" v-html="step.body"></div>
+          <h1 class="mt-1 text-2xl font-semibold tracking-tight">{{ text(step.slug).title }}</h1>
+          <div class="doc mt-4 text-[15px]" v-html="text(step.slug).body"></div>
           <div class="mt-6 flex flex-wrap gap-2">
-            <button v-if="!solved" type="button" :class="button" @click="load(step.solution, true)">Show the solution</button>
-            <button v-else type="button" :class="button" @click="load(step.files, false)">Start over</button>
-            <button type="button" :class="[button, 'lg:hidden']" @click="panel = 'code'">Open the code</button>
+            <button v-if="!solved" type="button" :class="button" @click="load(step.solution, true)">{{ t('tutorial.showSolution') }}</button>
+            <button v-else type="button" :class="button" @click="load(step.files, false)">{{ t('tutorial.startOver') }}</button>
+            <button type="button" :class="[button, 'lg:hidden']" @click="panel = 'code'">{{ t('tutorial.openCode') }}</button>
           </div>
         </div>
-        <nav class="flex items-stretch gap-2 border-t p-4" aria-label="Steps">
+        <nav class="flex items-stretch gap-2 border-t p-4" :aria-label="t('tutorial.steps')">
           <RouterLink
             v-if="prev"
-            :to="`/tutorial/${prev.slug}`"
+            :to="lp(`/tutorial/${prev.slug}`)"
             class="bg-background hover:bg-accent inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border px-3 text-sm font-medium"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-none stroke-current stroke-2"><path d="m15 6-6 6 6 6" /></svg>
-            Back
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="flip-rtl size-4 fill-none stroke-current stroke-2"><path d="m15 6-6 6 6 6" /></svg>
+            {{ t('tutorial.back') }}
           </RouterLink>
           <RouterLink
-            :to="next ? `/tutorial/${next.slug}` : '/v0/guides/tutorial'"
-            class="bg-primary text-primary-foreground hover:bg-primary/90 flex min-w-0 flex-1 items-center justify-between gap-3 rounded-md px-4 py-2 text-left"
+            :to="next ? lp(`/tutorial/${next.slug}`) : lp('/v0/guides/tutorial')"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex min-w-0 flex-1 items-center justify-between gap-3 rounded-md px-4 py-2 text-start"
           >
             <span class="min-w-0">
-              <span class="block text-xs opacity-70">{{ next ? 'Next' : 'Done? Keep going' }}</span>
-              <span class="block truncate text-sm font-medium">{{ next ? next.title : 'Build a full-stack app' }}</span>
+              <span class="block text-xs opacity-70">{{ next ? t('tutorial.next') : t('tutorial.done') }}</span>
+              <span class="block truncate text-sm font-medium">{{ next ? text(next.slug).title : t('tutorial.fullStack') }}</span>
             </span>
-            <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 shrink-0 fill-none stroke-current stroke-2"><path d="m9 6 6 6-6 6" /></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="flip-rtl size-4 shrink-0 fill-none stroke-current stroke-2"><path d="m9 6 6 6-6 6" /></svg>
           </RouterLink>
         </nav>
       </section>
 
       <!-- Code -->
-      <section :class="[...panelClass('code'), 'lg:border-r']" aria-label="Code">
+      <section :class="[...panelClass('code'), 'lg:border-e']" :aria-label="t('tutorial.code')" dir="ltr">
         <div class="bg-muted/70 flex items-end gap-1 overflow-x-auto border-b px-2 pt-2">
           <button
             v-for="name in Object.keys(files)"
@@ -148,8 +161,8 @@ const button =
       </section>
 
       <!-- Result -->
-      <section :class="panelClass('result')" aria-label="Result">
-        <div class="bg-muted/70 text-muted-foreground border-b px-4 py-2.5 text-sm font-medium">Result</div>
+      <section :class="panelClass('result')" :aria-label="t('tutorial.result')">
+        <div class="bg-muted/70 text-muted-foreground border-b px-4 py-2.5 text-sm font-medium">{{ t('tutorial.result') }}</div>
         <div class="bg-background min-h-0 flex-1">
           <PreviewFrame :files="files" />
         </div>

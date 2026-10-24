@@ -1,24 +1,16 @@
 <script setup lang="ts">
-const FEATURES = [
-  'Type-checked templates',
-  'Typed contracts',
-  'No code generation',
-  'Fine-grained updates',
-  'Modules and providers',
-  'One check command',
-  'Coverage per file',
-  'MCP server',
-  'AGENTS.md in every app',
-  'A docs page per error',
-];
+import { t } from '../i18n.ts';
+import type { MessageKey } from '../messages.ts';
+const FEATURES = Array.from({ length: 10 }, (_, i) => `feature.${i + 1}` as MessageKey);
 // Two copies side by side, so the strip loops without a gap.
 const items = [...FEATURES, ...FEATURES];
 </script>
 
 <template>
   <div
+    dir="ltr"
     class="group relative overflow-hidden py-2 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]"
-    aria-label="Features"
+    :aria-label="t('home.features')"
   >
     <ul class="animate-marquee flex w-max gap-3 group-hover:[animation-play-state:paused]">
       <li
@@ -30,7 +22,7 @@ const items = [...FEATURES, ...FEATURES];
         <svg viewBox="0 0 24 24" aria-hidden="true" class="text-foreground size-3.5 fill-none stroke-current stroke-[2.5]">
           <path d="m5 12 5 5 9-10" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
-        {{ feature }}
+        {{ t(feature) }}
       </li>
     </ul>
   </div>

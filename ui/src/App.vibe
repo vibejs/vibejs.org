@@ -1,13 +1,29 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from '@usevibejs/ui';
-import { RouterLink, RouterView, useRoute } from '@usevibejs/ui/router';
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from '@usevibejs/ui';
+import { RouterLink, RouterView, useRoute, useRouter } from '@usevibejs/ui/router';
 import SearchDialog from './components/SearchDialog.vibe';
+import { applyLocale, LOCALES, locale, localePath, splitLocale, t, type Locale } from './i18n.ts';
 import { setTheme, theme } from './theme.ts';
 
 const GITHUB = 'https://github.com/vibejs/vibejs';
 const searching = ref(false);
 const route = useRoute();
-const inDocs = computed(() => route.path.startsWith('/v0'));
+const router = useRouter();
+/** The path without its locale prefix, for "which tab is on". */
+const bare = computed(() => splitLocale(route.path).path);
+const inDocs = computed(() => bare.value.startsWith('/v0'));
+const lp = (path: string) => localePath(path, locale.value);
+// The select shows the page's language: the router sets it after the first render.
+const picker = useTemplateRef<HTMLSelectElement>('picker');
+watch([locale, picker], ([code, el]) => {
+  if (el) el.value = code;
+});
+
+function switchLocale(event: Event) {
+  const code = (event.target as HTMLSelectElement).value as Locale;
+  applyLocale(code, true);
+  void router.push(localePath(route.fullPath, code));
+}
 const dark = computed(() => theme.value === 'dark');
 
 const navLink = 'rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground';
@@ -30,34 +46,45 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
     class="bg-background/80 sticky top-0 z-30 border-b pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-background/60"
   >
     <div class="mx-auto flex h-14 max-w-screen-xl items-center gap-4 px-4 sm:px-6">
-      <RouterLink to="/" class="flex items-center gap-2.5 font-semibold tracking-tight" aria-label="vibe.js home">
+      <RouterLink :to="lp('/')" class="flex items-center gap-2.5 font-semibold tracking-tight" :aria-label="t('nav.home')">
         <img src="/logo.png" alt="" width="28" height="28" class="size-7 rounded-md" />
         <span>vibe.js</span>
       </RouterLink>
-      <nav class="ml-2 hidden items-center lg:flex" aria-label="Main">
-        <RouterLink to="/tutorial" :class="navLink">Tutorial</RouterLink>
-        <RouterLink to="/v0/guides/getting-started" :class="navLink">Get started</RouterLink>
-        <RouterLink to="/v0/" :class="navLink">Docs</RouterLink>
-        <RouterLink to="/v0/errors/" :class="navLink">Errors</RouterLink>
+      <nav class="ms-2 hidden items-center lg:flex" aria-label="Main">
+        <RouterLink :to="lp('/tutorial')" :class="navLink">{{ t('nav.tutorial') }}</RouterLink>
+        <RouterLink :to="lp('/v0/guides/getting-started')" :class="navLink">{{ t('nav.getStarted') }}</RouterLink>
+        <RouterLink :to="lp('/v0/')" :class="navLink">{{ t('nav.docs') }}</RouterLink>
+        <RouterLink :to="lp('/v0/errors/')" :class="navLink">{{ t('nav.errors') }}</RouterLink>
         <a :href="GITHUB" :class="navLink">GitHub</a>
       </nav>
       <button
         type="button"
-        class="border-input bg-muted/40 text-muted-foreground hover:bg-accent ml-auto hidden h-9 w-64 items-center gap-2 rounded-md border px-3 text-sm lg:flex"
+        class="border-input bg-muted/40 text-muted-foreground hover:bg-accent ms-auto hidden h-9 w-64 items-center gap-2 rounded-md border px-3 text-sm lg:flex"
         @click="searching = true"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-none stroke-current stroke-2">
           <circle cx="11" cy="11" r="7" />
           <path d="m20 20-3.5-3.5" stroke-linecap="round" />
         </svg>
-        Search docs…
-        <kbd class="bg-background ml-auto rounded border px-1.5 font-mono text-[11px]">/</kbd>
+        {{ t('nav.searchDocs') }}
+        <kbd class="bg-background ms-auto rounded border px-1.5 font-mono text-[11px]">/</kbd>
       </button>
-      <div class="ml-auto flex items-center gap-1 lg:ml-0">
+      <div class="ms-auto flex items-center gap-1 lg:ms-0">
+      <label class="relative">
+        <span class="sr-only">{{ t('nav.language') }}</span>
+        <select
+          ref="picker"
+          class="text-muted-foreground hover:bg-accent hover:text-foreground h-9 cursor-pointer appearance-none rounded-md bg-transparent ps-2 pe-6 text-sm font-medium"
+          @change="switchLocale"
+        >
+          <option v-for="l in LOCALES" :key="l.code" :value="l.code">{{ l.name }}</option>
+        </select>
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="text-muted-foreground pointer-events-none absolute end-1.5 top-1/2 size-3.5 -translate-y-1/2 fill-none stroke-current stroke-2"><path d="m6 9 6 6 6-6" /></svg>
+      </label>
       <button
         type="button"
         class="text-muted-foreground hover:bg-accent hover:text-foreground inline-flex size-9 items-center justify-center rounded-md"
-        :aria-label="dark ? 'Switch to light mode' : 'Switch to dark mode'"
+        :aria-label="dark ? t('theme.toLight') : t('theme.toDark')"
         @click="setTheme(dark ? 'light' : 'dark')"
       >
         <svg v-if="dark" viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] fill-none stroke-current stroke-2">
@@ -71,7 +98,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
       <a
         :href="GITHUB"
         class="text-muted-foreground hover:text-foreground inline-flex size-9 items-center justify-center rounded-md lg:hidden"
-        aria-label="vibe.js on GitHub"
+        :aria-label="t('nav.githubLabel')"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-current">
           <path
@@ -89,30 +116,30 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
     class="bg-background/90 fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 gap-1 border-t px-3 pt-1.5 pb-[max(env(safe-area-inset-bottom),0.5rem)] backdrop-blur lg:hidden"
     aria-label="Main"
   >
-    <RouterLink to="/" :class="[tab, route.path === '/' && 'text-foreground']">
+    <RouterLink :to="lp('/')" :class="[tab, bare === '/' && 'text-foreground']">
       <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
         <path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z" stroke-linejoin="round" />
       </svg>
-      Home
+      {{ t('tab.home') }}
     </RouterLink>
-    <RouterLink to="/v0/" :class="[tab, inDocs && 'text-foreground']">
+    <RouterLink :to="lp('/v0/')" :class="[tab, inDocs && 'text-foreground']">
       <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
         <path d="M5 4h10l4 4v12H5zM9 12h6M9 16h6" stroke-linejoin="round" stroke-linecap="round" />
       </svg>
-      Docs
+      {{ t('tab.docs') }}
     </RouterLink>
-    <RouterLink to="/tutorial" :class="[tab, route.path.startsWith('/tutorial') && 'text-foreground']">
+    <RouterLink :to="lp('/tutorial')" :class="[tab, bare.startsWith('/tutorial') && 'text-foreground']">
       <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
         <path d="m8 9-3 3 3 3m8-6 3 3-3 3M14 5l-4 14" stroke-linejoin="round" stroke-linecap="round" />
       </svg>
-      Learn
+      {{ t('tab.learn') }}
     </RouterLink>
     <button type="button" :class="tab" @click="searching = true">
       <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
         <circle cx="11" cy="11" r="7" />
         <path d="m20 20-3.5-3.5" stroke-linecap="round" />
       </svg>
-      Search
+      {{ t('tab.search') }}
     </button>
   </nav>
 

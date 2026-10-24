@@ -2,6 +2,7 @@
 import { onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from '@usevibejs/ui';
 import { compileFiles, type Problem } from './compile.ts';
 import { run, type Running } from './run.ts';
+import { t } from '../i18n.ts';
 
 const { files } = defineProps<{ files: Record<string, string> }>();
 const host = useTemplateRef<HTMLDivElement>('host');
@@ -55,14 +56,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="relative h-full">
+  <div class="relative h-full" dir="ltr">
     <div ref="host" class="h-full overflow-auto"></div>
     <div
       v-if="problems.length || runtimeError"
       class="bg-background/95 absolute inset-x-0 bottom-0 max-h-[60%] overflow-auto border-t p-4 font-mono text-[12.5px] backdrop-blur"
       role="alert"
     >
-      <p class="mb-2 font-sans text-sm font-semibold">{{ problems.length ? 'The compiler found a problem' : 'The app threw an error' }}</p>
+      <p class="mb-2 font-sans text-sm font-semibold">{{ problems.length ? t('tutorial.compileProblem') : t('tutorial.appError') }}</p>
       <p v-for="(p, i) in problems" :key="i" class="text-muted-foreground mb-1 whitespace-pre-wrap">
         <span class="text-foreground">{{ p.file }}{{ p.line ? `:${p.line}:${p.column}` : '' }}</span> {{ p.message }}
       </p>

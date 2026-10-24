@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { t } from '../i18n.ts';
 import { computed, ref } from '@usevibejs/ui';
 
 const COMMANDS = {
@@ -32,7 +33,7 @@ async function copy() {
 
 <template>
   <div class="bg-muted/50 rounded-xl border">
-    <div class="flex items-center gap-1 border-b p-1.5" role="radiogroup" aria-label="Package manager">
+    <div class="flex items-center gap-1 border-b p-1.5" role="radiogroup" :aria-label="t('create.manager')">
       <button
         v-for="name in managers"
         :key="name"
@@ -45,14 +46,14 @@ async function copy() {
         {{ name }}
       </button>
     </div>
-    <div class="flex items-center gap-2 py-2 pr-2 pl-4">
-      <code class="min-w-0 flex-1 overflow-x-auto font-mono text-sm whitespace-nowrap [scrollbar-width:none]">
+    <div class="flex items-center gap-2 py-2 pe-2 ps-4">
+      <code dir="ltr" class="min-w-0 flex-1 text-start overflow-x-auto font-mono text-sm whitespace-nowrap [scrollbar-width:none]">
         <span class="text-muted-foreground select-none">$ </span>{{ command }}
       </code>
       <button
         type="button"
         class="bg-background hover:bg-accent inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium shadow-xs"
-        :aria-label="copied ? 'Copied' : `Copy ${command}`"
+        :aria-label="copied ? t('create.copied') : t('create.copyLabel', { command })"
         @click="copy"
       >
         <svg v-if="!copied" viewBox="0 0 24 24" aria-hidden="true" class="size-3.5 fill-none stroke-current stroke-2">
@@ -62,7 +63,7 @@ async function copy() {
         <svg v-else viewBox="0 0 24 24" aria-hidden="true" class="size-3.5 fill-none stroke-current stroke-2">
           <path d="m5 12 5 5 9-10" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
-        <span aria-live="polite">{{ copied ? 'Copied' : 'Copy' }}</span>
+        <span aria-live="polite">{{ copied ? t('create.copied') : t('create.copy') }}</span>
       </button>
     </div>
   </div>
