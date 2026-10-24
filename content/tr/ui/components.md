@@ -1,6 +1,6 @@
 # Bileşenler
 
-Bileşen, bir `.vibe` dosyasıdır. Varsayılan dışa aktarımı kullanıldığı yerde içe aktarılır ve etiketi PascalCase ile yazılır. Global olarak kaydedilen bileşen yoktur.
+Her bileşen bir `.vibe` dosyasıdır. Kullanacağın yerde dosyanın default export'unu import edersin ve etiketini PascalCase yazarsın. Global olarak kaydedilen bileşen yoktur.
 
 ```vibe
 <script setup lang="ts">
@@ -14,13 +14,13 @@ import TodoItem from './TodoItem.vibe';
 </template>
 ```
 
-`<todo-item>` gibi kebab-case bir etiket bileşen değil, elemandır ([VIBE2002](https://vibejs.org/v0/errors/VIBE2002)). Hiçbir içe aktarıma karşılık gelmeyen bir etiket ise [VIBE2001](https://vibejs.org/v0/errors/VIBE2001) olarak bildirilir.
+`<todo-item>` gibi kebab-case bir etiket bileşen değil, HTML elemanı sayılır ([VIBE2002](https://vibejs.org/v0/errors/VIBE2002)). Hiçbir import'a karşılık gelmeyen bir etiket yazarsan [VIBE2001](https://vibejs.org/v0/errors/VIBE2001) hatasını alırsın.
 
-Aşağıdaki makrolar bir bileşenin arayüzünü tanımlar. `<script setup lang="ts">` içinde içe aktarma gerekmeden kullanılabilir ve bildirimlerini tür argümanı olarak alır; böylece üst bileşenin template'i bunlara karşı tür denetiminden geçer.
+Aşağıdaki makrolar bileşenin dışarıya açtığı arayüzü tanımlar. `<script setup lang="ts">` içinde import etmeden kullanırsın. Tanımları tip argümanı olarak alırlar, bu yüzden üst bileşenin şablonu da bunlara göre tip denetiminden geçer.
 
-## Props {#props}
+## Prop'lar {#props}
 
-`defineProps<Props>()` props'ları tanımlar. Sonucu destructure etmek her prop'a yerel bir ad verir; `=` sonrasındaki varsayılan değer, üst bileşen `undefined` verdiğinde ya da hiçbir şey vermediğinde geçerli olur.
+Prop'ları `defineProps<Props>()` ile tanımlarsın. Sonucu destructure edersen her prop yerel bir isim alır. `=` işaretinden sonra yazdığın varsayılan değer, üst bileşen `undefined` geçtiğinde ya da hiçbir şey geçmediğinde devreye girer.
 
 ```vibe [TodoItem.vibe]
 <script setup lang="ts">
@@ -40,18 +40,18 @@ const label = computed(() => `${title} (${tags.length} tags)`);
 </template>
 ```
 
-- Props salt okunurdur: birine atama yapmak [VIBE3106](https://vibejs.org/v0/errors/VIBE3106) olarak bildirilir. Üst bileşendeki bir değeri değiştirmek için bir [model](#v-model) kullanın ya da bir olay yayınlayın.
-- Üst bileşenin geçmediği isteğe bağlı bir boolean prop `undefined` olur; değersiz bir öznitelik (`<TodoItem done />` gibi) ise `true` geçirir.
-- Varsayılan değer bir sabit ya da içe aktarımları okuyan bir ifade olabilir; script'in bağlamalarını (binding) okuyamaz ([VIBE3105](https://vibejs.org/v0/errors/VIBE3105)). Nesne ya da dizi varsayılanı her örnek için ayrı oluşturulur.
-- Destructure etmeden `const props = defineProps<Props>()` bir nesne verir ve `props.title` bir prop'u okur.
+- Prop'lar salt okunurdur: birine değer atarsan [VIBE3106](https://vibejs.org/v0/errors/VIBE3106) hatası alırsın. Üst bileşendeki bir değeri değiştirmek istiyorsan bir [model](#v-model) kullan ya da event yay.
+- Opsiyonel bir boolean prop'u üst bileşen geçmezse değeri `undefined` olur. `<TodoItem done />` örneğindeki gibi değersiz bir attribute ise `true` geçer.
+- Varsayılan değer ya bir literal olur ya da import'ları okur. Script'teki değişkenleri okuyamaz ([VIBE3105](https://vibejs.org/v0/errors/VIBE3105)). Varsayılanı bir nesne ya da dizi ise her örnek için yenisi oluşur.
+- Destructure etmezsen `const props = defineProps<Props>()` sana bir nesne verir ve prop'u `props.title` ile okursun.
 
-### Props'ları okumak {#reading-props}
+### Prop'ları okumak {#reading-props}
 
-Destructure edilmiş bir prop kopya değildir: her okuma üst bileşene çağrı yapar ve üst bileşenin bağladığı ifadeyi değerlendirir; dolayısıyla her zaman güncel değeri görür. Maliyetli bir türetimi, yukarıdaki `label` gibi bir `computed` içine koyun; böylece yalnızca girdileri değiştiğinde çalışır. Bir prop'u argümanını izleyen bir fonksiyona (`watch` ya da `toRef` gibi) geçirmek için getter verin: `watch(() => title, ...)` ([VIBE3107](https://vibejs.org/v0/errors/VIBE3107)).
+Destructure ettiğin prop bir kopya değildir. Her okumada üst bileşene gider ve oradaki bağlı ifadeyi yeniden hesaplar, yani her zaman güncel değeri görür. Pahalı bir türetme yapıyorsan onu yukarıdaki `label` gibi bir `computed` içine koy. Böylece sadece girdileri değişince çalışır. Bir prop'u argümanını takip eden bir fonksiyona, örneğin `watch` ya da `toRef`'e vereceksen getter olarak ver: `watch(() => title, ...)` ([VIBE3107](https://vibejs.org/v0/errors/VIBE3107)).
 
-## Olaylar {#events}
+## Event'ler {#events}
 
-`defineEmits<Events>()` olayları, anahtarları olay adı, değerleri payload tuple'ı olan bir kayıt olarak tanımlar. Dönen fonksiyon bunları yayınlar.
+Event'leri `defineEmits<Events>()` ile tanımlarsın. Bu bir kayıt tipidir: anahtarlar event isimleri, değerler de payload tuple'larıdır. Dönen fonksiyonla event'leri yayarsın.
 
 ```vibe
 <script setup lang="ts">
@@ -68,11 +68,11 @@ const emit = defineEmits<{
 </template>
 ```
 
-Üst bileşen `@remove="handler"` ile dinler. Handler bir DOM olayı değil, payload'ı alır; bu yüzden olay değiştiricileri (modifier) bileşen olaylarına uygulanmaz ([VIBE2305](https://vibejs.org/v0/errors/VIBE2305)). Tanımlanmamış bir olay yayınlamak geliştirme sırasında VIBE5202 uyarısı verir.
+Üst bileşen `@remove="handler"` ile dinler. Handler'a DOM event'i değil payload gelir. Bu yüzden event modifier'ları bileşen event'lerinde çalışmaz ([VIBE2305](https://vibejs.org/v0/errors/VIBE2305)). Tanımlamadığın bir event'i yayarsan geliştirme sırasında VIBE5202 uyarısını görürsün.
 
-## Slotlar {#slots}
+## Slot'lar {#slots}
 
-Bir bileşen, `<slot>` yerleştirdiği yerde üst bileşenden gelen içeriği render eder. Adlandırılmış slotlar bir `name` alır ve `<slot>` üzerindeki öznitelikler slot props olarak üst bileşene aktarılır. `defineSlots<Slots>()` slotları ve props'larını tanımlar.
+Bileşen, `<slot>` koyduğu yere üst bileşenden gelen içeriği basar. İsimli slot'lar bir `name` alır. `<slot>` üzerine yazdığın attribute'lar üst bileşene slot prop'u olarak gider. Slot'ları ve prop'larını `defineSlots<Slots>()` ile tanımlarsın.
 
 ```vibe [ItemList.vibe]
 <script setup lang="ts">
@@ -96,7 +96,7 @@ const { items } = defineProps<{ items: string[] }>();
 </template>
 ```
 
-Üst bileşen slot içeriğini `<template #name>` ile geçirir ve slot props'larını `#name="props"` ile alır. Adlandırılmış template'lerin dışındaki içerik varsayılan slottur.
+Üst bileşen slot içeriğini `<template #name>` ile geçer, slot prop'larını da `#name="props"` ile alır. İsimli şablonların dışında kalan içerik default slot olur.
 
 ```vibe
 <script setup lang="ts">
@@ -111,19 +111,19 @@ import ItemList from './ItemList.vibe';
 </template>
 ```
 
-Slot adları statiktir ([VIBE2605](https://vibejs.org/v0/errors/VIBE2605)); slotlar arasında seçim yapmak için slot template'lerine `v-if` koyun.
+Slot isimleri sabittir ([VIBE2605](https://vibejs.org/v0/errors/VIBE2605)). Slot'lar arasında seçim yapmak istiyorsan slot şablonlarına `v-if` koy.
 
 ### Yedek içerik {#fallback-content}
 
-`<slot>` öğesinin çocukları, üst bileşen o slot için içerik geçmediğinde render edilir. Üst bileşenin geçtiği bir slot, içerik hiçbir şey render etmese bile (örneğin false olan bir `v-if`) üst bileşenin içeriğini render eder. Bu durumda yedek içeriği göstermek için koşulu doğrudan `<template #name>` üzerine koyun; böylece slot hiç geçirilmemiş olur.
+Üst bileşen bir slot için içerik geçmezse `<slot>` etiketinin çocukları görünür. Üst bileşen slot'u geçtiyse, o içerik hiçbir şey çizmese bile (örneğin `v-if` false ise) onun içeriği kullanılır. Bu durumda da yedek içeriği göstermek istiyorsan koşulu doğrudan `<template #name>` üzerine yaz. O zaman slot hiç geçilmez.
 
-### Script içinde slotlar {#slots-in-script}
+### Script içinde slot'lar {#slots-in-script}
 
-`useSlots()` bileşenin aldığı slotları döndürür, `$slots` ise bunları template içinde okur. Bir slotun geçirilip geçirilmediğini `v-if="$slots.header"` gibi sınamak için kullanın. Bir slot fonksiyonunu çağırmak içeriğini render eder ve DOM düğümlerini oluşturur; bu yüzden slot yalnızca `<slot>` tarafından çağrılır, içeriğini incelemek için çağrılmaz.
+`useSlots()` bileşene gelen slot'ları döner. Şablonda aynı şeyi `$slots` ile okursun. Bir slot'un geçilip geçilmediğine bakmak için bunları kullan: `v-if="$slots.header"`. Bir slot fonksiyonunu çağırmak içeriğini çizer ve DOM düğümlerini oluşturur. Bu yüzden slot'u sadece `<slot>` çağırır. İçinde ne olduğuna bakmak için slot'u çağırma.
 
 ## v-model {#v-model}
 
-`defineModel()` çift yönlü bir değer tanımlar. Dönen ref'i okumak prop'u okur, ona atama yapmak ise güncelleme olayını üst bileşene yayınlar.
+İki yönlü bir değeri `defineModel()` ile tanımlarsın. Dönen ref'i okuduğunda prop'u okursun, ona değer atadığında da üst bileşene update event'i gider.
 
 ```vibe
 <script setup lang="ts">
@@ -137,11 +137,11 @@ const open = defineModel<boolean>('open', { default: () => false });
 </template>
 ```
 
-Üst bileşen varsayılan modeli `v-model="text"` ile, adlandırılmış olanı `v-model:open="visible"` ile bağlar. `v-model`, `modelValue` prop'u ile `onUpdate:modelValue` olayının birleşimidir; `v-model:open` ise `open` ile `onUpdate:open` birleşimidir. `required` ya da `default` olmadan modelin türü `undefined` içerir. Üst bileşenin hiçbir şey bağlamadığı bir model yerel bir değer tutar.
+Üst bileşen default model'i `v-model="text"` ile, isimli bir model'i de `v-model:open="visible"` ile bağlar. `v-model` aslında `modelValue` prop'u ile `onUpdate:modelValue` event'inin birleşimidir. `v-model:open` da `open` ile `onUpdate:open` demektir. `required` ya da `default` vermezsen model'in tipi `undefined` içerir. Üst bileşen hiçbir şey bağlamazsa model değeri yerelde tutar.
 
-## Öznitelikler {#attributes}
+## Attribute'lar {#attributes}
 
-Üst bileşenin geçtiği ancak bileşenin props ya da olay olarak tanımlamadığı öznitelikler ve dinleyiciler, bileşenin öznitelikleridir (attributes). Bileşen tek bir kök eleman render ettiğinde bunlar o elemana eklenir: `class` ve `style` kökün kendi değerleriyle birleştirilir, dinleyiciler de kökünkilerin yanına eklenir. Kök başka bir bileşense bunlar o bileşene aktarılır.
+Üst bileşenin geçtiği ama bileşenin prop ya da event olarak tanımlamadığı attribute ve listener'lar, bileşenin attribute'ları olur. Bileşen tek bir kök eleman çiziyorsa bunlar o elemana eklenir. `class` ve `style` kökün kendi değerleriyle birleşir, listener'lar da kökün kendi listener'larının yanına eklenir. Kök başka bir bileşense attribute'lar o bileşene aktarılır.
 
 ```vibe
 <script setup lang="ts">
@@ -161,11 +161,11 @@ console.log(Object.keys(attrs));
 </template>
 ```
 
-`defineOptions({ inheritAttrs: false })` öznitelikleri kökten uzak tutar; böylece `v-bind="$attrs"` onları başka bir elemana yerleştirebilir. `useAttrs()` bunları script içinde döndürür. Birden çok kök elemanı olan bir bileşen öznitelik almaz ve kendisine öznitelik geçirildiğinde geliştirme sırasında VIBE5201 uyarısı verir.
+`defineOptions({ inheritAttrs: false })` yazarsan attribute'lar köke eklenmez. Sonra `v-bind="$attrs"` ile onları istediğin elemana koyarsın. Script içinde `useAttrs()` ile alırsın. Birden fazla kök elemanı olan bileşen attribute almaz. Ona attribute geçersen geliştirme sırasında VIBE5201 uyarısını görürsün.
 
 ## Değerleri dışarı açmak {#exposing-values}
 
-Bir bileşen üzerindeki template ref, bileşenin `defineExpose()` içine verdiği değerleri tutar; ref'ler açılmış (unwrapped) halde gelir. Bileşenin başka hiçbir şeyine erişilemez: ne props'larına, ne diğer bağlamalarına, ne de elemanlarına.
+Bir bileşene bağladığın template ref, o bileşenin `defineExpose()` ile verdiği değerleri tutar. Ref'ler burada açılmış hâlde gelir. Bileşenin geri kalanına erişemezsin: ne prop'larına, ne diğer değişkenlerine, ne de elemanlarına.
 
 ```vibe [SearchField.vibe]
 <script setup lang="ts">
@@ -199,4 +199,4 @@ onMounted(() => search.value?.focus());
 </template>
 ```
 
-Ref'in türü `SearchField` bileşeninin dışa açılan nesnesidir; bu yüzden `search.value?.focus()` denetlenir. `defineExpose()` çağırmayan bir bileşen boş bir nesne açar.
+Ref'in tipi `SearchField` bileşeninin dışarı açtığı nesnedir, yani `search.value?.focus()` da tip denetiminden geçer. `defineExpose()` çağırmayan bir bileşen boş bir nesne açar.

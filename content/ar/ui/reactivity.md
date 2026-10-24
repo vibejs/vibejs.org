@@ -1,10 +1,10 @@
 # التفاعلية
 
-القيم التفاعلية تسجّل من يقرؤها. وعندما تتغير قيمة، تعمل من جديد القيم المحسوبة والمراقبات (watchers) وارتباطات القالب التي تقرؤها، ولا يعمل شيء غيرها. تُستورد كل هذه الدوال من `@usevibejs/ui`.
+القيم التفاعلية تسجّل من يقرؤها. حين تتغيّر قيمة، تعمل من جديد قيم computed والمراقِبات وروابط القوالب التي قرأتها، ولا شيء غيرها. تستورد كل هذه الدوال من `@usevibejs/ui`.
 
 ## ref {#ref}
 
-يحمل `ref()` قيمة واحدة في `.value`. وتُجعل قيمة الكائن تفاعلية بعمق، فتُتتبَّع التغييرات في خصائصها المتداخلة أيضًا.
+يحمل `ref()` قيمة واحدة في `.value`. إذا كانت القيمة كائنًا، يصبح تفاعليًا بالعمق، فتُتتبَّع التغييرات في خصائصه المتداخلة أيضًا.
 
 ```ts
 import { ref } from '@usevibejs/ui';
@@ -16,11 +16,11 @@ const user = ref({ name: 'Ada', tags: ['admin'] });
 user.value.tags.push('editor'); // tracked
 ```
 
-`ref<T>()` بدون وسيط يحمل `T | undefined`. في القالب، وفي كائن `reactive()`، يُفك تغليف المرجع: يكتب القالب `count` وليس `count.value`.
+يحمل `ref<T>()` بلا وسيط النوع `T | undefined`. في القالب، وداخل كائن `reactive()`، تُفك قيمة الـ ref: تكتب في القالب `count` لا `count.value`.
 
 ## shallowRef {#shallowref}
 
-يتتبّع `shallowRef()` إسناد `.value` فقط. استخدمه للقيم الكبيرة التي تُستبدل ولا تُغيَّر في مكانها، وللكائنات التي يجب أن تبقى عادية، مثل نسخ الأصناف (class instances) في مكتبة ما.
+لا يتتبّع `shallowRef()` إلا الإسناد إلى `.value`. استخدمه للقيم الكبيرة التي تستبدلها كاملة بدل تعديلها في مكانها، وللكائنات التي يجب أن تبقى عادية، مثل نسخ الأصناف من مكتبة ما.
 
 ```ts
 import { shallowRef, triggerRef } from '@usevibejs/ui';
@@ -32,11 +32,11 @@ rows.value.push(2); // not tracked
 triggerRef(rows); // runs what reads rows now
 ```
 
-يُبقي `markRaw(object)` الكائن عاديًا أينما خُزّن، حتى داخل حالة تفاعلية.
+تُبقي `markRaw(object)` الكائن عاديًا أينما خزّنته، حتى داخل حالة تفاعلية.
 
 ## reactive وreadonly {#reactive-and-readonly}
 
-يعيد `reactive()` وكيلًا (proxy) تفاعليًا بعمق لكائن أو مصفوفة أو `Map` أو `Set`. وتُفك تغليفات المراجع المتداخلة عند القراءة.
+تعيد `reactive()` وكيلًا (proxy) تفاعليًا بالعمق لكائن أو مصفوفة أو `Map` أو `Set`. وتُفك الـ refs المتداخلة عند قراءتها.
 
 ```ts
 import { reactive, readonly, ref } from '@usevibejs/ui';
@@ -49,14 +49,14 @@ const view = readonly(state);
 // view.count++ fails to type-check, and warns VIBE5002 at runtime
 ```
 
-- الوكيل ليس الكائن الأصلي: قارن بـ `toRaw(value)` عندما تهمّك هوية الكائن.
-- استبدال كائن `reactive()` بالكامل يقطع الاتصال؛ احتفظ به في `ref()` بدلًا من ذلك، أو غيّر خصائصه.
-- ينطبق `shallowReactive()` و`shallowReadonly()` على الخصائص العليا فقط.
-- تفحص `isRef()` و`isReactive()` و`isReadonly()` و`isShallow()` و`isProxy()` قيمةً ما.
+- الوكيل ليس الكائن الأصلي، فقارن بـ `toRaw(value)` حين تهمّك الهوية.
+- إذا استبدلت كائن `reactive()` كاملًا انقطع الاتصال. احفظه في `ref()` بدلًا من ذلك، أو غيّر خصائصه.
+- لا تطبَّق `shallowReactive()` و`shallowReadonly()` إلا على خصائص المستوى الأعلى.
+- تفحص `isRef()` و`isReactive()` و`isReadonly()` و`isShallow()` و`isProxy()` نوع القيمة.
 
 ## computed {#computed}
 
-يشتق `computed()` قيمة من قيم تفاعلية أخرى. ولا يعمل إلا عند قراءته بعد تغيّر أحد مصادره، وتُخزَّن نتيجته مؤقتًا حتى ذلك الحين.
+تشتق `computed()` قيمة من قيم تفاعلية أخرى. لا تعمل إلا إذا قُرئت بعد تغيّر أحد مصادرها، وتبقى نتيجتها مخزّنة حتى ذلك الحين.
 
 ```ts
 import { computed, ref } from '@usevibejs/ui';
@@ -75,11 +75,11 @@ const editable = computed({
 editable.value = 'Grace Hopper';
 ```
 
-القيمة المحسوبة التي لها getter فقط للقراءة فقط. يتلقى الـ getter القيمة السابقة، مما يساعد على إعادة الكائن نفسه عندما لا يتغير شيء ذو صلة. ولا ينبغي لـ getter أن يغيّر الحالة؛ استخدم watcher لذلك.
+قيمة computed التي لها دالة جلب فقط تكون للقراءة فقط. تستقبل دالة الجلب القيمة السابقة، وهذا يساعدك على إعادة الكائن نفسه حين لا يتغيّر شيء مهم. لا ينبغي أن تغيّر دالة الجلب الحالة، فهذا عمل المراقِب.
 
 ## watch {#watch}
 
-تستدعي `watch(source, callback, options?)` الدالة `callback(value, oldValue, onCleanup)` عندما يتغير المصدر. والمصدر هو ref أو computed أو getter أو كائن تفاعلي أو مصفوفة من هذه.
+تستدعي `watch(source, callback, options?)` الدالة `callback(value, oldValue, onCleanup)` حين يتغيّر المصدر. المصدر ref أو computed أو دالة جلب أو كائن تفاعلي أو مصفوفة منها.
 
 ```ts
 import { reactive, ref, watch } from '@usevibejs/ui';
@@ -106,16 +106,16 @@ watch(filters, (value) => console.log(value.done));
 
 الخيارات:
 
-- `immediate: true` يستدعي الدالة مرة واحدة فورًا، مع `undefined` كقيمة قديمة.
-- `deep: true` يتتبّع القيم المتداخلة في مصدر من نوع ref أو getter؛ ويتتبّع الرقم هذا العدد من المستويات.
-- `once: true` يوقف المراقب بعد أول استدعاء.
-- `flush` يحدد وقت تشغيل الدالة: `'pre'` (الافتراضي) قبل تحديث DOM، و`'post'` بعده، و`'sync'` داخل عملية الإسناد نفسها.
+- `immediate: true` يستدعي الدالة مرة فورًا، والقيمة القديمة `undefined`.
+- `deep: true` يتتبّع القيم المتداخلة في مصدر من نوع ref أو دالة جلب. وإذا مرّرت رقمًا، يتتبّع ذلك العدد من المستويات.
+- `once: true` يوقف المراقِب بعد الاستدعاء الأول.
+- `flush` يحدّد متى تعمل الدالة: `'pre'` (الافتراضي) قبل تحديث DOM، و`'post'` بعده، و`'sync'` داخل الإسناد نفسه.
 
-المقبض المُعاد يوقف المراقب عند استدعائه، وله `stop()` و`pause()` و`resume()`. والمراقب المنشأ في setup الخاص بمكوّن يتوقف عند إلغاء تركيب المكوّن.
+المقبض المعاد يوقف المراقِب إذا استدعيته، وفيه `stop()` و`pause()` و`resume()`. والمراقِب الذي تنشئه في setup المكوّن يتوقف عند فك المكوّن.
 
 ## watchEffect {#watcheffect}
 
-يشغّل `watchEffect(effect)` الدالة `effect` الآن ومن جديد كلما تغير شيء قرأته. و`watchPostEffect()` و`watchSyncEffect()` هما صيغتا التفريغ (flush) `'post'` و`'sync'`.
+تشغّل `watchEffect(effect)` الدالة `effect` الآن، ثم كلما تغيّر شيء قرأته. و`watchPostEffect()` و`watchSyncEffect()` هما صيغتا `'post'` و`'sync'`.
 
 ```ts
 import { onWatcherCleanup, ref, watchEffect } from '@usevibejs/ui';
@@ -130,11 +130,11 @@ watchEffect(() => {
 });
 ```
 
-تسجّل `onWatcherCleanup()` عملية تنظيف للمراقب أو التأثير الجاري. والوسيط `onCleanup` في الدالة يفعل الشيء نفسه ويعمل أيضًا بعد `await`.
+تسجّل `onWatcherCleanup()` دالة تنظيف للمراقِب أو التأثير الجاري. والوسيط `onCleanup` في الدالة يفعل الشيء نفسه، ويعمل أيضًا بعد `await`.
 
-## نطاقات التأثير {#effect-scopes}
+## نطاقات التأثيرات {#effect-scopes}
 
-المراقبات والقيم المحسوبة المنشأة أثناء `scope.run()` تنتمي إلى النطاق، ويوقفها `scope.stop()` كلها. يعمل setup الخاص بالمكوّن في نطاق خاص به، ولذلك لا تنشئ معظم الشيفرة نطاقًا. استخدم `effectScope()` للحالة التي تعيش خارج المكوّن.
+المراقِبات وقيم computed التي تُنشأ أثناء `scope.run()` تنتمي إلى النطاق، و`scope.stop()` يوقفها كلها. يعمل setup المكوّن في نطاق خاص به، لذلك لا يحتاج معظم الكود إلى إنشاء نطاق. استخدم `effectScope()` للحالة التي تعيش خارج المكوّنات.
 
 ```ts
 import { effectScope, onScopeDispose, ref, watch } from '@usevibejs/ui';
@@ -152,11 +152,11 @@ scope.run(() => {
 scope.stop(); // stops the watcher and removes the listener
 ```
 
-تسجّل `onScopeDispose()` عملية تنظيف على النطاق الحالي؛ وفي المكوّن تعمل عند إلغاء تركيبه. وتعيد `getCurrentScope()` النطاق الحالي.
+تسجّل `onScopeDispose()` دالة تنظيف على النطاق الحالي، وفي المكوّن تعمل عند فكّه. وتعيد `getCurrentScope()` النطاق الحالي.
 
 ## nextTick {#nexttick}
 
-تحدّث تغييرات الحالة DOM في دفعة واحدة، قبل أن يرسم المتصفح. ينتظر `await nextTick()` حتى تُطبَّق التحديثات المعلّقة.
+تغيّرات الحالة تحدّث DOM في دفعة واحدة قبل أن يرسم المتصفح. و`await nextTick()` تنتظر حتى تُطبَّق التحديثات المعلّقة.
 
 ```ts
 import { nextTick, ref } from '@usevibejs/ui';
@@ -172,7 +172,7 @@ async function show(): Promise<void> {
 
 ## toRef وtoRefs وtoValue {#toref-torefs-and-tovalue}
 
-تحوّل هذه الدوال بين المراجع والـ getters والقيم العادية:
+تحوّل هذه الدوال بين refs ودوال الجلب والقيم العادية:
 
 ```ts
 import { computed, reactive, toRef, toRefs, toValue, type MaybeRefOrGetter } from '@usevibejs/ui';
@@ -192,11 +192,11 @@ function useDouble(input: MaybeRefOrGetter<number>) {
 console.log(useDouble(x).value, useDouble(() => state.y).value, useDouble(2).value, label.value);
 ```
 
-تعيد `unref(value)` قيمة المرجع، وتعيد أي قيمة أخرى كما هي.
+تعيد `unref(value)` قيمة الـ ref، وتعيد أي قيمة أخرى كما هي.
 
 ## الحالة المشتركة {#shared-state}
 
-الـ composable دالة تنشئ حالة تفاعلية وتعيدها. والحالة المنشأة على مستوى الوحدة، خارج أي دالة، يتشاركها كل مكوّن يستوردها:
+الدالة المركّبة (composable) دالة تنشئ حالة تفاعلية وتعيدها. والحالة التي تنشئها في نطاق الوحدة، خارج أي دالة، يتشاركها كل مكوّن يستوردها:
 
 ```ts
 import { computed, ref } from '@usevibejs/ui';
@@ -216,4 +216,4 @@ export function useCart() {
 }
 ```
 
-كل استدعاء لـ `useCart()` يعيد `items` نفسها. ضع الحالة داخل الدالة بدلًا من ذلك لتمنح كل مستدعٍ حالته الخاصة. وللحالة التي ينبغي أن يتشاركها جزء من الشجرة فقط، [وفّرها بـ provide](https://vibejs.org/v0/ui/provide-inject).
+كل استدعاء لـ `useCart()` يعيد `items` نفسها. إذا أردت أن يحصل كل مستدعٍ على حالته الخاصة، ضع الحالة داخل الدالة. وللحالة التي يجب أن يتشاركها جزء من الشجرة فقط، [وفّرها](https://vibejs.org/v0/ui/provide-inject).

@@ -1,10 +1,10 @@
 # Reaktivite
 
-Reaktif değerler, kendilerini kimin okuduğunu kaydeder. Bir değer değiştiğinde onu okuyan computed değerler, watcher'lar ve template bağlamaları yeniden çalışır; başka hiçbir şey çalışmaz. Bu fonksiyonların hepsi `@usevibejs/ui` paketinden içe aktarılır.
+Reaktif değerler kendilerini kimin okuduğunu kaydeder. Bir değer değişince sadece onu okuyan computed değerler, watcher'lar ve şablon bağlamaları yeniden çalışır, başka hiçbir şey çalışmaz. Bu fonksiyonların hepsini `@usevibejs/ui` paketinden import edersin.
 
 ## ref {#ref}
 
-`ref()` tek bir değeri `.value` içinde tutar. Nesne değerleri derin reaktif yapılır; yani iç içe özelliklerindeki değişiklikler de izlenir.
+`ref()` tek bir değeri `.value` içinde tutar. Değer bir nesneyse derinlemesine reaktif olur, yani iç içe alanlarındaki değişiklikler de takip edilir.
 
 ```ts
 import { ref } from '@usevibejs/ui';
@@ -16,11 +16,11 @@ const user = ref({ name: 'Ada', tags: ['admin'] });
 user.value.tags.push('editor'); // tracked
 ```
 
-Argümansız `ref<T>()`, `T | undefined` tutar. Template içinde ve bir `reactive()` nesnesinin içinde ref açılır (unwrap): template `count.value` değil, `count` yazar.
+Argümansız `ref<T>()`, `T | undefined` tutar. Şablonda ve bir `reactive()` nesnesinin içinde ref otomatik açılır: şablonda `count.value` değil, `count` yazarsın.
 
 ## shallowRef {#shallowref}
 
-`shallowRef()` yalnızca `.value` atamasını izler. Yerinde değiştirilmek yerine yenisiyle değiştirilen büyük değerler ve düz kalması gereken nesneler (örneğin bir kütüphanenin sınıf örnekleri) için kullanın.
+`shallowRef()` sadece `.value` alanına yapılan atamayı takip eder. Yerinde değiştirmek yerine baştan değiştirdiğin büyük değerler için kullan. Bir kütüphanenin sınıf örnekleri gibi düz kalması gereken nesneler için de uygundur.
 
 ```ts
 import { shallowRef, triggerRef } from '@usevibejs/ui';
@@ -32,11 +32,11 @@ rows.value.push(2); // not tracked
 triggerRef(rows); // runs what reads rows now
 ```
 
-`markRaw(object)`, bir nesneyi reaktif durumun içinde bile, nerede saklanırsa saklansın düz tutar.
+`markRaw(object)` bir nesneyi, reaktif bir durumun içinde dursa bile, nerede saklarsan sakla düz tutar.
 
 ## reactive ve readonly {#reactive-and-readonly}
 
-`reactive()`, bir nesnenin, dizinin, `Map` ya da `Set` yapısının derin reaktif proxy'sini döndürür. İç içe ref'ler okunurken açılır.
+`reactive()` bir nesnenin, dizinin, `Map` ya da `Set` yapısının derinlemesine reaktif bir proxy'sini döner. İçindeki ref'ler okunurken açılır.
 
 ```ts
 import { reactive, readonly, ref } from '@usevibejs/ui';
@@ -49,14 +49,14 @@ const view = readonly(state);
 // view.count++ fails to type-check, and warns VIBE5002 at runtime
 ```
 
-- Proxy, özgün nesne değildir: kimlik karşılaştırması önemliyse `toRaw(value)` ile karşılaştırın.
-- Bir `reactive()` nesnesini bütünüyle değiştirmek bağlantıyı koparır; bunun yerine onu bir `ref()` içinde tutun ya da özelliklerini değiştirin.
-- `shallowReactive()` ve `shallowReadonly()` yalnızca üst düzey özelliklere uygulanır.
-- `isRef()`, `isReactive()`, `isReadonly()`, `isShallow()` ve `isProxy()` bir değeri sınar.
+- Proxy, orijinal nesneyle aynı şey değildir. Kimlik önemliyse `toRaw(value)` ile karşılaştır.
+- Bir `reactive()` nesnesini komple değiştirirsen bağlantı kopar. Onun yerine nesneyi bir `ref()` içinde tut ya da alanlarını değiştir.
+- `shallowReactive()` ve `shallowReadonly()` sadece en üst seviyedeki alanlara etki eder.
+- Bir değerin ne olduğunu `isRef()`, `isReactive()`, `isReadonly()`, `isShallow()` ve `isProxy()` ile kontrol edersin.
 
 ## computed {#computed}
 
-`computed()`, bir değeri diğer reaktif değerlerden türetir. Yalnızca kaynaklarından biri değiştikten sonra okunduğunda çalışır ve o zamana kadar sonucu önbellekte tutulur.
+`computed()` başka reaktif değerlerden yeni bir değer türetir. Sadece kaynaklarından biri değiştikten sonra okunursa çalışır. O zamana kadar sonucu cache'te kalır.
 
 ```ts
 import { computed, ref } from '@usevibejs/ui';
@@ -75,11 +75,11 @@ const editable = computed({
 editable.value = 'Grace Hopper';
 ```
 
-Yalnızca getter'ı olan bir computed salt okunurdur. Getter önceki değeri alır; bu, ilgili hiçbir şey değişmediğinde aynı nesneyi döndürmeye yardımcı olur. Bir getter durumu değiştirmemelidir; bunun için bir watcher kullanın.
+Sadece getter'ı olan bir computed salt okunurdur. Getter önceki değeri de alır. Önemli bir şey değişmediyse aynı nesneyi dönmek için bunu kullanabilirsin. Getter durumu değiştirmemeli. Bunun için bir watcher kullan.
 
 ## watch {#watch}
 
-`watch(source, callback, options?)`, kaynak değiştiğinde `callback(value, oldValue, onCleanup)` çağırır. Kaynak bir ref, bir computed, bir getter, bir reaktif nesne ya da bunlardan oluşan bir dizi olabilir.
+`watch(source, callback, options?)`, kaynak değiştiğinde `callback(value, oldValue, onCleanup)` çağırır. Kaynak bir ref, bir computed, bir getter, reaktif bir nesne ya da bunlardan oluşan bir dizi olabilir.
 
 ```ts
 import { reactive, ref, watch } from '@usevibejs/ui';
@@ -106,16 +106,16 @@ watch(filters, (value) => console.log(value.done));
 
 Seçenekler:
 
-- `immediate: true`, callback'i eski değer olarak `undefined` vererek hemen bir kez çağırır.
-- `deep: true`, bir ref ya da getter kaynağının iç içe değerlerini izler; bir sayı verilirse o kadar seviye izlenir.
-- `once: true`, watcher'ı ilk çağrıdan sonra durdurur.
-- `flush`, callback'in ne zaman çalışacağını belirler: `'pre'` (varsayılan) DOM güncellenmeden önce, `'post'` güncellendikten sonra, `'sync'` atamanın içinde.
+- `immediate: true` callback'i hemen bir kere çağırır. Eski değer olarak `undefined` gelir.
+- `deep: true`, ref ya da getter kaynağının iç içe değerlerini de takip eder. Sayı verirsen o kadar seviye takip eder.
+- `once: true` ilk çağrıdan sonra watcher'ı durdurur.
+- `flush` callback'in ne zaman çalışacağını belirler: `'pre'` (varsayılan) DOM güncellenmeden önce, `'post'` güncellemelerden sonra, `'sync'` ise atamanın içinde.
 
-Dönen tutamaç çağrıldığında watcher'ı durdurur; ayrıca `stop()`, `pause()` ve `resume()` metotlarına sahiptir. Bir bileşenin setup'ında oluşturulan watcher, bileşen unmount edildiğinde durur.
+Dönen handle'ı çağırırsan watcher durur. Handle'da `stop()`, `pause()` ve `resume()` da var. Bir bileşenin setup'ında oluşturduğun watcher, bileşen unmount olunca durur.
 
 ## watchEffect {#watcheffect}
 
-`watchEffect(effect)`, `effect` fonksiyonunu hemen çalıştırır ve okuduğu bir şey değiştiğinde yeniden çalıştırır. `watchPostEffect()` ve `watchSyncEffect()`, sırasıyla `'post'` ve `'sync'` flush biçimleridir.
+`watchEffect(effect)`, `effect` fonksiyonunu hemen çalıştırır. Okuduğu bir şey değiştikçe de tekrar çalıştırır. `watchPostEffect()` ve `watchSyncEffect()` bunun `'post'` ve `'sync'` flush hâlleridir.
 
 ```ts
 import { onWatcherCleanup, ref, watchEffect } from '@usevibejs/ui';
@@ -130,11 +130,11 @@ watchEffect(() => {
 });
 ```
 
-`onWatcherCleanup()`, çalışmakta olan watcher ya da effect için bir temizlik fonksiyonu kaydeder. Callback'in `onCleanup` argümanı aynı işi yapar ve bir `await` sonrasında da çalışır.
+`onWatcherCleanup()` o an çalışan watcher ya da effect için bir temizlik fonksiyonu kaydeder. Callback'in `onCleanup` argümanı da aynı işi yapar, üstelik bir `await` sonrasında da çalışır.
 
-## Effect scope'lar {#effect-scopes}
+## Effect scope'ları {#effect-scopes}
 
-`scope.run()` sırasında oluşturulan watcher'lar ve computed değerler scope'a aittir ve `scope.stop()` hepsini durdurur. Bir bileşenin setup'ı kendi scope'unda çalışır; bu yüzden çoğu kod scope oluşturmaz. Bileşenin dışında yaşayan durum için `effectScope()` kullanın.
+`scope.run()` sırasında oluşturduğun watcher ve computed değerler o scope'a aittir. `scope.stop()` hepsini durdurur. Bileşenin setup'ı zaten kendi scope'unda çalışır, bu yüzden çoğu kodda scope oluşturman gerekmez. Bir bileşenin dışında yaşayan durum için `effectScope()` kullan.
 
 ```ts
 import { effectScope, onScopeDispose, ref, watch } from '@usevibejs/ui';
@@ -152,11 +152,11 @@ scope.run(() => {
 scope.stop(); // stops the watcher and removes the listener
 ```
 
-`onScopeDispose()`, geçerli scope'a bir temizlik fonksiyonu kaydeder; bir bileşende bileşen unmount edildiğinde çalışır. `getCurrentScope()` geçerli scope'u döndürür.
+`onScopeDispose()` o anki scope'a bir temizlik fonksiyonu kaydeder. Bileşen içindeyse bileşen unmount olunca çalışır. `getCurrentScope()` o anki scope'u döner.
 
 ## nextTick {#nexttick}
 
-Durum değişiklikleri DOM'u, tarayıcı boyamadan önce bir grup halinde günceller. `await nextTick()`, bekleyen güncellemeler uygulanana kadar bekler.
+Durum değişiklikleri DOM'u toplu olarak, tarayıcı ekranı çizmeden önce günceller. `await nextTick()` bekleyen güncellemeler uygulanana kadar bekler.
 
 ```ts
 import { nextTick, ref } from '@usevibejs/ui';
@@ -192,11 +192,11 @@ function useDouble(input: MaybeRefOrGetter<number>) {
 console.log(useDouble(x).value, useDouble(() => state.y).value, useDouble(2).value, label.value);
 ```
 
-`unref(value)`, bir ref'in değerini döndürür; başka her değeri olduğu gibi döndürür.
+`unref(value)` bir ref'in değerini döner, diğer değerleri de olduğu gibi döner.
 
 ## Paylaşılan durum {#shared-state}
 
-Composable, reaktif durum oluşturup döndüren bir fonksiyondur. Herhangi bir fonksiyonun dışında, modül kapsamında oluşturulan durum, onu içe aktaran tüm bileşenler tarafından paylaşılır:
+Composable, reaktif durum oluşturup dönen bir fonksiyondur. Modül seviyesinde, yani herhangi bir fonksiyonun dışında oluşturduğun durumu, onu import eden bütün bileşenler paylaşır:
 
 ```ts
 import { computed, ref } from '@usevibejs/ui';
@@ -216,4 +216,4 @@ export function useCart() {
 }
 ```
 
-`useCart()` çağrısının her biri aynı `items` değerini döndürür. Her çağıranın kendine ait durumu olması için durumu bunun yerine fonksiyonun içine koyun. Ağacın yalnızca bir bölümünün paylaşması gereken durum için [onu provide edin](https://vibejs.org/v0/ui/provide-inject).
+Her `useCart()` çağrısı aynı `items` değerini döner. Her çağırana ayrı bir durum vermek istiyorsan durumu fonksiyonun içine taşı. Ağacın sadece bir kısmının paylaşması gereken durum için onu [provide et](https://vibejs.org/v0/ui/provide-inject).

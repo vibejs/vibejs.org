@@ -1,12 +1,12 @@
-# vibe.js'i genişletme
+# vibe.js'i genişletmek
 
-Bir uygulamanın vibe.js'i genişletmek için kullandığı her şey herkese açık API'dir; bu yüzden bir özellik, değişiklik gerektirmeden uygulamadan bir pakete taşınabilir.
+Bir uygulamanın vibe.js'i genişletmek için kullandığı her şey public API. Yani bir özelliği hiç değiştirmeden uygulamadan bir pakete taşıyabilirsin.
 
 ## Sunucu {#server}
 
-### Yapılandırılabilir modüller {#configurable-modules}
+### Ayarlanabilir modüller {#configurable-modules}
 
-Seçeneklere ihtiyaç duyan bir modül, bir `DynamicModule` döndüren statik bir `forRoot(options)` sunar: modül sınıfı ile ek provider'lar ve export'lar. Seçenekler bir provider olur; böylece modülün kendi sınıfları onları inject edebilir:
+Seçenek alan bir modül, `DynamicModule` döndüren statik bir `forRoot(options)` sunar. `DynamicModule` dediğimiz şey modül sınıfı, üstüne de ek provider'lar ve export'lar. Seçenekler bir provider'a dönüşür, böylece modülün kendi sınıfları onları inject eder:
 
 ```ts
 export interface MailOptions {
@@ -36,11 +36,11 @@ export class MailModule {
 }
 ```
 
-Bir uygulama `MailModule.forRoot({ ... })` çağrısını import eder. Döndürülen nesnenin provider'ları, controller'ları, import'ları ve export'ları `@Module()` içindekilere eklenir. Her `forRoot()` çağrısı yeni bir nesne, yani ayrı bir modül örneği döndürür; tek bir örneği paylaşmak için sonucu bir kez import edip export edin veya `global` yapın. Başka provider'lardan gelen seçenekler için, `useValue` yerine `useFactory` ve `inject` ile sağlayın.
+Uygulama `MailModule.forRoot({ ... })` import eder. Dönen nesnedeki provider'lar, controller'lar, import'lar ve export'lar `@Module()` içindekilere eklenir. Her `forRoot()` çağrısı yeni bir nesne, yani ayrı bir modül örneği döner. Tek bir örneği paylaşmak istiyorsan sonucu bir kez import edip export et ya da `global` yap. Seçenekler başka provider'lardan geliyorsa `useValue` yerine `useFactory` ve `inject` ile ver.
 
 ### Middleware paketleri {#middleware-packages}
 
-Bir middleware bir fonksiyondur; bu yüzden bir paket, seçenek alıp bir `Middleware` döndüren bir factory export eder:
+Middleware bir fonksiyon. O yüzden paket, seçenek alıp `Middleware` döndüren bir factory export eder:
 
 ```ts
 export function requireHeader(name: string): Middleware {
@@ -51,15 +51,15 @@ export function requireHeader(name: string): Middleware {
 }
 ```
 
-Uygulama bunu `AppOptions.middleware` içine ekler. Bir middleware'de fırlatılan hata, bir handler'daki hata gibi bir problem olarak yanıtlanır.
+Uygulama onu `AppOptions.middleware` dizisine ekler. Middleware'de fırlatılan bir hata, handler'daki bir hata gibi problem yanıtına dönüşür.
 
-### Yeniden kullanılabilir guard'lar, interceptor'lar ve filter'lar {#reusable-guards-interceptors-and-filters}
+### Yeniden kullanılabilir guard, interceptor ve filter'lar {#reusable-guards-interceptors-and-filters}
 
-Enhancer'lar, constructor parametresi olmayan ve ihtiyaç duyduklarını `inject()` ile alan sınıflardır; bu yüzden bir paket, bağımlılıklarını sağlayan bir modülün yanında bunları export edebilir. Bunları, container'ın geçirmediği constructor argümanlarıyla değil, yukarıdaki gibi `forRoot()` ile gelen bir seçenek token'ı üzerinden yapılandırın.
+Enhancer'lar constructor parametresi olmayan sınıflardır; ihtiyaçlarını `inject()` ile alırlar. Bu yüzden bir paket onları, bağımlılıklarını sağlayan bir modülün yanında export edebilir. Onları constructor argümanlarıyla değil, yukarıdaki gibi `forRoot()`'tan gelen bir seçenek token'ıyla ayarla. Container constructor argümanı geçmez.
 
 ### Metadata {#metadata}
 
-`createMetadata<T>(name)` bir pakete tipli bir decorator ve guard'larında ile interceptor'larında `ctx.getMetadata(key)` ile geri okumak için anahtarı verir:
+`createMetadata<T>(name)` pakete tipli bir dekoratör ve bir anahtar verir. Paket bu anahtarla değeri guard ve interceptor'larında `ctx.getMetadata(key)` ile geri okur:
 
 ```ts
 export const CacheFor = createMetadata<number>('cacheFor');
@@ -73,17 +73,17 @@ export class CacheHeaders implements Interceptor {
 }
 ```
 
-Uygulamalar daha sonra bir handler üzerine `@CacheFor(60)` yazar ve `CacheHeaders` sınıfını genel olarak veya `@UseInterceptors()` ile kaydeder.
+Uygulama bir handler'ın üstüne `@CacheFor(60)` yazar ve `CacheHeaders`'ı global olarak ya da `@UseInterceptors()` ile kaydeder.
 
-Bu yapı taşlarının uyduğu kurallar için [Modüller ve provider'lar](https://vibejs.org/v0/server/modules) ile [Middleware, guard'lar, interceptor'lar ve filter'lar](https://vibejs.org/v0/server/pipeline) sayfalarına bakın.
+Bu yapı taşlarının uyduğu kurallar için [Modüller ve provider'lar](https://vibejs.org/v0/server/modules) ile [Middleware, guard, interceptor ve filter'lar](https://vibejs.org/v0/server/pipeline) sayfalarına bak.
 
 ## UI {#ui}
 
 ### Plugin'ler {#plugins}
 
-Bir plugin, app'i alan bir fonksiyon veya `install(app)` metodu olan bir nesnedir. `app.use(plugin, ...options)` onu bir kez kurar ve seçenekleri plugin'in `Plugin<Options>` tipine göre denetler; aynı plugin ile ikinci bir çağrı [VIBE5304](https://vibejs.org/v0/errors/VIBE5304) uyarısı verir ve hiçbir şey yapmaz. Bir plugin, `app.provide()` ile her bileşene değer sağlar ve `app.onUnmount()` ile temizlik kaydeder.
+Plugin, uygulamayı parametre olarak alan bir fonksiyon ya da `install(app)` metodu olan bir nesnedir. `app.use(plugin, ...options)` onu bir kez kurar ve seçenekleri plugin'in `Plugin<Options>` tipine göre denetler. Aynı plugin'le ikinci kez çağırırsan [VIBE5304](https://vibejs.org/v0/errors/VIBE5304) uyarısı verir ve hiçbir şey yapmaz. Plugin, `app.provide()` ile her bileşene değer sağlar ve temizlik işini `app.onUnmount()` ile kaydeder.
 
-Örnek todo uygulamasının feature flag paketi bir plugin factory export eder: seçenek alır, flag'leri bir kez yükler ve onları özel bir injection anahtarı altında sağlar.
+Örnek todo uygulamasındaki feature flag paketi bir plugin factory export ediyor: seçenekleri alıyor, flag'leri bir kez yüklüyor ve onları private bir injection anahtarı altında sağlıyor.
 
 ```ts
 export interface FlagsPluginOptions {
@@ -110,7 +110,7 @@ export const flagsPlugin =
   };
 ```
 
-Uygulama bunu router'ın yanına kurar:
+Uygulama onu router'ın yanına kurar:
 
 ```ts
 createApp(App).use(flagsPlugin()).mount('#app');
@@ -118,11 +118,11 @@ createApp(App).use(flagsPlugin()).mount('#app');
 
 ### Provide ve inject {#provide-and-inject}
 
-`app.provide(key, value)` bir değeri app'in her bileşenine sunar; bir bileşenin setup'ında `provide(key, value)` ise onu o bileşenin alt öğelerine sunar. `inject(key)` en yakın olanı okur; `inject(key, fallback)` ise hiçbir şey `key` sağlamıyorsa `fallback` döndürür. Anahtarları, değerinin tipini taşıyan bir symbol olan `InjectionKey<T>` ile tipleyin; böylece `inject()` o tipi döndürür.
+`app.provide(key, value)` bir değeri uygulamadaki bütün bileşenlere açar. Bir bileşenin setup'ında `provide(key, value)` ise değeri yalnızca o bileşenin altındakilere açar. `inject(key)` en yakındakini okur. `inject(key, fallback)` de `key`'i sağlayan kimse yoksa `fallback` döner. Anahtarlara `InjectionKey<T>` ile tip ver. Bu, değerinin tipini taşıyan bir symbol; böylece `inject()` o tipi döner.
 
 ### Composable'lar {#composables}
 
-Bir composable, durumlu mantığı yeniden kullanmak için setup'ın çağırdığı bir fonksiyondur: injection'ları okuyabilir, ref'ler ve computed değerler oluşturabilir ve çağıran bileşenin yaşam döngüsü hook'larını kaydedebilir. Flag paketi injection'ını bir composable içinde okur; böylece bileşenler anahtarı hiç görmez ve plugin'siz bir app her flag için `false` alır:
+Composable, durumlu mantığı yeniden kullanmak için setup içinden çağırdığın bir fonksiyon. Injection okuyabilir, ref ve computed oluşturabilir, çağıran bileşenin yaşam döngüsü hook'larını kaydedebilir. Flag paketi injection'ını bir composable içinde okuyor. Böylece bileşenler anahtarı hiç görmüyor ve plugin'i olmayan bir uygulama her flag için `false` alıyor:
 
 ```ts
 /** Whether the flag `name` is on; always `false` in an app without `flagsPlugin()`. */
@@ -132,9 +132,9 @@ export function useFlag(name: string): Readonly<Ref<boolean>> {
 }
 ```
 
-Bir sayfa daha sonra setup'ında `useFlag('removeDone')` çağırır ve ref'i template'inde kullanır.
+Bir sayfa setup'ında `useFlag('removeDone')` çağırır ve ref'i şablonunda kullanır.
 
 ### Sınırlar {#limits}
 
-- Global bileşen, özel direktif, mixin veya global özellik yoktur: `app.component()`, `app.directive()` ve `app.mixin()` [VIBE5301](https://vibejs.org/v0/errors/VIBE5301) fırlatır. Bileşenleri import için export edin, öğe davranışını bir template ref alan composable'lar olarak, paylaşılan değerleri de `app.provide()` ile sunun.
-- `.vibe` bileşenleri içeren paketler v0.2 için planlanmıştır. O zamana kadar bir paket plugin'leri, composable'ları, injection anahtarlarını ve tipleri export eder.
+- Global bileşen, özel direktif, mixin ya da global property yok: `app.component()`, `app.directive()` ve `app.mixin()` [VIBE5301](https://vibejs.org/v0/errors/VIBE5301) fırlatır. Bileşenleri export et, kullanan import etsin. Eleman davranışını template ref alan bir composable'a koy, paylaşılan değerleri de `app.provide()` ile ver.
+- `.vibe` bileşeni içeren paketler v0.2 için planlanıyor. O zamana kadar bir paket plugin, composable, injection anahtarı ve tip export eder.

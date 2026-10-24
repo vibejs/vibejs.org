@@ -1,6 +1,6 @@
 # اختبار الخادم
 
-تعمل اختبارات الخادم داخل العملية نفسها: بلا منفذ وبلا شبكة. تبني `Test.createTestingModule()` من `@usevibejs/server/testing` الـ `App` نفسه الذي يعمل في الإنتاج من الوحدات التي تسردها، ويخدم `app.fetch` الطلبات.
+تعمل اختبارات الخادم داخل العملية نفسها: لا منفذ ولا شبكة. تبني `Test.createTestingModule()` من `@usevibejs/server/testing` الـ `App` نفسه الذي يعمل في الإنتاج، من الوحدات التي تذكرها، ويقدّم `app.fetch` الطلبات.
 
 ```ts
 const app = await Test.createTestingModule({
@@ -17,9 +17,9 @@ expect(result.data).toEqual(['write tests']);
 await app.close();
 ```
 
-تأخذ `createTestingModule()` خيارات الوحدة (`imports` و`providers` و`controllers`) وخيارات التطبيق (`basePath` و`logger` و`guards` وغيرها) في كائن واحد. انشر `appOptions` من `app.module.ts` للاختبار بخيارات الإنتاج.
+تقبل `createTestingModule()` خيارات الوحدة (`imports` و`providers` و`controllers`) وخيارات التطبيق (`basePath` و`logger` و`guards` وغيرها) في كائن واحد. وزّع `appOptions` من `app.module.ts` لتختبر بخيارات الإنتاج.
 
-استدعاء المسارات عبر `createClient` يفحص العقد أيضًا: يفشل الاختبار في الترجمة عندما يتغير مسار أو مدخل أو نوع استجابة. ضيّق النتيجة كما تفعل الواجهة:
+استدعاء المسارات عبر `createClient` يتحقق من العقد أيضًا: لا يُترجم الاختبار إذا تغيّر مسار أو مدخل أو نوع استجابة. ضيّق نوع النتيجة كما تفعل الواجهة:
 
 ```ts
 const api = createClient({ todos }, { baseUrl: '/api', fetch: app.fetch });
@@ -28,11 +28,11 @@ if (removed.ok || removed.error.code !== 'TODO_NOT_FOUND') throw new Error('expe
 expect(removed.error.status).toBe(404);
 ```
 
-للطلبات خارج العقد، مثل مسار مفقود أو جسم مشوَّه، استخدم `app.request(path, init?)`؛ و`init.json` يرسل جسم JSON.
+للطلبات التي لا يغطيها عقد، مثل مسار غير موجود أو جسم تالف، استخدم `app.request(path, init?)`، و`init.json` يرسل جسمًا بصيغة JSON.
 
-## استبدال المزوِّدين {#replacing-providers}
+## استبدال providers {#replacing-providers}
 
-تستبدل `overrideProvider(token)` مزوِّدًا بحسب رمزه في كل وحدة توفّره، قبل إنشاء أي شيء:
+تستبدل `overrideProvider(token)` الـ provider بحسب الـ token في كل وحدة توفّره، قبل إنشاء أي شيء:
 
 ```ts
 const sent: string[] = [];
@@ -47,15 +47,15 @@ const app = await Test.createTestingModule({
 app.get(Mailer).send('ada@example.com');
 ```
 
-تتوفر `useValue` و`useClass` و`useFactory`. استبدال رمز لا توفّره أي وحدة يفشل بالرمز [VIBE9701](https://vibejs.org/v0/errors/VIBE9701). وتقرأ `app.get(token)` مزوِّدًا، مثل خدمة يفحص اختبار حالتها.
+المتاح هو `useValue` و`useClass` و`useFactory`. واستبدال token لا توفّره أي وحدة يفشل بالرمز [VIBE9701](https://vibejs.org/v0/errors/VIBE9701). ويقرأ `app.get(token)` الـ provider، كخدمة يفحص الاختبار حالتها.
 
-## السجلات {#logs}
+## السجلّات {#logs}
 
-مرّر `logger: new JsonLogger({ level: 'silent' })` لإبقاء مخرجات الاختبار نظيفة، أو `JsonLogger` مع دالة `write` للتحقق من مدخلات السجل. سجلات الإطار الخاصة بالطلبات والأخطاء ودورة الحياة تذهب إلى هذا المسجِّل؛ واستبدال `Logger` يصل فقط إلى الشيفرة التي تحقنه.
+مرّر `logger: new JsonLogger({ level: 'silent' })` لتبقى مخرجات الاختبار نظيفة، أو `JsonLogger` مع دالة `write` لتتحقق من مدخلات السجلّ. سجلّات إطار العمل نفسه، للطلبات والأخطاء ودورة الحياة، تذهب إلى هذا المسجِّل. أما استبدال `Logger` فلا يصل إلا إلى الكود الذي يحقنه.
 
-## فحص الرسم البياني {#checking-the-graph}
+## فحص المخطط {#checking-the-graph}
 
-تسرد `inspect(root, options)` المسارات والوحدات دون إنشاء أي شيء. ولقطة (snapshot) منها تكشف أي تغيير غير مقصود في مسار أو حارس أو وحدة:
+تعرض `inspect(root, options)` المسارات والوحدات دون إنشاء أي شيء. ولقطة (snapshot) منها تكشف أي تغيير غير مقصود في مسار أو guard أو وحدة:
 
 ```ts
 expect(inspect(AppModule, appOptions)).toMatchSnapshot();

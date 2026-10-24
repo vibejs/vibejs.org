@@ -1,20 +1,20 @@
-# Middleware والحراس والمعترضات والمرشِّحات
+# middleware وguards وinterceptors والمرشِّحات
 
-يمرّ الطلب بهذه الخطوات:
+يمر الطلب بهذه الخطوات:
 
-1. **Middleware**، حول كل شيء، بترتيب `AppOptions.middleware`.
-2. **التوجيه**: 404، أو 405 مع `Allow`، عندما لا يطابق أي مسار.
-3. **الحراس (Guards)**: العامة، ثم حراس المتحكم، ثم حراس الدالة. أول حارس يعيد `false` ينهي الطلب بالحالة 403 `FORBIDDEN`.
-4. **المعترضات (Interceptors)**: العامة، ثم المتحكم، ثم الدالة؛ والأول هو الأبعد (الأخارجي).
+1. **middleware**، حول كل شيء، بترتيب `AppOptions.middleware`.
+2. **التوجيه**: 404، أو 405 مع `Allow`، إذا لم يطابق أي مسار.
+3. **guards**: العامة، ثم guards المتحكّم، ثم guards الدالة. أول guard يعيد `false` ينهي الطلب بـ 403 `FORBIDDEN`.
+4. **interceptors**: العامة، ثم interceptors المتحكّم، ثم interceptors الدالة. والأول هو الغلاف الخارجي.
 5. **التحقق** من أجزاء الطلب، ثم **المعالج**.
-6. بناء **الاستجابة** والتحقق منها.
-7. **المرشِّحات (Filters)** لأي خطأ في الخطوات من 3 إلى 6: الدالة، ثم المتحكم، ثم العام.
+6. **بناء الاستجابة** والتحقق منها.
+7. **المرشِّحات (filters)** لأي خطأ في الخطوات من 3 إلى 6: مرشِّحات الدالة، ثم المتحكّم، ثم العامة.
 
-يسرد `app.inspect()` و`inspect(root, options)` حراس كل مسار ومعترضاته ومرشِّحاته بهذا الترتيب بالضبط، بما فيها العامة.
+تعرض `app.inspect()` و`inspect(root, options)` الـ guards والـ interceptors والمرشِّحات لكل مسار بهذا الترتيب بالضبط، ومعها العامة.
 
 ## Middleware {#middleware}
 
-يغلّف الـ middleware الطلب كله على مستوى Fetch. يعمل قبل التوجيه، فيرى كل طلب، بما في ذلك الطلبات التي لا تطابق أي مسار:
+يغلّف الـ middleware الطلب كله على مستوى Fetch. ويعمل قبل التوجيه، فيرى كل طلب، حتى الطلبات التي لا تطابق أي مسار:
 
 ```ts
 export const timing: Middleware = async (req, next) => {
@@ -27,11 +27,11 @@ export const timing: Middleware = async (req, next) => {
 };
 ```
 
-تتابع `next(req?)` بالطلب نفسه أو ببديل عنه. الـ middleware دالة عادية، ولذلك يمكن لحزمة أن تصدّر factory لـ middleware، مثل `cors()` المضمَّنة.
+يكمل `next(req?)` بالطلب نفسه أو بطلب بديل. والـ middleware دالة عادية، فتستطيع الحزمة أن تصدّر factory تنتج middleware، مثل `cors()` المدمجة.
 
-## الحراس {#guards}
+## Guards {#guards}
 
-يقرر الحارس ما إذا كان يجوز للطلب أن يصل إلى معالجه:
+يقرّر الـ guard هل يصل الطلب إلى معالجه:
 
 ```ts
 export class SessionGuard implements CanActivate {
@@ -43,9 +43,9 @@ export class SessionGuard implements CanActivate {
 }
 ```
 
-طبّقه بـ `@UseGuards(SessionGuard)` على متحكم أو معالج، أو بشكل عام بـ `AppOptions.guards`. وللإجابة بشيء غير 403، ارمِ `HttpError`، مثل `new HttpError(401, 'UNAUTHORIZED')`.
+طبّقه بـ `@UseGuards(SessionGuard)` على متحكّم أو معالج، أو على كل المسارات بـ `AppOptions.guards`. وإذا أردت إجابة غير 403، فارمِ `HttpError`، مثل `new HttpError(401, 'UNAUTHORIZED')`.
 
-تحمل `ctx.state` القيم من الحراس والمعترضات إلى المعالجات. نمِّط حقولها بتوسيع `RequestState`:
+ينقل `ctx.state` القيم من guards وinterceptors إلى المعالجات. وتحدّد أنواع حقوله بتوسيع `RequestState`:
 
 ```ts
 declare module '@usevibejs/server' {
@@ -55,9 +55,9 @@ declare module '@usevibejs/server' {
 }
 ```
 
-## المعترضات {#interceptors}
+## Interceptors {#interceptors}
 
-يغلّف المعترض المعالج. تشغّل `next()` بقية السلسلة وتُحَلّ إلى نتيجة المعالج، ولذلك يستطيع المعترض أن يقيس النتيجة أو يعيد المحاولة أو يستبدلها:
+يغلّف الـ interceptor المعالج. تشغّل `next()` بقية السلسلة وتُحسم بنتيجة المعالج، فيستطيع الـ interceptor أن يقيسها أو يعيد المحاولة أو يستبدلها:
 
 ```ts
 export class LogDuration implements Interceptor {
@@ -74,7 +74,7 @@ export class LogDuration implements Interceptor {
 
 ## المرشِّحات {#filters}
 
-يحوّل المرشِّح الخطأ إلى استجابة. يعيد `Response`، أو `HttpError` ليُرسل كمشكلة (problem)، أو `undefined` لتمرير الخطأ إلى المرشِّح التالي. الأخطاء التي لا يعالجها أي مرشِّح يُجاب عنها كما هو موصوف في [المعالجات](https://vibejs.org/v0/server/handlers#errors).
+يحوّل المرشِّح الخطأ إلى استجابة. يعيد `Response`، أو `HttpError` ليُرسل مشكلةً (problem)، أو `undefined` ليمرّر الخطأ إلى المرشِّح التالي. والأخطاء التي لا يعالجها أي مرشِّح يُجاب عنها كما في [المعالجات](https://vibejs.org/v0/server/handlers#errors).
 
 ```ts
 export class DbErrors implements ExceptionFilter {
@@ -84,11 +84,11 @@ export class DbErrors implements ExceptionFilter {
 }
 ```
 
-الحراس والمعترضات والمرشِّحات أصناف بلا معاملات في المُنشِئ. تُنشأ مرة واحدة، في نطاق وحدة متحكمها (والعامة في الوحدة الجذرية)، ولذلك تستطيع أن تحقن المزوِّدين بـ `inject()`.
+الـ guards والـ interceptors والمرشِّحات أصناف بلا معاملات في المُنشئ. تُنشأ مرة واحدة، في نطاق وحدة المتحكّم الخاص بها (والعامة في الوحدة الجذر)، فتستطيع أن تستدعي `inject()` لجلب providers.
 
 ## البيانات الوصفية {#metadata}
 
-تنشئ `createMetadata<T>(name)` مزخرفًا مُنمَّطًا هو أيضًا المفتاح الذي تُقرأ به القيمة. وقيم الدالة تتغلب على قيم المتحكم:
+تنشئ `createMetadata<T>(name)` مزخرفًا له نوع، وهو نفسه المفتاح الذي تقرأ به القيمة لاحقًا. وقيم الدالة تتقدّم على قيم المتحكّم:
 
 ```ts
 export const Roles = createMetadata<readonly string[]>('roles');
@@ -112,9 +112,9 @@ export class AdminController {
 }
 ```
 
-## المعزِّزات العامة {#global-enhancers}
+## المحسِّنات العامة {#global-enhancers}
 
-يطبّق `AppOptions` الـ middleware والمعزِّزات (enhancers) على كل مسار:
+يطبّق `AppOptions` الـ middleware والمحسِّنات (enhancers) على كل المسارات:
 
 ```ts
 export const appOptions: AppOptions = {

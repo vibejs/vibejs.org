@@ -1,10 +1,10 @@
 # Provide ve inject
 
-`provide(key, value)` bir değeri bileşenin tüm alt soyları için kullanılabilir kılar; `inject(key)` ise `key` değerini sağlayan en yakın atanın değerini okur. Aradaki bileşenlerin değeri props olarak aktarması gerekmez.
+`provide(key, value)` bir değeri bileşenin bütün alt bileşenlerine açar. `inject(key)` ise `key` için değer veren en yakın üst bileşenin değerini okur. Aradaki bileşenlerin bu değeri prop olarak taşıması gerekmez.
 
 ## Tipli anahtarlar {#typed-keys}
 
-`InjectionKey<T>`, değerinin türünü taşıyan bir symbol'dür; böylece `provide()` değeri denetler ve `inject()` `T` döndürür. Anahtarı, her iki tarafın içe aktardığı bir `.ts` modülünden dışa aktarın:
+`InjectionKey<T>`, değerinin tipini taşıyan bir symbol'dür. Böylece `provide()` değeri denetler, `inject()` de `T` döner. Anahtarı, iki tarafın da import ettiği bir `.ts` modülünden export et:
 
 ```ts [theme.ts]
 import { inject, type InjectionKey, type Ref } from '@usevibejs/ui';
@@ -20,7 +20,7 @@ export const ThemeKey: InjectionKey<Theme> = Symbol('theme');
 export const useTheme = (): Theme | undefined => inject(ThemeKey);
 ```
 
-Sağlayan bileşen değeri kendi setup'ında oluşturur:
+Değeri veren bileşen onu kendi setup'ında oluşturur:
 
 ```vibe
 <script setup lang="ts">
@@ -42,7 +42,7 @@ provide(ThemeKey, {
 </template>
 ```
 
-Herhangi bir alt soy bileşen bunu enjekte eder; burada `theme.ts` içindeki `useTheme()` composable'ı üzerinden:
+Herhangi bir alt bileşen bu değeri inject edebilir. Burada `theme.ts` içindeki `useTheme()` composable'ı üzerinden yapıyoruz:
 
 ```vibe
 <script setup lang="ts">
@@ -56,11 +56,11 @@ const theme = useTheme();
 </template>
 ```
 
-Alt soyların değişiklikleri görmesini istiyorsanız, yukarıdaki `mode` gibi bir ref ya da reaktif nesne sağlayın. Bir string anahtar da çalışır, ancak değeri tipli değildir.
+Alt bileşenlerin değişiklikleri görmesini istiyorsan, yukarıdaki `mode` gibi bir ref ya da reaktif nesne ver. String anahtar da çalışır, ama o zaman değerin tipi olmaz.
 
 ## Varsayılan değerler {#defaults}
 
-Sağlayan yoksa `inject(key)` `undefined` döndürür ve geliştirme sırasında VIBE5206 uyarısı verir. Bir varsayılan değer, değeri zorunlu kılar:
+Değer veren bir üst bileşen yoksa `inject(key)` `undefined` döner ve geliştirme sırasında VIBE5206 uyarısı verir. Bir varsayılan verirsen değer kesinleşir:
 
 ```ts
 // A default value.
@@ -71,11 +71,11 @@ const fallback = inject(LocaleKey, () => ref(navigator.language), true);
 console.log(locale.value, fallback.value);
 ```
 
-Üçüncü argüman olan `true`, `inject()` fonksiyonuna fonksiyonun kendisini döndürmek yerine varsayılanı çağırmasını söyler.
+Üçüncü argüman olan `true`, `inject()` fonksiyonuna varsayılanı olduğu gibi dönmek yerine çağırmasını söyler.
 
-## Uygulama düzeyinde değerler {#app-level-values}
+## Uygulama seviyesindeki değerler {#app-level-values}
 
-`app.provide(key, value)` bir değeri uygulamanın tüm bileşenlerine sağlar. Bir bileşenin aynı anahtar için yaptığı `provide()`, kendi alt soyları için önceliklidir.
+`app.provide(key, value)` bir değeri uygulamadaki her bileşene açar. Bir bileşen aynı anahtar için `provide()` çağırırsa, kendi alt bileşenleri için onun değeri geçerli olur.
 
 ```ts
 const app = createApp(App);
@@ -85,7 +85,7 @@ app.mount('#app');
 
 ## Setup dışında {#outside-setup}
 
-`provide()` ve `inject()` bir bileşenin setup'ı sırasında çalışır. `hasInjectionContext()`, o noktada `inject()` çağrılıp çağrılamayacağını döndürür; böylece bir composable açık bir mesajla hata verebilir ya da yedek davranışa geçebilir. `app.runWithContext(fn)`, `fn` fonksiyonunu uygulamayı enjeksiyon bağlamı yaparak çalıştırır; böylece bir router guard'ı ya da test gibi herhangi bir bileşenin dışındaki kod uygulamanın değerlerini okuyabilir:
+`provide()` ve `inject()` bir bileşenin setup'ı sırasında çalışır. `hasInjectionContext()` o anda `inject()` çağırıp çağıramayacağını söyler. Bir composable bunu kullanarak anlaşılır bir mesajla hata verebilir ya da başka bir yola geçebilir. `app.runWithContext(fn)` ise `fn` fonksiyonunu injection bağlamı olarak uygulamayla çalıştırır. Böylece bir router guard'ı ya da bir test gibi hiçbir bileşenin içinde olmayan kod da uygulamanın değerlerini okuyabilir:
 
 ```ts
 const app = createApp(App).provide(LocaleKey, ref('de'));
@@ -99,4 +99,4 @@ console.log(locale?.value); // 'de'
 
 ## UI ve sunucu {#ui-and-server}
 
-Bir bileşendeki `inject(key)`, bileşen ağacında sağlanan değerleri okur. `@usevibejs/server` paketinin alan (field) `inject(Token)` çağrısıyla ilgisi yoktur; o, provider'ları bir modülün dependency injection container'ından çözer. İkisi hiçbir zaman değer paylaşmaz.
+Bir bileşendeki `inject(key)` bileşen ağacında verilen değerleri okur. `@usevibejs/server` paketindeki field `inject(Token)` ile bir ilgisi yoktur. O, provider'ları bir modülün dependency injection container'ından çözer. İkisi hiçbir zaman değer paylaşmaz.

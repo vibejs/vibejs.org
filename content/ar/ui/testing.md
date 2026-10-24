@@ -1,10 +1,10 @@
 # اختبار المكوّنات
 
-تعمل اختبارات المكوّنات في Vitest مع jsdom. تركّب `@usevibejs/ui/testing` المكوّن في تطبيق حقيقي، وتعيد غلافًا (wrapper) للاستعلام عن DOM المعروض والتحكم فيه، وتنظّف بعد كل اختبار.
+تعمل اختبارات المكوّنات في Vitest مع jsdom. يركّب `@usevibejs/ui/testing` المكوّن داخل تطبيق حقيقي، ويعيد غلافًا (wrapper) تستعلم به عن DOM المعروض وتتحكّم فيه، وينظّف كل شيء بعد كل اختبار.
 
 ## الإعداد {#setup}
 
-يترجم الملحق `vibe()` ملفات `.vibe` للاختبارات كما يفعل للتطبيق:
+تترجم الإضافة `vibe()` ملفات `.vibe` للاختبارات كما تترجمها للتطبيق:
 
 ```ts
 import { vibe } from '@usevibejs/compiler/vite';
@@ -19,7 +19,7 @@ export default defineConfig({
 });
 ```
 
-قالب التطبيق يحتوي هذا الإعداد بالفعل. توضع الاختبارات بجانب المكوّن: `Counter.test.ts` بجانب `Counter.vibe`.
+هذا الإعداد موجود أصلًا في قالب التطبيق. وتضع الاختبار بجانب المكوّن: `Counter.test.ts` بجانب `Counter.vibe`.
 
 ## التركيب {#mounting}
 
@@ -35,27 +35,27 @@ it('counts clicks', async () => {
 });
 ```
 
-تأخذ `mount(component, options)`:
+تقبل `mount(component, options)`:
 
-- `props`: الخصائص، بما فيها مستمعات `on*`. وهي مطلوبة عندما يكون للمكوّن خصائص مطلوبة.
-- `slots`: محتوى الفتحات بحسب الاسم، كنص أو مكوّن أو دالة من خصائص الفتحة تعيد نصًا أو عُقدًا.
-- `provide`: القيم التي يوفّرها التطبيق بحسب المفتاح، مثل `{ [API]: api }` لـ `InjectionKey`.
-- `plugins`: الملحقات التي يثبّتها التطبيق بالترتيب، مثل الموجِّه.
-- `attachTo`: المكان الذي يُلحَق به عنصر المضيف، عنصر أو محدِّد؛ والافتراضي `document.body`.
+- `props`: الخصائص، ومنها المستمعون `on*`. إلزامية إذا كان للمكوّن خصائص إلزامية.
+- `slots`: محتوى الـ slots بحسب الاسم، نصًا أو مكوّنًا أو دالة تأخذ خصائص الـ slot وتعيد نصًا أو عُقدًا.
+- `provide`: القيم التي يوفّرها التطبيق، بحسب المفتاح، مثل `{ [API]: api }` لمفتاح من نوع `InjectionKey`.
+- `plugins`: الإضافات التي يثبّتها التطبيق، بالترتيب، مثل الموجِّه.
+- `attachTo`: المكان الذي يُلحق به العنصر المضيف، عنصرًا أو محدِّدًا، والافتراضي `document.body`.
 
-الخيارات الأخرى تفشل بالرمز [VIBE7206](https://vibejs.org/v0/errors/VIBE7206)، الذي يسمّي البديل.
+أي خيار آخر يفشل بالرمز [VIBE7206](https://vibejs.org/v0/errors/VIBE7206)، وتذكر الرسالة البديل.
 
-المكوّن المركَّب في متن اختبار أو في `beforeEach` يُلغى تركيبه عند انتهاء الاختبار. وعندما يفشل اختبار، ينتهي خطؤه بشيفرة HTML المعروضة لكل مكوّن مركَّب. أما المكوّن المركَّب في `beforeAll` فيبقى إلى أن تستدعي `wrapper.unmount()`.
+المكوّن الذي تركّبه في جسم الاختبار أو في `beforeEach` يُفك عند انتهاء الاختبار. وإذا فشل الاختبار، ينتهي خطؤه بـ HTML المعروض لكل مكوّن مركَّب. أما المكوّن الذي تركّبه في `beforeAll` فيبقى إلى أن تستدعي `wrapper.unmount()`.
 
 ## البحث عن العناصر {#finding-elements}
 
 تستعلم الأغلفة عن DOM المعروض بمحدِّدات CSS:
 
-- تعيد `get(selector)` أول تطابق، أو تفشل بالرمز [VIBE7201](https://vibejs.org/v0/errors/VIBE7201) مع شيفرة HTML المعروضة.
-- تعيد `find(selector)` أول تطابق، أو غلافًا تكون `exists()` فيه `false`؛ واستخدامه يفشل بالرمز [VIBE7202](https://vibejs.org/v0/errors/VIBE7202).
-- تعيد `findAll(selector)` كل التطابقات بترتيب المستند.
+- تعيد `get(selector)` أول تطابق، أو تفشل بالرمز [VIBE7201](https://vibejs.org/v0/errors/VIBE7201) مع HTML المعروض.
+- تعيد `find(selector)` أول تطابق، أو غلافًا قيمة `exists()` فيه `false`، واستخدام هذا الغلاف يفشل بالرمز [VIBE7202](https://vibejs.org/v0/errors/VIBE7202).
+- تعيد `findAll(selector)` كل التطابقات بترتيب ظهورها في المستند.
 
-يقرأ الغلاف عنصره بـ `text()` و`html()` و`attributes(name?)` و`classes(name?)` و`isVisible()` و`exists()`، و`element` هو عنصر DOM نفسه. اختر بحسب ما يراه المستخدم وبحسب نقاط ارتكاز ثابتة: أسماء العناصر والأدوار والتسميات كسمات، أو الأصناف، أو سمات `data-test`.
+يقرأ الغلاف عنصره بـ `text()` و`html()` و`attributes(name?)` و`classes(name?)` و`isVisible()` و`exists()`، و`element` هو عنصر DOM نفسه. اختر العناصر بما يراه المستخدم وبعلامات ثابتة: أسماء العناصر، والأدوار والتسميات في السمات، والأصناف، أو سمات `data-test`.
 
 ```ts
 const wrapper = mount(TodoList);
@@ -65,11 +65,11 @@ expect(wrapper.get('[aria-label="New todo"]').attributes('placeholder')).toBe('W
 expect(wrapper.find('.empty').exists()).toBe(false);
 ```
 
-`wrapper.element` وكل عنصر من `findAll()` هما عناصر DOM عادية، ولذلك تعمل عليها أي مكتبة لاختبار DOM أيضًا.
+`wrapper.element` وكل عنصر تعيده `findAll()` عناصر DOM عادية، فتعمل عليها أي مكتبة لاختبار DOM.
 
 ## الأحداث والإدخال {#events-and-input}
 
-تُطلق `trigger(event, init?)` حدثًا فقاعيًا (bubbling) قابلًا للإلغاء من الصنف الصحيح، وتضبط `setValue(value)` قيمة حقل إدخال أو textarea أو مربع اختيار أو زر راديو أو select، ثم تُطلق الأحداث التي يستمع إليها `v-model`. وكلتاهما تنتظر تحديث DOM.
+يطلق `trigger(event, init?)` حدثًا من الصنف المناسب، ينتشر صعودًا (bubbling) ويقبل الإلغاء. ويضبط `setValue(value)` قيمة حقل إدخال أو textarea أو مربع اختيار أو زر راديو أو select، ثم يطلق الأحداث التي يستمع إليها `v-model`. وكلاهما ينتظر تحديث DOM.
 
 ```ts
 const wrapper = mount(TodoList);
@@ -78,11 +78,11 @@ await wrapper.get('input').trigger('keydown', { key: 'Enter' });
 expect(wrapper.findAll('li').at(-1)?.text()).toBe('Ship it');
 ```
 
-يوضع المفتاح أو المُعدِّل في تهيئة الحدث (event init)، وليس في اسم الحدث أبدًا: `trigger('keydown.enter')` يفشل بالرمز [VIBE7203](https://vibejs.org/v0/errors/VIBE7203). والعنصر المعطَّل لا يستقبل أي حدث.
+المفتاح أو المعدِّل مكانه في init الحدث، لا في اسمه أبدًا: `trigger('keydown.enter')` يفشل بالرمز [VIBE7203](https://vibejs.org/v0/errors/VIBE7203). والعنصر المعطَّل لا يستقبل أي حدث.
 
 ## الخصائص والأحداث {#props-and-events}
 
-تسند `setProps(props)` الخصائص وتنتظر التحديث. وتعيد `emitted()` وسائط كل حدث أطلقه المكوّن، بحسب اسم الحدث، مُنمَّطة بواسطة `defineEmits`.
+يسند `setProps(props)` الخصائص وينتظر التحديث. وتعيد `emitted()` وسائط كل حدث أطلقه المكوّن، بحسب اسم الحدث، بأنواع مأخوذة من `defineEmits`.
 
 ```ts
 const wrapper = mount(Picker, { props: { options: ['a', 'b'] } });
@@ -93,7 +93,7 @@ expect(wrapper.emitted('pick')).toEqual([['c']]);
 
 ## انتظار العمل غير المتزامن {#waiting-for-async-work}
 
-تُحَلّ `flushPromises()` بعد تشغيل دوال الاستدعاء المعلّقة للوعود (promises)، ومعها تحديثات DOM التي سبّبتها. انتظرها بعد أي شيء يحمّل بيانات. وهي تعمل أيضًا مع `vi.useFakeTimers()`.
+تُحسم `flushPromises()` بعد أن تعمل دوال الـ promises المعلّقة، ومعها تحديثات DOM التي سبّبتها. انتظرها بعد أي شيء يحمّل بيانات. وتعمل أيضًا مع `vi.useFakeTimers()`.
 
 ```ts
 const wrapper = mount(UserCard, { props: { id: 1 } });
@@ -101,9 +101,9 @@ await flushPromises();
 expect(wrapper.get('h2').text()).toBe('Ada');
 ```
 
-## الـ Composables {#composables}
+## الدوال المركّبة {#composables}
 
-تشغّل `mountComposable(fn, options?)` الدالة `fn` بوصفها setup لمكوّن، فيمكنها استخدام `inject()` وخطافات دورة الحياة والمراقبات (watchers)، وتعيد `result` الخاص بها. وهي تأخذ `provide` و`plugins` وتُلغي التركيب كما تفعل `mount()`.
+تشغّل `mountComposable(fn, options?)` الدالة `fn` على أنها setup مكوّن، فتستطيع استخدام `inject()` وخطّافات دورة الحياة والمراقِبات، ثم تعيد `result` الخاص بها. وتقبل `provide` و`plugins`، وتُفك كما يُفك `mount()`.
 
 ```ts
 import { nextTick, ref, watch } from '@usevibejs/ui';
@@ -125,7 +125,7 @@ expect(result.past).toEqual([1]);
 
 ## الاختبار مع الموجِّه {#testing-with-the-router}
 
-ثبّت موجِّهًا بسجل في الذاكرة عبر `plugins`، ثم انتظر أول عملية تنقّل بـ `router.isReady()`. استخدم مسارات التطبيق نفسه، المستوردة من `routes.ts`، ليغطي الاختبار السجلات الحقيقية:
+ثبّت موجِّهًا بسجلّ في الذاكرة عبر `plugins`، ثم انتظر التنقّل الأول بـ `router.isReady()`. استخدم مسارات التطبيق نفسها، مستوردة من `routes.ts`، حتى يغطي الاختبار السجلّات الحقيقية:
 
 ```ts
 import { createMemoryHistory, createRouter } from '@usevibejs/ui/router';
@@ -145,11 +145,11 @@ it('opens a user from the list', async () => {
 });
 ```
 
-للبدء من مسار آخر، استخدم `await router.push('/users/1')` بعد `router.isReady()`. ينتظر `await router.push()` الحراس والصفحة الكسولة؛ وبعد تنقّل يحمّل بيانات، انتظر `flushPromises()` أيضًا.
+للبدء من مسار آخر، استدعِ `await router.push('/users/1')` بعد `router.isReady()`. ينتظر `await router.push()` الـ guards والصفحة الكسولة. وبعد تنقّل يحمّل بيانات، انتظر `flushPromises()` أيضًا.
 
 ## استبدال مكوّن ابن {#replacing-a-child-component}
 
-تُعرض المكوّنات الأبناء كما تُعرض في التطبيق. ولإبقاء ابن ثقيل خارج اختبار ما، حاكِ وحدته باستخدام Vitest:
+تُعرض المكوّنات الأبناء كما تُعرض في التطبيق. لإبعاد ابن ثقيل عن الاختبار، استبدل وحدته بنسخة وهمية (mock) في Vitest:
 
 ```ts
 import { vi } from 'vitest';
@@ -157,11 +157,11 @@ import { vi } from 'vitest';
 vi.mock('./Chart.vibe', () => import('./test/ChartStub.vibe'));
 ```
 
-`ChartStub.vibe` مكوّن صغير بالخصائص نفسها، مثل `<div class="chart-stub" />`.
+`ChartStub.vibe` مكوّن صغير له الخصائص نفسها، مثل `<div class="chart-stub" />`.
 
 ## التغطية {#coverage}
 
-يعرض `vibejs check` تغطية كل ملف ويحذّر بالرمز [VIBE8302](https://vibejs.org/v0/errors/VIBE8302) عند ما دون 100%. ولجعل التغطية الكاملة شرطًا، أزل التعليق عن سطر العتبة في `vitest.config.ts`:
+يعرض `vibejs check` تغطية كل ملف، ويحذّر بالرمز [VIBE8302](https://vibejs.org/v0/errors/VIBE8302) إذا كانت أقل من 100%. لتجعل التغطية الكاملة شرطًا، أزل التعليق عن سطر الحدّ في `vitest.config.ts`:
 
 ```ts
 export default defineConfig({

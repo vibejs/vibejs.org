@@ -1,17 +1,17 @@
 # Veri yükleme
 
-`@usevibejs/ui` içindeki `useAsync()`, bir bileşende veriyi yükler ve güncel tutar. Tipli API istemcisiyle birlikte, gereksiz kalan her istek iptal edilir ve her sonuç, hatalar dahil, tipli bir değerdir.
+`@usevibejs/ui` içindeki `useAsync()`, bir bileşende veri yükler ve bu veriyi güncel tutar. Tipli API istemcisiyle kullanınca her istek artık gerekmediği anda iptal olur. Hatalar dahil her sonuç da tipli bir değer olarak gelir.
 
 ## useAsync {#useasync}
 
-`useAsync(fn)`, `fn(signal)` fonksiyonunu hemen çağırır ve dört değer döndürür:
+`useAsync(fn)` hemen `fn(signal)` çağırır ve sana dört değer döner:
 
-- `data`: son çalıştırmanın çözümlendiği değeri tutan bir ref; ilk çalıştırma bitmeden önce `undefined` olur.
-- `error`: son çalıştırmanın fırlattığı şeyi tutan bir ref, yoksa `undefined`.
-- `loading`: bir çalıştırma sürerken `true` olan bir ref.
-- `refresh()`: `fn` fonksiyonunu yeniden çalıştırır; o çalıştırma bitince promise çözülür ve asla reddedilmez.
+- `data`: son çalışmanın döndüğü değeri tutan ref. İlk çalışma bitmeden önce `undefined` olur.
+- `error`: son çalışmanın fırlattığı şeyi tutan ref, yoksa `undefined`.
+- `loading`: bir çalışma sürerken `true` olan ref.
+- `refresh()`: `fn` fonksiyonunu yeniden çalıştırır. Dönen promise o çalışma bitince resolve olur ve hiçbir zaman reject etmez.
 
-Örnek uygulamanın todo sayfası, URL'deki id ile tek bir todo yükler:
+Örnek uygulamanın todo sayfası, URL'deki id'ye göre tek bir todo yükler:
 
 ```vibe
 <script setup lang="ts">
@@ -34,9 +34,9 @@ const { data: todo } = useAsync((signal) =>
 </template>
 ```
 
-`API`, uygulamanın istemcisini sağladığı enjeksiyon anahtarıdır.
+`API`, uygulamanın kendi istemcisini provide ettiği injection anahtarıdır.
 
-`loading` ve `refresh()` ilerlemeyi gösterir ve istek üzerine yeniden yükler:
+`loading` ile ilerlemeyi gösterirsin, `refresh()` ile de istediğin an yeniden yüklersin:
 
 ```vibe
 <script setup lang="ts">
@@ -55,9 +55,9 @@ const { data, loading, refresh } = useAsync(async (signal) => {
 </template>
 ```
 
-## İzleme ve yeniden çalıştırma {#tracking-and-reruns}
+## Takip ve yeniden çalışma {#tracking-and-reruns}
 
-`fn`, **ilk `await` öncesinde** okuduğu bir reaktif değer değiştiğinde yeniden çalışır. Yukarıda `route.params.id` eşzamanlı okunur; bu yüzden `/todos/1` adresinden `/todos/2` adresine geçildiğinde sayfa ekranda kalırken yeni todo yüklenir. Bir `await` sonrasında okunan değer izlenmez: önce tüm girdileri okuyun, sonra await edin.
+`fn`, **ilk `await` ifadesinden önce** okuduğu reaktif bir değer değişince yeniden çalışır. Yukarıdaki örnekte `route.params.id` senkron okunuyor. Bu yüzden `/todos/1` adresinden `/todos/2` adresine geçtiğinde sayfa ekranda kalır ve yeni todo yüklenir. Bir `await` sonrasında okuduğun değer takip edilmez. Önce tüm girdileri oku, sonra bekle.
 
 ```ts
 const query = ref('');
@@ -70,17 +70,17 @@ const results = useAsync(async (signal) => {
 });
 ```
 
-## İptal etmek {#aborting}
+## İptal {#aborting}
 
-Her çalıştırma kendi `AbortSignal` nesnesini alır. Yeni bir çalıştırma başladığında önceki signal iptal edilir; bileşen unmount edildiğinde de güncel olan iptal edilir. İsteğin durması için signal'i istemci çağrısına, `{ signal }` olarak, ya da `fetch` fonksiyonuna geçirin. İptal edilmiş bir çalıştırma `data`, `error` ya da `loading` alanlarına asla yazmaz; böylece yavaş gelen bir yanıt daha yeni bir yanıtın üzerine yazamaz.
+Her çalışma kendi `AbortSignal` nesnesini alır. Yeni bir çalışma başlayınca öncekinin sinyali iptal olur. Bileşen unmount olunca da o anki sinyal iptal olur. İsteğin gerçekten durması için sinyali istemci çağrısına `{ signal }` olarak ya da `fetch` fonksiyonuna ver. İptal edilen bir çalışma `data`, `error` ya da `loading` değerlerine hiçbir zaman yazmaz. Yani yavaş gelen bir yanıt, daha yeni bir yanıtın üzerine yazamaz.
 
-`useAsync()` setup içinde ya da setup'ın çağırdığı bir composable içinde kullanılmalıdır; onu sahiplenecek bir bileşene ya da effect scope'a ihtiyaç duyar ([VIBE7301](https://vibejs.org/v0/errors/VIBE7301)).
+`useAsync()` setup içinde ya da setup'ın çağırdığı bir composable içinde durmalı. Onu sahiplenecek bir bileşene ya da effect scope'a ihtiyacı var ([VIBE7301](https://vibejs.org/v0/errors/VIBE7301)).
 
 ## Tipli sonuçlar {#typed-results}
 
-API istemcisi bir HTTP ya da ağ hatası için asla reddetmez: her çağrı, `{ ok: true, data }` veya `{ ok: false, error }` biçiminde bir sonuca çözülür. Yani istemciyle birlikte hatalar `data` içinde gelir; `error` yalnızca `fn` içindeki bir istisna gibi gerçek hataları tutar.
+API istemcisi HTTP ya da ağ hatası yüzünden asla reject etmez. Her çağrı ya `{ ok: true, data }` ya da `{ ok: false, error }` olan bir sonuçla resolve olur. Yani istemciyi kullanırken hatalar `data` içinde gelir. `error` ise sadece gerçek bug'ları, örneğin `fn` içindeki bir exception'ı tutar.
 
-Payload'ı okumadan önce `ok` üzerinden daraltın: template'te `v-if="data?.ok"` ile, script'te `data.value?.ok` ile.
+Payload'u okumadan önce `ok` alanına bakarak tipi daralt. Şablonda bunu `v-if="data?.ok"` ile, script'te de `data.value?.ok` ile yaparsın.
 
 ```ts
 const { data } = useAsync((signal) => health({ signal }));
@@ -90,11 +90,11 @@ const status = computed(() =>
 );
 ```
 
-`error.code`, route'un contract'ında bildirdiği kodlardan biri ya da `NETWORK_ERROR` gibi bir istemci kodudur; bu yüzden üzerindeki bir `switch` TypeScript tarafından denetlenir.
+`error.code`, rotanın sözleşmesinde (contract) tanımladığı kodlardan biri ya da `NETWORK_ERROR` gibi bir istemci kodudur. Bu yüzden üzerine yazdığın bir `switch` ifadesini TypeScript denetler.
 
 ## Paylaşılan durum {#shared-state}
 
-Birden çok bileşenin okuduğu durum (oturum açmış kullanıcı ya da bir sepet gibi) bir modülde yaşar: modül kapsamında bir kez oluşturun ve bir composable ile dışarı açın.
+Giriş yapmış kullanıcı ya da sepet gibi birden çok bileşenin okuduğu durumu bir modülde tutarsın. Durumu modül seviyesinde bir kere oluştur ve bir composable üzerinden dışarı aç.
 
 ```ts
 import { computed, readonly, ref } from '@usevibejs/ui';
@@ -121,11 +121,11 @@ export function useCart() {
 }
 ```
 
-`useCart()` çağıran her bileşen aynı durumu okur ve değiştirir; template ref'leri her zamanki gibi açar. Yazma işlemlerini composable'ın fonksiyonlarında tutun; böylece her değişiklik tek bir yerden geçer. Testlerde, modül aynı dosyanın testleri arasında yüklü kaldığı için durumu bir `beforeEach` içinde `clear()` ile sıfırlayın.
+`useCart()` çağıran her bileşen aynı durumu okur ve değiştirir. Şablon da ref'leri her zamanki gibi açar. Yazma işlemlerini composable'ın fonksiyonlarında tut ki her değişiklik tek bir yerden geçsin. Testlerde durumu bir `beforeEach` içinde `clear()` ile sıfırla. Çünkü aynı dosyadaki testler arasında modül yüklü kalır.
 
-Ağacın tek bir bölümüne ait olan ya da bir testin değiştirmesi gereken durum için bunun yerine `provide()` ile sağlayın ve `inject()` ile okuyun.
+Durum ağacın sadece bir kısmına aitse ya da bir testin onu değiştirmesi gerekiyorsa, onun yerine `provide()` ile ver ve `inject()` ile oku.
 
-## Ayrıca bakın {#see-also}
+## Ayrıca bak {#see-also}
 
-- [Routing](https://vibejs.org/v0/ui/routing): parametreler, guard'lar ve lazy sayfalar.
-- [Bileşen testleri](https://vibejs.org/v0/ui/testing#waiting-for-async-work): veri yüklendikten sonra `flushPromises()`.
+- [Yönlendirme](https://vibejs.org/v0/ui/routing): parametreler, guard'lar ve lazy sayfalar.
+- [Bileşenleri test etmek](https://vibejs.org/v0/ui/testing#waiting-for-async-work): veri yüklendikten sonra `flushPromises()`.

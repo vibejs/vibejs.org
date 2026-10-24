@@ -1,27 +1,27 @@
-# الدليل التعليمي
+# الدرس التطبيقي
 
-في هذا الدليل تضيف واجهة `users` البرمجية (API) إلى تطبيق جديد، وتكتب صفحة تعرض المستخدمين، وتدع `vibejs check` يكتشف خطأ في الأنواع داخل قالب، ثم تبني التطبيق وتقدّمه. يستغرق نحو عشر دقائق. تحتاج إلى Node.js بالإصدار `^24.15.0 || >=26` وإلى pnpm.
+في هذا الدرس تضيف API باسم `users` إلى تطبيق جديد، وتكتب صفحة تعرض قائمة المستخدمين، وتترك `vibejs check` يكشف خطأ أنواع في قالب، ثم تبني التطبيق وتشغّله. يستغرق الأمر نحو عشر دقائق. تحتاج إلى Node.js `^24.15.0 || >=26` وإلى pnpm.
 
-كل أمر وملف في هذه الصفحة تشغّله مجموعة اختبارات vibe.js بهذا الترتيب عند كل تغيير، لذا تعمل الخطوات كما هي مكتوبة.
+مجموعة اختبارات vibe.js تشغّل كل أمر وكل ملف في هذه الصفحة، بالترتيب نفسه، مع كل تغيير. لذلك تعمل الخطوات كما هي مكتوبة.
 
-## 1. إنشاء التطبيق {#1-create-the-app}
+## 1. أنشئ التطبيق {#1-create-the-app}
 
 ```sh
 pnpm create vibejs my-app
 cd my-app
 ```
 
-للتطبيق ثلاثة أجزاء: `contracts/` لعقود الـ API، و`server/` للخادم، و`ui/` للواجهة. راجع [البدء](https://vibejs.org/v0/guides/getting-started) لمعرفة البنية وإعداد المحرر.
+للتطبيق ثلاثة أجزاء: `contracts/` لعقود الـ API، و`server/` للخادم، و`ui/` للواجهة. تجد بنية المشروع وإعداد المحرر في [البدء](https://vibejs.org/v0/guides/getting-started).
 
-## 2. فحصه {#2-check-it}
+## 2. افحصه {#2-check-it}
 
 ```sh
 pnpm vibejs check
 ```
 
-يشغّل `vibejs check` مدقّق الأنواع على TypeScript وقوالب `.vibe`، والمدقّق (linter)، وفحص التنسيق، والاختبارات مع التغطية. ينجح التطبيق الجديد مع تغطية كاملة لكل ملف.
+يتحقق `vibejs check` من الأنواع في TypeScript وفي قوالب `.vibe`، ثم يشغّل الـ linter، ويفحص التنسيق، ويشغّل الاختبارات مع قياس التغطية. التطبيق الجديد ينجح في الفحص، وتغطية كل ملف فيه كاملة.
 
-## 3. توليد مورد وصفحة ومكوّن {#3-generate-a-resource-a-page-and-a-component}
+## 3. ولّد موردًا وصفحة ومكوّنًا {#3-generate-a-resource-a-page-and-a-component}
 
 ```sh
 pnpm vibejs g resource users
@@ -30,13 +30,13 @@ pnpm vibejs g component UserCard
 pnpm vibejs check
 ```
 
-يكتب كل مولّد ملفاته مع اختباراتها، ويسجّلها حيث يجب:
+كل مولّد يكتب ملفاته مع اختباراتها، ويسجّلها في أماكنها:
 
-- يكتب `g resource users` العقد `contracts/src/users.contract.ts` بمسارات لعرض المستخدمين وجلبهم وإنشائهم وتحديثهم وحذفهم، ووحدة خادم فيها متحكم وخدمة في الذاكرة واختبار. ويضيف الوحدة إلى `server/src/app.module.ts` والعقد إلى عميل الـ API في الواجهة داخل `ui/src/api.ts`.
-- يكتب `g page Users` الملف `ui/src/pages/UsersPage.vibe` مع اختبار، ويضيف المسار `/users` إلى `ui/src/routes.ts`.
-- يكتب `g component UserCard` الملف `ui/src/components/UserCard.vibe`، وهو مكوّن له prop باسم `title`، مع اختباره.
+- `g resource users` يكتب العقد `contracts/src/users.contract.ts`، وفيه مسارات لعرض المستخدمين وجلب مستخدم وإنشائه وتعديله وحذفه. ويكتب وحدة خادم فيها متحكم (controller) وخدمة تحفظ البيانات في الذاكرة واختبار. ثم يضيف الوحدة إلى `server/src/app.module.ts`، والعقد إلى عميل الـ API في الواجهة داخل `ui/src/api.ts`.
+- `g page Users` يكتب `ui/src/pages/UsersPage.vibe` مع اختبار، ويضيف المسار `/users` إلى `ui/src/routes.ts`.
+- `g component UserCard` يكتب `ui/src/components/UserCard.vibe`، وهو مكوّن له خاصية `title`، ويكتب اختباره.
 
-يعلن العقد عن كل مسار مرة واحدة، مع معاملاته وجسمه واستجابته وأخطائه، ويُنمَّط الطرفان منه. يبدو عقد تطبيق المهام التجريبي (todo) على النحو نفسه:
+يعرّف العقد كل مسار مرة واحدة، مع معاملاته وجسم طلبه واستجابته وأخطائه، ومنه يأخذ الطرفان أنواعهما. وهذا عقد مثال تطبيق المهام (todo)، وهو بالشكل نفسه:
 
 ```ts
 import { defineContract, del, get, patch, post } from '@usevibejs/contract';
@@ -56,11 +56,11 @@ export const todos = defineContract('/todos', {
 });
 ```
 
-يعالج الخادم كل مسار في العقد بمعالج (handler) مُنمَّط ([المتحكمات والمعالجات](https://vibejs.org/v0/server/handlers))، وتستدعيه الواجهة عبر عميل مُنمَّط دون توليد شيفرة ([العقود](https://vibejs.org/v0/server/contracts)). لا تكتب المولّدات فوق تعديلاتك أبدًا: شغّل أحدها مرة أخرى وسيتخطى الملفات الموجودة.
+يعالج الخادم كل مسار في العقد بمعالج ذي أنواع ([المتحكمات والمعالجات](https://vibejs.org/v0/server/handlers))، وتستدعيه الواجهة عبر عميل ذي أنواع دون توليد كود ([العقود](https://vibejs.org/v0/server/contracts)). المولّدات لا تكتب فوق تعديلاتك أبدًا: إن شغّلت أحدها مرة أخرى تخطّى الملفات الموجودة.
 
-## 4. عرض المستخدمين {#4-list-the-users}
+## 4. اعرض المستخدمين {#4-list-the-users}
 
-اجعل الصفحة تحمّل المستخدمين من الـ API وتعرض `UserCard` واحدًا لكل مستخدم، مرقّمًا. أولًا، اختبار الصفحة: يركّب التطبيق على `/users` مع عميل API تجيب `fetch` الخاصة به بمستخدم واحد.
+اجعل الصفحة تجلب المستخدمين من الـ API وتعرض `UserCard` مرقّمًا لكل مستخدم. ابدأ باختبار الصفحة: يركّب الاختبار التطبيق على `/users`، ويعطيه عميل API تردّ دالة `fetch` فيه بمستخدم واحد.
 
 ```ts [ui/src/pages/UsersPage.test.ts]
 import { createMemoryHistory, createRouter } from '@usevibejs/ui/router';
@@ -81,7 +81,7 @@ it('lists the users from the API at /users', async () => {
 });
 ```
 
-ثم الصفحة. تحمّل `useAsync` القائمة عند تركيب الصفحة، ونتيجة العميل إما `{ ok: true, data }` أو `{ ok: false, error }` ([تحميل البيانات](https://vibejs.org/v0/ui/data)). في هذه النسخة الأولى خطأ:
+ثم الصفحة. تجلب `useAsync` القائمة عند تركيب الصفحة، ونتيجة العميل إما `{ ok: true, data }` وإما `{ ok: false, error }` ([جلب البيانات](https://vibejs.org/v0/ui/data)). في هذه النسخة الأولى خطأ:
 
 ```vibe [ui/src/pages/UsersPage.vibe]
 <script setup lang="ts">
@@ -101,20 +101,20 @@ const users = computed(() => (data.value?.ok ? data.value.data : []));
 </template>
 ```
 
-## 5. دع check يجد الخطأ {#5-let-check-find-the-mistake}
+## 5. دع الفحص يجد الخطأ {#5-let-check-find-the-mistake}
 
 ```sh exit=1
 pnpm vibejs check
 ```
 
-يفشل الفحص. تُفحَص أنواع القوالب كما تُفحَص أنواع TypeScript، فيُبلَّغ عن خطأ النوع عند سطره وعموده في ملف `.vibe`. ويفشل اختبار الصفحة أيضًا لأن البطاقة تعرض `1`:
+يفشل الفحص. القوالب تخضع للتحقق من الأنواع مثل TypeScript تمامًا، فيظهر خطأ الأنواع عند سطره وعموده في ملف `.vibe`. ويفشل اختبار الصفحة أيضًا، لأن البطاقة تعرض `1`:
 
 ```txt
 ui/src/pages/UsersPage.vibe:14:60  error  TS2322  Type 'number' is not assignable to type 'string'.
 ui/src/pages/UsersPage.test.ts:8:1  error  test-failed  AssertionError: expected [ '1' ] to deeply equal [ '1. Ada' ]
 ```
 
-الـ prop المسمّى `title` من النوع `string` أما `index + 1` فرقم. يعرض محررك الخطأ نفسه أثناء الكتابة. مرّر نصًا:
+الخاصية `title` من النوع `string`، أما `index + 1` فرقم. ويعرض محررك الخطأ نفسه أثناء الكتابة. مرّر نصًا:
 
 ```vibe [ui/src/pages/UsersPage.vibe]
 <script setup lang="ts">
@@ -140,31 +140,31 @@ pnpm vibejs check
 
 ينجح الفحص من جديد، بما في ذلك الاختبارات والتغطية الكاملة.
 
-## 6. البناء والتقديم {#6-build-and-serve}
+## 6. ابنِ التطبيق وشغّله {#6-build-and-serve}
 
 ```sh
 pnpm vibejs build
 pnpm start
 ```
 
-يكتب `vibejs build` الواجهة في `ui/dist` والخادم في `server/dist/main.js`. يشغّل `pnpm start` الخادم المبني على المنفذ 3000، أو على المنفذ المحدد في `PORT`: يجيب `/api/health` بـ `{"status":"ok"}` ويجيب `/api/users` بقائمة المستخدمين، وهي فارغة الآن. أوقفه بـ Ctrl+C. يُنشَر الناتجان بشكل منفصل: الواجهة كملفات ثابتة، والخادم كعملية Node.js ([النشر](https://vibejs.org/v0/server/#deploying)).
+يكتب `vibejs build` الواجهة في `ui/dist` والخادم في `server/dist/main.js`. ويشغّل `pnpm start` الخادم المبني على المنفذ 3000، أو على المنفذ المحدد في `PORT`. يردّ `/api/health` بـ `{"status":"ok"}`، ويردّ `/api/users` بقائمة المستخدمين، وهي فارغة حتى الآن. أوقفه بـ Ctrl+C. تنشر الناتجين كلًّا على حدة: الواجهة ملفات ثابتة، والخادم عملية Node.js ([النشر](https://vibejs.org/v0/server/#deploying)).
 
-## 7. التطوير {#7-develop}
+## 7. طوّر {#7-develop}
 
 ```sh
 pnpm dev
 ```
 
-يخدم `pnpm dev` الواجهة والـ API على منفذ واحد ويطبع عنوانه؛ افتح `/users` عليه. أبقِه يعمل أثناء عملك:
+يخدم `pnpm dev` الواجهة والـ API على منفذ واحد ويطبع عنوانه، فافتح عليه `/users`. اتركه يعمل أثناء عملك:
 
-- عدّل `ui/src/components/UserCard.vibe`، مثلًا ترميزه: تتحدّث الصفحة في مكانها وتحتفظ بحالتها.
-- عدّل ملفًا تحت `server/`، مثلًا الخدمة: يعاد تشغيل الخادم في أقل بكثير من ثانية، ويصل الطلب التالي إلى الشيفرة الجديدة.
-- تذهب أخطاء البناء والمتصفح والخادم إلى `.vibejs/dev.log`؛ ويسردها `pnpm vibejs errors`.
+- عدّل `ui/src/components/UserCard.vibe`، كأن تغيّر بنيته (markup): تتحدّث الصفحة في مكانها وتحتفظ بحالتها.
+- عدّل ملفًا داخل `server/`، كملف الخدمة مثلًا: يعيد الخادم تشغيل نفسه في أقل بكثير من ثانية، ويصل الطلب التالي إلى الكود الجديد.
+- أخطاء البناء والمتصفح والخادم تُكتب في `.vibejs/dev.log`، ويعرضها `pnpm vibejs errors`.
 
-يُبلغ أمر `pnpm dev` ثانٍ في التطبيق نفسه عن الخادم العامل بدلًا من تشغيل خادم آخر.
+إن شغّلت `pnpm dev` مرة ثانية في التطبيق نفسه، أخبرك بالخادم الذي يعمل بدل أن يشغّل خادمًا آخر.
 
-## التالي {#next}
+## الخطوة التالية {#next}
 
 - [التوجيه](https://vibejs.org/v0/ui/routing) و[اختبار المكوّنات](https://vibejs.org/v0/ui/testing) للواجهة.
 - [الخادم](https://vibejs.org/v0/server/) و[الوحدات والمزوّدات](https://vibejs.org/v0/server/modules) للخادم.
-- [سطر الأوامر ووكلاء الذكاء الاصطناعي](https://vibejs.org/v0/guides/ai-agents) لتدع وكيل برمجة يعمل على التطبيق بالأوامر نفسها.
+- [سطر الأوامر ووكلاء الذكاء الاصطناعي](https://vibejs.org/v0/guides/ai-agents) ليعمل وكيل برمجة على التطبيق بالأوامر نفسها.

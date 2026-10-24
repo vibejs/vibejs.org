@@ -2,19 +2,19 @@
 
 Bir istek şu adımlardan geçer:
 
-1. **Middleware**, her şeyin etrafında, `AppOptions.middleware` sırasıyla.
-2. **Routing**: hiçbir route eşleşmezse 404, ya da `Allow` ile 405.
-3. **Guard'lar**: önce global, sonra controller, sonra metot. `false` döndüren ilk guard isteği 403 `FORBIDDEN` ile sonlandırır.
-4. **Interceptor'lar**: önce global, sonra controller, sonra metot; ilki en dıştakidir.
-5. İstek parçalarının **doğrulaması**, ardından **handler**.
-6. **Yanıt** oluşturma ve yanıt doğrulaması.
-7. 3. ile 6. adımlardaki herhangi bir hata için **Filter'lar**: önce metot, sonra controller, sonra global.
+1. **Middleware**, her şeyi sarar ve `AppOptions.middleware` sırasıyla çalışır.
+2. **Yönlendirme**: hiçbir rota eşleşmezse 404, ya da `Allow` header'ıyla 405.
+3. **Guard'lar**: önce global, sonra controller, sonra method seviyesindekiler. `false` dönen ilk guard isteği 403 `FORBIDDEN` ile bitirir.
+4. **Interceptor'lar**: önce global, sonra controller, sonra method seviyesindekiler. İlki en dıştakidir.
+5. İsteğin parçalarının **doğrulanması**, ardından **handler**.
+6. Yanıtın **oluşturulması** ve doğrulanması.
+7. 3 ile 6 arasındaki adımlarda çıkan her hata için **filter'lar**: önce method, sonra controller, sonra global seviyesindekiler.
 
-`app.inspect()` ve `inspect(root, options)`, her route'un guard'larını, interceptor'larını ve filter'larını, globaller dahil tam olarak bu sırayla listeler.
+`app.inspect()` ve `inspect(root, options)` her rotanın guard'larını, interceptor'larını ve filter'larını global olanlar dahil tam olarak bu sırayla listeler.
 
 ## Middleware {#middleware}
 
-Middleware, tüm isteği Fetch düzeyinde sarar. Routing'den önce çalışır; bu yüzden hiçbir route ile eşleşmeyenler dahil her isteği görür:
+Middleware, isteğin tamamını Fetch seviyesinde sarar. Yönlendirmeden önce çalışır, yani hiçbir rotayla eşleşmeyenler dahil her isteği görür:
 
 ```ts
 export const timing: Middleware = async (req, next) => {
@@ -27,7 +27,7 @@ export const timing: Middleware = async (req, next) => {
 };
 ```
 
-`next(req?)` aynı istekle ya da bir yedeğiyle devam eder. Middleware düz bir fonksiyondur; bu yüzden bir paket, yerleşik `cors()` gibi bir middleware factory'si export edebilir.
+`next(req?)` aynı istekle ya da yerine koyduğun bir istekle devam eder. Middleware düz bir fonksiyondur. Bu yüzden bir paket, yerleşik `cors()` gibi middleware üreten bir factory export edebilir.
 
 ## Guard'lar {#guards}
 
@@ -43,9 +43,9 @@ export class SessionGuard implements CanActivate {
 }
 ```
 
-Onu bir controller ya da handler üzerinde `@UseGuards(SessionGuard)` ile, ya da global olarak `AppOptions.guards` ile uygulayın. 403 dışında bir yanıt vermek için `new HttpError(401, 'UNAUTHORIZED')` gibi bir `HttpError` fırlatın.
+Bir controller'a ya da handler'a `@UseGuards(SessionGuard)` ile, global olarak da `AppOptions.guards` ile uygularsın. 403 dışında bir şeyle cevap vermek istiyorsan `new HttpError(401, 'UNAUTHORIZED')` gibi bir `HttpError` fırlat.
 
-`ctx.state`, guard'lardan ve interceptor'lardan handler'lara değer taşır. Alanlarını `RequestState` arayüzünü genişleterek tipleyin:
+`ctx.state`, guard'lardan ve interceptor'lardan handler'lara değer taşır. Alanlarının tipini `RequestState` arayüzünü genişleterek verirsin:
 
 ```ts
 declare module '@usevibejs/server' {
@@ -57,7 +57,7 @@ declare module '@usevibejs/server' {
 
 ## Interceptor'lar {#interceptors}
 
-Interceptor, handler'ı sarar. `next()` zincirin geri kalanını çalıştırır ve handler'ın sonucuyla çözülür; böylece bir interceptor sonucu ölçebilir, yeniden deneyebilir ya da değiştirebilir:
+Interceptor handler'ı sarar. `next()` zincirin geri kalanını çalıştırır ve handler'ın sonucuyla resolve olur. Böylece interceptor bu sonucu ölçebilir, işi yeniden deneyebilir ya da sonucu değiştirebilir:
 
 ```ts
 export class LogDuration implements Interceptor {
@@ -74,7 +74,7 @@ export class LogDuration implements Interceptor {
 
 ## Filter'lar {#filters}
 
-Filter, bir hatayı yanıta çevirir. Bir `Response`, problem olarak gönderilecek bir `HttpError` ya da hatayı sonraki filter'a iletmek için `undefined` döndürür. Hiçbir filter'ın ele almadığı hatalar [Handler'lar](https://vibejs.org/v0/server/handlers#errors) sayfasında anlatıldığı gibi yanıtlanır.
+Filter bir hatayı yanıta çevirir. Bir `Response`, problem olarak gönderilecek bir `HttpError` ya da hatayı bir sonraki filter'a bırakmak için `undefined` döner. Hiçbir filter'ın ele almadığı hatalar [Handler'lar](https://vibejs.org/v0/server/handlers#errors) sayfasında anlatıldığı gibi cevaplanır.
 
 ```ts
 export class DbErrors implements ExceptionFilter {
@@ -84,11 +84,11 @@ export class DbErrors implements ExceptionFilter {
 }
 ```
 
-Guard'lar, interceptor'lar ve filter'lar constructor parametresi olmayan sınıflardır. Controller'larının modülü kapsamında (globaller kök modülde) bir kez oluşturulurlar; bu yüzden provider'ları `inject()` edebilirler.
+Guard'lar, interceptor'lar ve filter'lar constructor parametresi olmayan class'lardır. Her biri, controller'ının ait olduğu modülün kapsamında bir kere oluşur (global olanlar kök modülde). Bu yüzden provider'ları `inject()` edebilirler.
 
 ## Metadata {#metadata}
 
-`createMetadata<T>(name)`, değeri geri okumak için anahtar da olan tipli bir decorator oluşturur. Metot değerleri controller değerlerini geçersiz kılar:
+`createMetadata<T>(name)` tipli bir decorator oluşturur. Bu decorator aynı zamanda değeri geri okumak için kullandığın anahtardır. Method seviyesindeki değerler controller seviyesindekileri ezer:
 
 ```ts
 export const Roles = createMetadata<readonly string[]>('roles');
@@ -114,7 +114,7 @@ export class AdminController {
 
 ## Global enhancer'lar {#global-enhancers}
 
-`AppOptions`, middleware ve enhancer'ları her route'a uygular:
+`AppOptions`, middleware'leri ve enhancer'ları her rotaya uygular:
 
 ```ts
 export const appOptions: AppOptions = {

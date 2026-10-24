@@ -1,10 +1,10 @@
-# UI temelleri
+# Arayüz temelleri
 
-Bir vibe.js uygulamasının arayüzü, `.vibe` dosyalarında yazılan bileşenlerden ve bunların okuduğu reaktif durumdan oluşur. Bir bileşenin içe aktardığı her şey `@usevibejs/ui` paketinden gelir; derleyici ve dil araçları script ile template'i birlikte tür denetiminden geçirir.
+Bir vibe.js uygulamasının arayüzü iki şeyden oluşur: `.vibe` dosyalarında yazdığın bileşenler ve bu bileşenlerin okuduğu reaktif durum. Bir bileşenin import ettiği her şey `@usevibejs/ui` paketinden gelir. Derleyici ve dil araçları script ile şablonun tipini birlikte denetler.
 
 ## Bir bileşen {#a-component}
 
-Bir `.vibe` dosyası en fazla üç bloktan oluşur: setup script'i, template ve kapsamlı (scoped) stiller.
+Bir `.vibe` dosyasında en fazla üç blok olur: setup script'i, şablon ve scoped stiller.
 
 ```vibe
 <script setup lang="ts">
@@ -27,15 +27,15 @@ button {
 </style>
 ```
 
-- `<script setup lang="ts">` bileşenin her örneği için bir kez çalışır. Üst düzey bağlamaları ve içe aktarımları template içinde kullanılabilir; ref'ler orada açılır: template `count` yazar, script `count.value` yazar.
-- `<template>` DOM'u tanımlar. Elemanları bir kez oluşturan ve yalnızca değişen durumu okuyan metni, öznitelikleri ve listeleri güncelleyen koda derlenir.
-- `<style scoped>` yalnızca bu bileşenin elemanlarına uygulanır.
+- `<script setup lang="ts">` bileşenin her örneği için bir kere çalışır. En üst seviyedeki değişkenlerine ve import'larına şablondan erişirsin. Ref'ler orada otomatik açılır: şablonda `count`, script'te `count.value` yazarsın.
+- `<template>` DOM'u tarif eder. Elemanları bir kere oluşturan, sonra sadece değişen durumu okuyan metinleri, attribute'ları ve listeleri güncelleyen koda derlenir.
+- `<style scoped>` sadece bu bileşenin elemanlarına uygulanır.
 
-`defineProps` ve diğer `define*` çağrıları derleyici makrolarıdır: içe aktarma gerekmeden kullanılabilir. [Bileşenler](https://vibejs.org/v0/ui/components) sayfası bunları listeler.
+`defineProps` ve diğer `define*` çağrıları derleyici makrolarıdır, import etmeden kullanırsın. Hepsinin listesi [Bileşenler](https://vibejs.org/v0/ui/components) sayfasında.
 
 ## Uygulamayı mount etmek {#mounting-the-app}
 
-`createApp()` kök bileşeni alır; `mount()` onu bir elemana ya da bir seçicinin eşleştirdiği elemana render eder ve içeriğinin yerine geçer.
+`createApp()` kök bileşeni alır. `mount()` onu bir elemanın ya da bir seçicinin bulduğu elemanın içine çizer ve elemanın içeriğini değiştirir.
 
 ```ts
 const app = createApp(App);
@@ -50,24 +50,24 @@ app.config.warnHandler = (message, instance, trace) => {
 app.mount('#app');
 ```
 
-Gerçek bir uygulamada `App`, `./App.vibe` dosyasının varsayılan içe aktarımıdır.
+Gerçek bir uygulamada `App`, `./App.vibe` dosyasının default import'udur.
 
-- `errorHandler`, hiçbir `onErrorCaptured` hook'unun durdurmadığı her hatayı alır: setup'ta, render sırasında, bir watcher'da, bir olay handler'ında ya da bir lifecycle hook'unda fırlatılan hatalar. `info` kaynağı adlandırır; örneğin `'setup function'` ya da `'native event handler'`. Handler yoksa hata [VIBE5102](https://vibejs.org/v0/errors/VIBE5102) olarak loglanır.
-- `warnHandler`, geliştirme uyarılarını konsol yerine bileşen adlarının izleriyle birlikte alır. Production build'lerinde uyarı yayınlanmaz.
+- `errorHandler`, hiçbir `onErrorCaptured` hook'unun durdurmadığı her hatayı alır: setup içinde, bir render sırasında, bir watcher'da, bir event handler'da ya da bir yaşam döngüsü hook'unda fırlatılan hatalar. `info` kaynağı söyler, örneğin `'setup function'` ya da `'native event handler'`. Handler yoksa hata [VIBE5102](https://vibejs.org/v0/errors/VIBE5102) olarak loglanır.
+- `warnHandler` geliştirme uyarılarını console yerine kendisi alır. Uyarıyla beraber bileşen isimlerinden oluşan izi de gelir. Production build'lerinde uyarı çıkmaz.
 - `app.unmount()` kök bileşeni unmount eder ve düğümlerini kaldırır.
 
 ## Sıcak güncellemeler {#hot-updates}
 
-Geliştirme sırasında bir `.vibe` dosyasını kaydetmek, çalışan sayfayı yeniden yüklemeden günceller:
+Geliştirme sırasında bir `.vibe` dosyasını kaydettiğinde çalışan sayfa yenilenmeden güncellenir:
 
-- Template'te yapılan bir düzenleme, bileşenin her örneğini yeniden render eder ve setup durumunu korur. O template'in render ettiği alt bileşenler yeniden oluşturulur; bu yüzden kendi durumları sıfırlanır.
-- Script'te yapılan bir düzenleme bileşeni yeni durumla yeniden mount eder.
+- Şablonu değiştirirsen bileşenin her örneği yeniden çizilir ve setup durumu korunur. O şablonun çizdiği çocuk bileşenler ise baştan oluşur, yani kendi durumları sıfırlanır.
+- Script'i değiştirirsen bileşen yeni bir durumla baştan mount olur.
 
-## Sonraki adımlar {#where-to-go-next}
+## Sırada ne var {#where-to-go-next}
 
-- [Reaktivite](https://vibejs.org/v0/ui/reactivity): `ref`, `reactive`, `computed`, `watch` ve diğer ilkel yapılar.
-- [Template sözdizimi](https://vibejs.org/v0/ui/template-syntax): interpolasyon, bağlamalar, olaylar, koşullar, listeler, `v-model` ve template ref'leri.
-- [Bileşenler](https://vibejs.org/v0/ui/components): props, olaylar, slotlar, modeller, öznitelikler ve dışa açılan değerler.
-- [Lifecycle](https://vibejs.org/v0/ui/lifecycle): lifecycle hook'ları, sıraları ve hata yönetimi.
+- [Reaktivite](https://vibejs.org/v0/ui/reactivity): `ref`, `reactive`, `computed`, `watch` ve diğer temel yapılar.
+- [Şablon sözdizimi](https://vibejs.org/v0/ui/template-syntax): interpolation, bağlamalar, event'ler, koşullar, listeler, `v-model` ve template ref'ler.
+- [Bileşenler](https://vibejs.org/v0/ui/components): prop'lar, event'ler, slot'lar, model'ler, attribute'lar ve dışarı açılan değerler.
+- [Yaşam döngüsü](https://vibejs.org/v0/ui/lifecycle): yaşam döngüsü hook'ları, sıraları ve hata yönetimi.
 - [Provide ve inject](https://vibejs.org/v0/ui/provide-inject): değerleri bileşen ağacında aşağı aktarmak.
 - [vibe.js'i genişletmek](https://vibejs.org/v0/guides/extending): plugin'ler ve composable'lar.

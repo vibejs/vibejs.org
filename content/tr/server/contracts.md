@@ -1,6 +1,6 @@
-# Contract'lar
+# Sözleşmeler
 
-Contract, tek bir kaynağın route'larını bildirir: metot, yol, girdiler, yanıt ve hatalar. Sunucu onu sunar, UI onu çağırır ve ikisi de kod üretimi olmadan aynı bildirime karşı tür denetiminden geçer.
+Sözleşme (contract), tek bir kaynağın rotalarını tanımlar: method, path, girdiler, yanıt ve hatalar. Sunucu sözleşmeyi sunar, UI onu çağırır. İkisi de aynı tanıma göre tip denetiminden geçer ve arada hiç kod üretimi yoktur.
 
 ```ts
 import { defineContract, del, get, patch, post } from '@usevibejs/contract';
@@ -20,26 +20,26 @@ export const todos = defineContract('/todos', {
 });
 ```
 
-Contract dosyaları (`*.contract.ts`) yalnızca `@usevibejs/contract` ve bir şema kütüphanesini içe aktarır; böylece UI, sunucu kodunu çekmeden bunları içe aktarabilir.
+Sözleşme dosyaları (`*.contract.ts`) sadece `@usevibejs/contract` ve bir schema kütüphanesi import eder. Böylece UI bu dosyaları import ettiğinde sunucu kodunu da beraberinde çekmez.
 
-## Route'lar {#routes}
+## Rotalar {#routes}
 
-Route yardımcıları `get`, `post`, `put`, `patch` ve `del` fonksiyonlarıdır. Her biri bir yol ve isteğe bağlı bir tanım alır:
+Rota yardımcıları şunlar: `get`, `post`, `put`, `patch` ve `del`. Her biri bir path ve isteğe bağlı bir tanım alır:
 
-| Alan                     | Anlamı                                                                                                         |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| `params`                 | Yol parametreleri için şema; yoksa parametreler string olur.                                                   |
-| `query`                  | Query string için şema. URL'de tekrarlanan ya da dizi olarak tiplenen bir anahtar dizi olur.                   |
-| `headers`                | İstek başlıkları için şema; adlar küçük harflidir.                                                             |
-| `body`                   | JSON istek gövdesi için şema; `get` üzerinde kullanılamaz ([VIBE9004](https://vibejs.org/v0/errors/VIBE9004)). |
-| `response`               | JSON başarı gövdesi için şema ya da `raw()`. Yoksa route 204 ile yanıtlar.                                     |
-| `status`                 | Başarı durumu: 200 (varsayılan), 201 veya 202.                                                                 |
-| `errors`                 | Route'un ürettiği hata kodları, her biri HTTP durumuyla birlikte.                                              |
-| `summary`, `description` | OpenAPI dokümanı için metin.                                                                                   |
+| Alan                     | Anlamı                                                                                                                |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `params`                 | Path parametreleri için bir schema. Vermezsen parametreler string olur.                                               |
+| `query`                  | Query string için bir schema. URL'de tekrarlanan ya da dizi olarak tiplenen bir anahtar dizi olur.                    |
+| `headers`                | İstek header'ları için küçük harfli isimlerle bir schema.                                                             |
+| `body`                   | JSON istek body'si için bir schema. `get` üzerinde kullanamazsın ([VIBE9004](https://vibejs.org/v0/errors/VIBE9004)). |
+| `response`               | Başarılı JSON body için bir schema ya da `raw()`. Vermezsen rota 204 döner.                                           |
+| `status`                 | Başarı durumu: 200 (varsayılan), 201 ya da 202.                                                                       |
+| `errors`                 | Rotanın fırlattığı hata kodları, her biri kendi HTTP durumuyla.                                                       |
+| `summary`, `description` | OpenAPI belgesi için metin.                                                                                           |
 
-Yollar `/` ya da `/users/:id/posts` gibi segmentlerdir; parametreler `:` ile başlar ([VIBE9001](https://vibejs.org/v0/errors/VIBE9001)). Bir route'un tam yolu, contract önekini route yolunun izlemesidir; uygulamanın `basePath` değeri de sunulurken başa eklenir.
+Path'ler ya `/` olur ya da `/users/:id/posts` gibi segmentlerden oluşur. Parametreler `:` ile başlar ([VIBE9001](https://vibejs.org/v0/errors/VIBE9001)). Bir rotanın tam path'i, sözleşme önekinin ardından gelen rota path'idir. Rota sunulurken başına uygulamanın `basePath` değeri de eklenir.
 
-`raw(contentType?)`, bir dosya gibi olduğu gibi gönderilen bir yanıtı bildirir. Handler bir `Response` ya da string veya stream gibi bir gövde döndürür ve istemci `Response` nesnesini alır:
+`raw(contentType?)`, dosya gibi olduğu gibi gönderilen bir yanıt tanımlar. Handler bir `Response` ya da string veya stream gibi bir body döner. İstemciye de `Response` gelir:
 
 ```ts
 export const reports = defineContract('/reports', {
@@ -49,7 +49,7 @@ export const reports = defineContract('/reports', {
 
 ## Hatalar {#errors}
 
-Bir route, istemcinin ele alması gereken hataları `errors: { CODE: status }` olarak bildirir. Handler bunları `ctx.fail('CODE', detail?)` ile üretir ve istemci bir `application/problem+json` yanıtı alır:
+Bir rota, istemcinin ele alması gereken hataları `errors: { CODE: status }` şeklinde tanımlar. Handler bunları `ctx.fail('CODE', detail?)` ile fırlatır, istemci de bir `application/problem+json` yanıtı alır:
 
 ```json
 {
@@ -62,20 +62,20 @@ Bir route, istemcinin ele alması gereken hataları `errors: { CODE: status }` o
 }
 ```
 
-Bildirilen kodların yanında, her route yerleşik şu kodlarla yanıt verebilir: `BAD_REQUEST`, `VALIDATION_FAILED`, `INVALID_JSON`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `METHOD_NOT_ALLOWED`, `BODY_TOO_LARGE`, `UNSUPPORTED_MEDIA_TYPE`, `INTERNAL_ERROR` ve `SERVICE_UNAVAILABLE`. Bir `VALIDATION_FAILED` problem'i her sorunu `errors` içinde `{ in, pointer, message }` olarak listeler.
+Tanımladığın kodların yanında her rota şu yerleşik kodlarla da cevap verebilir: `BAD_REQUEST`, `VALIDATION_FAILED`, `INVALID_JSON`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `METHOD_NOT_ALLOWED`, `BODY_TOO_LARGE`, `UNSUPPORTED_MEDIA_TYPE`, `INTERNAL_ERROR` ve `SERVICE_UNAVAILABLE`. Bir `VALIDATION_FAILED` problemi, her sorunu `errors` içinde `{ in, pointer, message }` olarak listeler.
 
-## Şema kütüphaneleri {#schema-libraries}
+## Schema kütüphaneleri {#schema-libraries}
 
-Her [Standard Schema](https://standardschema.dev) kütüphanesi çalışır ve bir contract bunları karıştırabilir.
+Herhangi bir [Standard Schema](https://standardschema.dev) kütüphanesi çalışır, tek bir sözleşmede birkaç tanesini karıştırabilirsin bile.
 
-- **valibot**, tarayıcıya gönderilen kod için önerilen varsayılandır; çünkü pakete yalnızca kullandığınız doğrulayıcılar girer.
-- **zod** da çalışır. Tarihler JSON'da string olarak taşınır; bu yüzden onları `z.date()` yerine `z.iso.datetime()` ile bildirin.
+- **valibot**, tarayıcıya giden kod için önerilen varsayılandır. Çünkü bundle'a sadece kullandığın doğrulayıcılar girer.
+- **zod** da çalışır. JSON'da tarihler string olarak taşınır, bu yüzden onları `z.date()` yerine `z.iso.datetime()` ile tanımla.
 
-Şemalar sunucuda çalışır. Sunucu, handler çalışmadan önce istek parçalarını doğrular ve şema çıktısını handler'a verir; dolayısıyla bir gövde şemasındaki `v.trim()` sunucuda kırpar. İstemci tipli girdisini doğrulamadan JSON olarak gönderir ve yanıtı şemadan tipler, tekrar doğrulamaz.
+Schema'lar sunucuda çalışır. Sunucu, handler çalışmadan önce isteğin parçalarını doğrular ve schema çıktısını handler'a verir. Yani body schema'sındaki `v.trim()` kırpma işini sunucuda yapar. İstemci tipli girdisini doğrulamadan JSON olarak gönderir. Yanıtın tipini de schema'dan alır, ama yanıtı bir daha doğrulamaz.
 
-## Contract'ı çağırmak {#calling-a-contract}
+## Bir sözleşmeyi çağırmak {#calling-a-contract}
 
-`createClient(contracts, options)`, route başına bir fonksiyon döndürür. Bir çağrı HTTP ya da ağ hataları için asla hata fırlatmaz; önce `ok` üzerinden, sonra `error.code` üzerinden daralttığınız bir `ApiResult` ile çözülür:
+`createClient(contracts, options)` her rota için bir fonksiyon döner. Bir çağrı HTTP ya da ağ hataları yüzünden asla hata fırlatmaz. Her zaman bir `ApiResult` ile resolve olur. Sen de onu önce `ok`, sonra `error.code` üzerinden daraltırsın:
 
 ```ts
 const api = createClient({ todos }, { baseUrl: '/api' });
@@ -91,14 +91,14 @@ if (result.ok) {
 }
 ```
 
-- Girdi nesnesinde `params`, `query`, `headers` ve `body` bulunur; her biri route'tan tiplenir.
-- İkinci argüman `{ signal, headers }` alır. `options.headers` bir fonksiyon olabilir ve her istek için çağrılır; örneğin bir authorization başlığı ekleyen fonksiyon.
-- Ağ hatası `code: 'NETWORK_ERROR'` ve `status: 0` ile, iptal `ABORTED` ile, problem olmayan başarısız bir yanıt ya da JSON olmayan bir gövde ise `UNEXPECTED_RESPONSE` ile çözülür.
-- Testler, bir uygulamayı süreç içinde çağırmak için `fetch: app.fetch` verir; bkz. [Testler](https://vibejs.org/v0/server/testing).
+- Girdi nesnesinde `params`, `query`, `headers` ve `body` bulunur. Her birinin tipi rotadan gelir.
+- İkinci argüman `{ signal, headers }` alır. `options.headers` bir fonksiyon da olabilir. Bu fonksiyon her istekte çağrılır, örneğin bir authorization header'ı eklemek için.
+- Ağ hatası `code: 'NETWORK_ERROR'` ve `status: 0` ile resolve olur. İptal `ABORTED` ile resolve olur. Problem olmayan başarısız bir yanıt ya da JSON olmayan bir body de `UNEXPECTED_RESPONSE` ile resolve olur.
+- Testler, bir uygulamayı aynı process içinde çağırmak için `fetch: app.fetch` verir. Bak: [Test](https://vibejs.org/v0/server/testing).
 
 ## OpenAPI {#openapi}
 
-`@usevibejs/server/openapi` içindeki `generateOpenApi(contracts, options)`, istemcinin aldığı contract kaydı için bir OpenAPI 3.1 dokümanı döndürür. Onu bir middleware ile sunun. Middleware tam istek yolunu, base path dahil görür; bu yüzden aşağıdaki tarif, `/api` base path'i altında `/api/openapi.json` adresini yanıtlar:
+`@usevibejs/server/openapi` içindeki `generateOpenApi(contracts, options)`, istemcinin aldığı sözleşme kaydının aynısı için bir OpenAPI 3.1 belgesi döner. Bunu bir middleware ile sun. Middleware, base path dahil isteğin tam path'ini görür. Bu yüzden aşağıdaki tarif `/api` base path'i altında `/api/openapi.json` adresine cevap verir:
 
 ```ts
 const doc = generateOpenApi(
@@ -112,4 +112,4 @@ export const openapi: Middleware = (req, next) =>
     : next();
 ```
 
-Her şema kendi Standard JSON Schema dönüştürücüsüyle dönüştürülür. zod şemaları bir dönüştürücü taşır; valibot şemalarını `@valibot/to-json-schema` içindeki `toStandardJsonSchema()` ile sarın ya da yedek olarak bir `toJsonSchema(schema, io)` verin. Dönüştürülemeyen bir şema [VIBE9801](https://vibejs.org/v0/errors/VIBE9801), aynı adı taşıyan iki farklı şema [VIBE9802](https://vibejs.org/v0/errors/VIBE9802), 400–599 dışındaki bir hata durumu ise [VIBE9803](https://vibejs.org/v0/errors/VIBE9803) hatası fırlatır.
+Her schema kendi Standard JSON Schema dönüştürücüsüyle çevrilir. zod schema'larında bu dönüştürücü zaten var. valibot schema'larını `@valibot/to-json-schema` içindeki `toStandardJsonSchema()` ile sarmala ya da yedek olarak bir `toJsonSchema(schema, io)` ver. Çevrilemeyen bir schema [VIBE9801](https://vibejs.org/v0/errors/VIBE9801) fırlatır. Aynı ismi taşıyan iki farklı schema [VIBE9802](https://vibejs.org/v0/errors/VIBE9802) fırlatır. 400–599 aralığının dışındaki bir hata durumu da [VIBE9803](https://vibejs.org/v0/errors/VIBE9803) fırlatır.

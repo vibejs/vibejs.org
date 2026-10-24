@@ -1,10 +1,10 @@
-# Provide وinject
+# التزويد والحقن
 
-تجعل `provide(key, value)` القيمة متاحة لكل مكوّن تابع لمكوّن ما، وتقرأ `inject(key)` قيمة أقرب سلف وفّر `key`. ولا تمرّرها المكوّنات الواقعة بينهما كخصائص (props).
+تجعل `provide(key, value)` قيمةً متاحة لكل أحفاد المكوّن. وتقرأ `inject(key)` القيمة من أقرب سلف وفّر `key`. المكوّنات الواقعة بينهما لا تمرّر القيمة خصائصَ (props).
 
-## المفاتيح المُنمَّطة {#typed-keys}
+## مفاتيح ذات أنواع {#typed-keys}
 
-`InjectionKey<T>` هو رمز (symbol) يحمل نوع قيمته، ولذلك تفحص `provide()` القيمة وتعيد `inject()` النوع `T`. صدِّر المفتاح من وحدة `.ts` يستوردها الطرفان:
+`InjectionKey<T>` رمز (symbol) يحمل نوع قيمته، فتتحقق `provide()` من القيمة وتعيد `inject()` النوع `T`. صدّر المفتاح من وحدة `.ts` يستوردها الطرفان:
 
 ```ts [theme.ts]
 import { inject, type InjectionKey, type Ref } from '@usevibejs/ui';
@@ -20,7 +20,7 @@ export const ThemeKey: InjectionKey<Theme> = Symbol('theme');
 export const useTheme = (): Theme | undefined => inject(ThemeKey);
 ```
 
-ينشئ المزوِّد القيمة في setup الخاص به:
+ينشئ المكوّن الموفِّر القيمة في setup الخاص به:
 
 ```vibe
 <script setup lang="ts">
@@ -42,7 +42,7 @@ provide(ThemeKey, {
 </template>
 ```
 
-يحقنها أي مكوّن تابع، وهنا عبر الـ composable المسمّى `useTheme()` في `theme.ts`:
+ويحقنها أي حفيد، وهنا عبر الدالة المركّبة `useTheme()` في `theme.ts`:
 
 ```vibe
 <script setup lang="ts">
@@ -56,11 +56,11 @@ const theme = useTheme();
 </template>
 ```
 
-وفّر ref أو كائنًا تفاعليًا، كما في `mode` أعلاه، عندما يجب أن ترى المكوّنات التابعة التغييرات. ويصلح مفتاح نصي كذلك، لكن قيمته غير مُنمَّطة.
+وفّر ref أو كائنًا تفاعليًا، مثل `mode` أعلاه، إذا أردت أن يرى الأحفاد التغييرات. يصلح المفتاح النصي أيضًا، لكن قيمته بلا نوع.
 
 ## القيم الافتراضية {#defaults}
 
-بدون مزوِّد، تعيد `inject(key)` القيمة `undefined` وتُصدر تحذيرًا VIBE5206 أثناء التطوير. تجعل القيمة الافتراضية القيمة مطلوبة:
+إن لم يوجد موفِّر، تعيد `inject(key)` القيمة `undefined` ويظهر التحذير VIBE5206 أثناء التطوير. والقيمة الافتراضية تجعل القيمة إلزامية:
 
 ```ts
 // A default value.
@@ -71,11 +71,11 @@ const fallback = inject(LocaleKey, () => ref(navigator.language), true);
 console.log(locale.value, fallback.value);
 ```
 
-الوسيط الثالث، `true`، يخبر `inject()` بأن تستدعي القيمة الافتراضية بدلًا من إعادة الدالة نفسها.
+الوسيط الثالث، `true`، يطلب من `inject()` أن تستدعي الدالة الافتراضية بدلًا من أن تعيد الدالة نفسها.
 
-## القيم على مستوى التطبيق {#app-level-values}
+## قيم على مستوى التطبيق {#app-level-values}
 
-توفّر `app.provide(key, value)` قيمة لكل مكوّن في التطبيق. وتكون لاستدعاء `provide()` داخل مكوّن للمفتاح نفسه الأولوية بالنسبة للمكوّنات التابعة له.
+توفّر `app.provide(key, value)` قيمة لكل مكوّنات التطبيق. وإذا استدعى مكوّن `provide()` بالمفتاح نفسه، تتقدّم قيمته عند أحفاده.
 
 ```ts
 const app = createApp(App);
@@ -85,7 +85,7 @@ app.mount('#app');
 
 ## خارج setup {#outside-setup}
 
-تعمل `provide()` و`inject()` أثناء setup الخاص بالمكوّن. تعيد `hasInjectionContext()` ما إذا كان يمكن استدعاء `inject()` في تلك النقطة، مما يتيح للـ composable أن يفشل برسالة واضحة أو أن يلجأ إلى بديل. وتشغّل `app.runWithContext(fn)` الدالة `fn` والتطبيق هو سياق الحقن، فتستطيع الشيفرة الواقعة خارج أي مكوّن، مثل حارس مسار أو اختبار، أن تقرأ قيم التطبيق:
+تعمل `provide()` و`inject()` أثناء setup المكوّن. تخبرك `hasInjectionContext()` هل يمكن استدعاء `inject()` في هذه النقطة، فتستطيع الدالة المركّبة أن تفشل برسالة واضحة أو أن تلجأ إلى بديل. وتشغّل `app.runWithContext(fn)` الدالة `fn` والتطبيقُ سياقُ الحقن، فيستطيع كود خارج أي مكوّن، مثل guard في الموجِّه أو اختبار، أن يقرأ قيم التطبيق:
 
 ```ts
 const app = createApp(App).provide(LocaleKey, ref('de'));
@@ -99,4 +99,4 @@ console.log(locale?.value); // 'de'
 
 ## الواجهة والخادم {#ui-and-server}
 
-تقرأ `inject(key)` في المكوّن القيم الموفَّرة في شجرة المكوّنات. وهي لا علاقة لها بـ `inject(Token)` الخاصة بالحقول في الخادم ضمن `@usevibejs/server`، التي تحلّ المزوِّدين من حاوية حقن الاعتماديات لوحدة ما. ولا يتشارك الاثنان القيم أبدًا.
+تقرأ `inject(key)` داخل المكوّن القيم الموفَّرة في شجرة المكوّنات. ولا علاقة لها بالحقل `inject(Token)` في الخادم من `@usevibejs/server`، الذي يجلب providers من حاوية حقن التبعيات في الوحدة (module). لا يتشارك الاثنان أي قيمة.

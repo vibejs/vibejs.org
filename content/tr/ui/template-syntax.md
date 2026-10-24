@@ -1,10 +1,10 @@
-# Template sözdizimi
+# Şablon sözdizimi
 
-Template, ifadeler ve direktiflerle zenginleştirilmiş HTML'dir. Bir ifade; `<script setup>` içindeki bağlamaları ve içe aktarımları, props'ları, ayrıca `$attrs`, `$slots`, `$emit` ve `$props` değerlerini okur; ref'ler açılır. Bunlardan hiçbiri olmayan bir ad, dosya derlenirken [VIBE2007](https://vibejs.org/v0/errors/VIBE2007) olarak bildirilir.
+Şablon, içinde ifadeler ve direktifler olan bir HTML'dir. Bir ifade `<script setup>` içindeki değişkenleri ve import'ları, prop'ları, ayrıca `$attrs`, `$slots`, `$emit` ve `$props` değerlerini okuyabilir. Ref'ler burada açılmış hâlde gelir. Bunlardan hiçbiri olmayan bir isim yazarsan dosya derlenirken [VIBE2007](https://vibejs.org/v0/errors/VIBE2007) hatası alırsın.
 
 ## Metin {#text}
 
-`{{ expression }}` metin render eder. `null` ve `undefined` hiçbir şey render etmez; diziler ve düz nesneler JSON olarak render edilir.
+`{{ expression }}` metin basar. `null` ve `undefined` hiçbir şey basmaz. Diziler ve düz nesneler JSON olarak görünür.
 
 ```vibe
 <script setup lang="ts">
@@ -20,11 +20,11 @@ const html = '<em>Welcome back</em>';
 </template>
 ```
 
-`v-text="value"` bir elemanın metin içeriğini, `v-html="value"` ise iç HTML'ini ayarlar. `v-html` string'i HTML olarak render eder: ona yalnızca güvendiğiniz içeriği verin.
+`v-text="value"` bir elemanın metin içeriğini, `v-html="value"` ise iç HTML'ini ayarlar. `v-html` string'i HTML olarak çizer. Ona sadece güvendiğin içeriği ver.
 
-## Öznitelikler {#attributes}
+## Attribute'lar {#attributes}
 
-`v-bind:name` kısaltması olan `:name="expression"`, bir özniteliği ya da DOM özelliğini bağlar. `null` ve `undefined` özniteliği kaldırır; `false` ise `disabled` gibi boolean bir özniteliği kaldırır. `v-bind="object"` bir nesnenin tüm anahtarlarını yayar (spread).
+`v-bind:name` ifadesinin kısaltması olan `:name="expression"`, bir attribute'u ya da bir DOM property'sini bağlar. `null` ve `undefined` attribute'u kaldırır. `false` ise `disabled` gibi boolean bir attribute'u kaldırır. `v-bind="object"` bir nesnenin bütün anahtarlarını tek seferde yayar.
 
 ```vibe
 <script setup lang="ts">
@@ -40,11 +40,11 @@ const link = { href: 'https://vibejs.org', target: '_blank', rel: 'noopener' };
 </template>
 ```
 
-`.prop` değiştiricisi her zaman bir DOM özelliği, `.attr` her zaman bir öznitelik ayarlar; `.camel` adı camelCase'e çevirir.
+`.prop` modifier'ı her zaman bir DOM property'si, `.attr` ise her zaman bir attribute ayarlar. `.camel` ismi camelCase'e çevirir.
 
 ## Class ve style {#class-and-style}
 
-`:class` bir string, değeri doğru (truthy) olduğunda anahtarları eklenen bir nesne ya da bunlardan oluşan bir dizi alır. `:style` bir string, camelCase ya da kebab-case yazılmış CSS özelliklerinden oluşan bir nesne ya da bir dizi alır. CSS özel özellikleri (`--name`) ve `!important` her iki biçimde de çalışır. Statik bir `class` veya `style` ile bağlanmış olan birleştirilir.
+`:class` bir string, değeri truthy olan anahtarları eklenen bir nesne ya da bunlardan oluşan bir dizi alır. `:style` bir string, camelCase ya da kebab-case CSS property'lerinden oluşan bir nesne veya bir dizi alır. CSS custom property'leri (`--name`) ve `!important` iki biçimde de çalışır. Sabit bir `class` ya da `style` ile bağlanan değer birleştirilir.
 
 ```vibe
 <script setup lang="ts">
@@ -61,9 +61,9 @@ const size = ref(16);
 </template>
 ```
 
-## Olaylar {#events}
+## Event'ler {#events}
 
-`v-on:event` kısaltması olan `@event="handler"` bir dinleyici ekler. Değer bir fonksiyon ya da olay tetiklendiğinde çalışan bir ifadedir; ifadede `$event` olaydır.
+`v-on:event` ifadesinin kısaltması olan `@event="handler"` bir listener ekler. Değer bir fonksiyon ya da event tetiklendiğinde çalışan bir ifade olabilir. Bu ifadenin içinde event'e `$event` ile erişirsin.
 
 ```vibe
 <script setup lang="ts">
@@ -91,14 +91,14 @@ function type(event: Event) {
 </template>
 ```
 
-- Değiştiriciler (modifier): `.stop` ve `.prevent` sırasıyla `stopPropagation()` ve `preventDefault()` çağırır, `.self` çocuklardan gelen olayları yok sayar, `.once`, `.capture` ve `.passive` dinleyici seçenekleridir, `.ctrl`, `.alt`, `.shift` ve `.meta` ilgili tuşu gerektirir, `.exact` yalnızca listelenen tuşları gerektirir, `.left`, `.middle` ve `.right` fare düğmesini seçer.
-- `keydown`, `keyup` ve `keypress` olaylarında diğer değiştiriciler tuşları kebab-case ile adlandırır: `.enter`, `.esc`, `.page-down`.
-- Her dinleyici `addEventListener` ile kendi elemanına eklenir; olaylar ortak bir ataya devredilmez (delegate edilmez). `event.currentTarget` o elemandır ve bir handler'daki `.stop`, olayın atalardaki dinleyicilere ulaşmasını engeller.
-- Olay adı statiktir ([VIBE2303](https://vibejs.org/v0/errors/VIBE2303)) ve her olay için tek bir öznitelik vardır ([VIBE2302](https://vibejs.org/v0/errors/VIBE2302)).
+- Modifier'lar: `.stop` ve `.prevent`, `stopPropagation()` ile `preventDefault()` çağırır. `.self` çocuklardan gelen event'leri yok sayar. `.once`, `.capture` ve `.passive` listener seçenekleridir. `.ctrl`, `.alt`, `.shift` ve `.meta` o tuşun basılı olmasını ister. `.exact` sadece listelenen tuşların basılı olmasını ister. `.left`, `.middle` ve `.right` de fare tuşunu seçer.
+- `keydown`, `keyup` ve `keypress` üzerinde diğer modifier'lar kebab-case yazılmış tuş isimleridir: `.enter`, `.esc`, `.page-down`.
+- Her listener `addEventListener` ile kendi elemanına bağlanır. Event'ler ortak bir üst elemana delege edilmez. `event.currentTarget` elemanın kendisidir. Bir handler içindeki `.stop` da event'in üst elemanların listener'larına ulaşmasını engeller.
+- Event ismi sabittir ([VIBE2303](https://vibejs.org/v0/errors/VIBE2303)). Her event için tek bir attribute yazarsın ([VIBE2302](https://vibejs.org/v0/errors/VIBE2302)).
 
 ## Koşullar {#conditions}
 
-`v-if`, `v-else-if` ve `v-else` birkaç daldan birini render eder. Kaldırılan dal unmount edilir: bileşenleri unmount hook'larını çalıştırır ve durumları kaybolur. `<template v-if>` birkaç elemanı sarmalayıcı olmadan gruplar.
+`v-if`, `v-else-if` ve `v-else` birkaç daldan birini çizer. Kaldırılan dal unmount olur: içindeki bileşenler unmount hook'larını çalıştırır ve durumları kaybolur. `<template v-if>` birden fazla elemanı bir sarmalayıcı eleman olmadan gruplar.
 
 ```vibe
 <script setup lang="ts">
@@ -119,7 +119,7 @@ const status = ref<'loading' | 'error' | 'ready'>('loading');
 
 ## Listeler {#lists}
 
-`v-for`; bir dizinin, `Map` ya da `Set` gibi bir iterable'ın her öğesi, 1'den `n`'e kadar sayılar ya da bir nesnenin değerleri için bir eleman render eder. Bir `v-for` içindeki her eleman benzersiz ve kararlı bir `:key` ister ([VIBE2203](https://vibejs.org/v0/errors/VIBE2203)); yalnızca sayısal aralık buna ihtiyaç duymaz.
+`v-for` her öğe için bir eleman çizer. Öğeler bir diziden, `Map` ya da `Set` gibi bir iterable'dan, 1'den `n` değerine kadar sayılardan ya da bir nesnenin değerlerinden gelebilir. `v-for` içindeki her elemana benzersiz ve sabit bir `:key` vermen gerekir ([VIBE2203](https://vibejs.org/v0/errors/VIBE2203)). Sadece sayı aralığında gerekmez.
 
 ```vibe
 <script setup lang="ts">
@@ -146,11 +146,11 @@ const scores = { ada: 3, grace: 5 };
 </template>
 ```
 
-Liste değiştiğinde aynı anahtara sahip öğeler elemanlarını ve durumlarını korur ve en az sayıda eleman taşınır. `v-if` ve `v-for` aynı elemanı paylaşamaz ([VIBE2103](https://vibejs.org/v0/errors/VIBE2103)): bunun yerine listeyi bir `computed` içinde filtreleyin.
+Liste değişince aynı key'e sahip öğeler elemanlarını ve durumlarını korur. Mümkün olan en az eleman yer değiştirir. `v-if` ile `v-for` aynı elemanda duramaz ([VIBE2103](https://vibejs.org/v0/errors/VIBE2103)). Bunun yerine listeyi bir `computed` içinde filtrele.
 
 ## v-show {#v-show}
 
-`v-show="condition"`, koşul false iken `display: none` ayarlar ve elemanı DOM'da tutar. Sık açılıp kapanan içerik için kullanın; nadiren gösterilen içerik için `v-if` kullanın. Yalnızca elemanlara uygulanır; bileşenlere ya da `<template>` öğesine uygulanmaz.
+`v-show="condition"`, koşul false olduğu sürece `display: none` uygular ve elemanı DOM'da tutar. Sık açılıp kapanan içerik için bunu kullan. Nadiren görünen içerik için `v-if` kullan. Sadece elemanlarda çalışır, bileşenlerde ya da `<template>` üzerinde çalışmaz.
 
 ## Elemanlarda v-model {#v-model-on-elements}
 
@@ -183,16 +183,16 @@ const color = ref('red');
 </template>
 ```
 
-- Metin girdileri ve `<textarea>` `input` olayında güncellenir. `.lazy` bunun yerine `change` olayında günceller, `.trim` değeri kırpar, `.number` değeri sayıya çevirir (`<input type="number">` bunu her zaman yapar). Bir giriş yöntemi (IME) metin oluştururken model, oluşturma bittiğinde güncellenir.
-- Bir checkbox bir boolean bağlar ya da `value` değerini bir dizi veya `Set` içine ekler ve çıkarır; `true-value` ve `false-value` `true` ile `false` yerine geçer.
-- Bir radio düğmesi modeli kendi `value` değerine ayarlar.
-- `<select>` seçili option'ın değerini bağlar; `<select multiple>` değerlerden oluşan bir dizi bağlar.
+- Metin input'ları ve `<textarea>`, `input` event'inde güncellenir. `.lazy` yazarsan onun yerine `change` event'inde güncellenir. `.trim` değerin başındaki ve sonundaki boşlukları siler, `.number` da değeri sayıya çevirir (`<input type="number">` bunu zaten her zaman yapar). Bir giriş yöntemi metin oluştururken model, kompozisyon bitince güncellenir.
+- Checkbox bir boolean bağlar ya da kendi `value` değerini bir diziye veya `Set` yapısına ekler ve çıkarır. `true-value` ve `false-value`, `true` ile `false` yerine geçer.
+- Radio button model'i kendi `value` değerine ayarlar.
+- `<select>` seçili seçeneğin değerini bağlar. `<select multiple>` ise değerlerden oluşan bir dizi bağlar.
 
 [Bileşenler](https://vibejs.org/v0/ui/components#v-model) de `v-model` alabilir.
 
-## Template ref'leri {#template-refs}
+## Template ref'ler {#template-refs}
 
-Bir eleman üzerindeki `ref="name"`, script'in `useTemplateRef('name')` ile tanımladığı template ref'i doldurur. Değeri, eleman render edilene kadar ve kaldırıldıktan sonra tekrar `null` olur; `v-for` içinde elemanlardan oluşan bir dizidir.
+Bir elemana `ref="name"` yazarsan, script'te `useTemplateRef('name')` ile tanımladığın template ref dolar. Değeri eleman çizilene kadar `null` olur, eleman kaldırıldıktan sonra da yine `null` olur. `v-for` içinde ise elemanlardan oluşan bir dizidir.
 
 ```vibe
 <script setup lang="ts">
@@ -208,11 +208,11 @@ onMounted(() => input.value?.focus());
 </template>
 ```
 
-Eşleşen bir `useTemplateRef()` olmayan string ref, [VIBE2701](https://vibejs.org/v0/errors/VIBE2701) olarak bildirilir. Bağlanmış bir `:ref="(el) => ..."`, fonksiyonu elemanla, eleman kaldırıldığında ise `null` ile çağırır. Bir bileşen üzerindeki ref, o bileşenin [dışa açtığı](https://vibejs.org/v0/ui/components#exposing-values) değerleri verir.
+Karşılığında bir `useTemplateRef()` olmayan string bir ref yazarsan [VIBE2701](https://vibejs.org/v0/errors/VIBE2701) hatası alırsın. Bağlanmış bir `:ref="(el) => ..."` fonksiyonu elemanla çağırır, eleman kaldırılınca da `null` ile çağırır. Bir bileşene koyduğun ref, o bileşenin [dışarı açtığı](https://vibejs.org/v0/ui/components#exposing-values) değerleri verir.
 
 ## Dinamik bileşenler {#dynamic-components}
 
-`<component :is="value">`, `value` değerinin tuttuğu bileşeni render eder; `null` ya da `undefined` için hiçbir şey render etmez. Değeri değiştirmek önceki bileşeni unmount eder.
+`<component :is="value">`, `value` içinde duran bileşeni çizer. `null` ya da `undefined` için hiçbir şey çizmez. Değeri değiştirirsen önceki bileşen unmount olur.
 
 ```vibe
 <script setup lang="ts">
@@ -234,4 +234,4 @@ function open(name: string) {
 </template>
 ```
 
-`:is` bir bileşen nesnesi alır, asla bir ad almaz: global kayıt defteri yoktur ([VIBE2006](https://vibejs.org/v0/errors/VIBE2006), [VIBE5207](https://vibejs.org/v0/errors/VIBE5207)). Bileşeni, onu reaktif yapmayan bir `shallowRef` içinde tutun.
+`:is` bir bileşen nesnesi alır, asla isim almaz. Çünkü global bir kayıt yoktur ([VIBE2006](https://vibejs.org/v0/errors/VIBE2006), [VIBE5207](https://vibejs.org/v0/errors/VIBE5207)). Bileşeni bir `shallowRef` içinde tut. `shallowRef` onu reaktif yapmaz.

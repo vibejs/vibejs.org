@@ -1,180 +1,181 @@
-// The lesson texts in Turkish and Arabic, by step slug. The code of each lesson is the same in
-// every language; English lives in steps.ts.
+// The lesson texts in Turkish and Arabic, by step slug, written to read naturally in each
+// language (see TRANSLATING.md). The code is the same in every language; English lives in
+// steps.ts. Names in <em> match the labels that localize.ts gives each lesson's app.
 type Lesson = { title: string; body: string };
 
 export const LESSONS: Record<'tr' | 'ar', Record<string, Lesson>> = {
   tr: {
     components: {
-      title: 'İlk bileşeniniz',
-      body: `<p>Bir <code>.vibe</code> dosyası tek bir bileşendir: TypeScript ile yazılmış bir <code>&lt;script setup&gt;</code> ve işaretlemeyi içeren bir <code>&lt;template&gt;</code>. Script'in tanımladığı her şey template'te kullanılabilir; <code>{{ }}</code> bir değeri yazdırır.</p>
-<p><strong>Deneyin:</strong> <code>name</code> değerini kendi adınızla değiştirin. Siz yazarken önizleme güncellenir.</p>`,
+      title: 'İlk bileşenin',
+      body: `<p>Her <code>.vibe</code> dosyası bir bileşendir. İçinde TypeScript yazdığın bir <code>&lt;script setup&gt;</code> ve ekrana çizilecek her şeyin durduğu bir <code>&lt;template&gt;</code> var. Script'te tanımladığın her şeyi şablonda doğrudan kullanabilirsin; <code>{{ }}</code> bir değeri ekrana yazar.</p>
+<p><strong>Sıra sende:</strong> <code>name</code> değerini kendi adınla değiştir. Sen yazdıkça önizleme de değişir.</p>`,
     },
     reactivity: {
       title: 'Reaktif durum',
-      body: `<p><code>ref()</code> bir değeri reaktif yapar: değer değiştiğinde onu okuyan metin güncellenir, başka hiçbir şey yeniden render edilmez. <code>@click</code> bir tıklamada kod çalıştırır. Template'te bir ref doğrudan değeri olarak okunur; script'te <code>.value</code> kullanın.</p>
-<p><strong>Deneyin:</strong> <code>count</code> değerini 0'a döndüren bir <em>Sıfırla</em> butonu ekleyin.</p>`,
+      body: `<p><code>ref()</code> bir değeri reaktif yapar: değer değişince onu okuyan metin güncellenir, başka hiçbir şey baştan çizilmez. <code>@click</code> tıklanınca kod çalıştırır. Şablonda ref'i doğrudan değeri gibi okursun; script'te ise <code>.value</code> ile erişirsin.</p>
+<p><strong>Sıra sende:</strong> <code>count</code> değerini sıfıra döndüren bir <em>Sıfırla</em> butonu ekle.</p>`,
     },
     computed: {
       title: 'Hesaplanan değerler',
-      body: `<p><code>computed()</code> başka reaktif değerlerden bir değer türetir. Yalnızca onlardan biri değiştiğinde yeniden hesaplanır, arada sonucu önbellekte tutar.</p>
-<p><strong>Deneyin:</strong> <code>isEven</code> adında bir computed ekleyin ve sayının yanında “çift” ya da “tek” gösterin.</p>`,
+      body: `<p><code>computed()</code> başka reaktif değerlerden yeni bir değer türetir. Sonucu aklında tutar ve yalnızca bağlı olduğu değerlerden biri değişince yeniden hesaplar.</p>
+<p><strong>Sıra sende:</strong> <code>isEven</code> adında bir computed ekle ve sayının çift mi tek mi olduğunu yazdır.</p>`,
     },
     lists: {
       title: 'Koşullar ve listeler',
-      body: `<p><code>v-if</code> ve <code>v-else</code> iki daldan birini render eder. <code>v-for</code> her öğe için bir eleman render eder; her öğenin sabit bir <code>:key</code> değeri olmalıdır.</p>
-<p><strong>Deneyin:</strong> hiç todo yokken listenin yerine “Yapılacak bir şey yok.” gösterin. Kontrol etmek için <em>Temizle</em>'ye tıklayın.</p>`,
+      body: `<p><code>v-if</code> ile <code>v-else</code> iki seçenekten birini gösterir. <code>v-for</code> listedeki her öğe için bir eleman çizer; her öğeye değişmeyen bir <code>:key</code> vermen gerekir.</p>
+<p><strong>Sıra sende:</strong> liste boşalınca yerine “Yapılacak bir şey yok.” yazsın. Denemek için <em>Temizle</em>'ye bas.</p>`,
     },
     forms: {
       title: 'Formlar',
-      body: `<p><code>v-model</code> bir input'u bir ref'e iki yönlü bağlar. <code>@submit.prevent</code> bir formu sayfayı yeniden yüklemeden işler.</p>
-<p><strong>Deneyin:</strong> <em>Ekle</em> butonu yazılan başlığı <code>todos</code> listesine eklesin ve input'u temizlesin.</p>`,
+      body: `<p><code>v-model</code> bir input'u bir ref'e iki yönlü bağlar: biri değişince diğeri de değişir. <code>@submit.prevent</code> formu sayfayı yenilemeden gönderir.</p>
+<p><strong>Sıra sende:</strong> <em>Ekle</em>'ye basınca yazdığın başlık <code>todos</code> listesine girsin ve input temizlensin.</p>`,
     },
     props: {
-      title: 'Bileşenler ve props',
-      body: `<p>Başka bir <code>.vibe</code> dosyasını import ederek onu bir etiket olarak kullanın. <code>defineProps</code> bileşenin ne aldığını tanımlar; tipleri, bileşeni kullanan her template'te derleyici tarafından denetlenir.</p>
-<p><strong>Deneyin:</strong> <code>TodoItem.vibe</code> dosyasını açıp bir <code>done</code> prop'u ekleyin; onu <code>App.vibe</code>'dan geçirin ve true olduğunda ✓ gösterin.</p>`,
+      title: 'Bileşenler ve prop’lar',
+      body: `<p>Başka bir <code>.vibe</code> dosyasını import edip etiket gibi kullanabilirsin. <code>defineProps</code> bileşenin hangi değerleri aldığını söyler; derleyici bu tipleri bileşeni kullanan her şablonda denetler.</p>
+<p><strong>Sıra sende:</strong> <code>TodoItem.vibe</code> dosyasına bir <code>done</code> prop'u ekle, <code>App.vibe</code>'dan gönder ve <code>true</code> olunca yanına ✓ koy.</p>`,
     },
     events: {
       title: 'Olaylar',
-      body: `<p>Bir alt bileşen, bir şey olduğunu üst bileşene bir olay yayınlayarak bildirir. <code>defineEmits</code> olayları ve taşıdıkları verileri tanımlar; üst bileşen <code>@</code> ile dinler.</p>
-<p><strong>Deneyin:</strong> <em>Sil</em> butonu <code>remove</code> olayını yayınlasın ve <code>App.vibe</code> todo'yu silsin.</p>`,
+      body: `<p>Alt bileşen bir şey olduğunda bunu üst bileşene bir olay göndererek haber verir. <code>defineEmits</code> hangi olayları ve hangi verileri gönderdiğini tanımlar; üst bileşen de <code>@</code> ile dinler.</p>
+<p><strong>Sıra sende:</strong> <em>Sil</em> butonu <code>remove</code> olayını göndersin, <code>App.vibe</code> da o görevi listeden çıkarsın.</p>`,
     },
     slots: {
       title: 'Slot’lar',
-      body: `<p>Bir bileşen üst bileşeninden işaretleme alabilir. <code>&lt;slot&gt;</code> bu içeriğin nereye geleceğini belirler; adlandırılmış slot'lar bir <code>name</code> alır ve üst bileşen onları <code>&lt;template #name&gt;</code> ile doldurur.</p>
-<p><strong>Deneyin:</strong> <code>title</code> slot'una “Başlıksız” varsayılanını verin, ardından başlıksız üçüncü bir kart ekleyin.</p>`,
+      body: `<p>Bir bileşen, üst bileşeninden işaretleme alabilir. <code>&lt;slot&gt;</code> bu içeriğin nereye geleceğini belirler. İsimli slot'lar bir <code>name</code> alır, üst bileşen de onları <code>&lt;template #name&gt;</code> ile doldurur.</p>
+<p><strong>Sıra sende:</strong> <code>title</code> slot'u boş gelirse “Başlıksız” yazsın; sonra başlığı olmayan üçüncü bir kart ekle.</p>`,
     },
     'v-model': {
       title: 'Bileşenlerde v-model',
-      body: `<p><code>defineModel()</code> bir bileşene iki yönlü bir değer verir: okumak üst bileşenin değerini okur, atamak üst bileşeni günceller. Üst bileşen onu bir input'taki gibi <code>v-model</code> ile bağlar.</p>
-<p><strong>Deneyin:</strong> anahtara tıklamak <code>on</code> değerini tersine çevirsin, böylece <code>App.vibe</code>'daki metin de değişsin.</p>`,
+      body: `<p><code>defineModel()</code> bileşene iki yönlü bir değer verir: okursan üst bileşenin değerini okursun, atarsan üst bileşeni güncellersin. Üst bileşen de onu bir input'a bağlar gibi <code>v-model</code> ile bağlar.</p>
+<p><strong>Sıra sende:</strong> anahtara tıklayınca <code>on</code> tersine dönsün; <code>App.vibe</code>'daki yazı da ona uysun.</p>`,
     },
     styles: {
       title: 'Kapsamlı stiller',
-      body: `<p><code>&lt;style scoped&gt;</code> yalnızca bu bileşenin işaretlemesine uygulanır. <code>:class</code> sınıfları duruma göre açıp kapatır.</p>
-<p><strong>Deneyin:</strong> <code>done</code> true olduğunda öğeye <code>done</code> sınıfını verin; böylece bir tıklama onun üstünü çizsin.</p>`,
+      body: `<p><code>&lt;style scoped&gt;</code> içindeki kurallar yalnızca bu bileşenin işaretlemesine uygulanır, dışarı taşmaz. <code>:class</code> ile sınıfları duruma göre açıp kapatırsın.</p>
+<p><strong>Sıra sende:</strong> <code>done</code> <code>true</code> olunca öğeye <code>done</code> sınıfını ver; tıklayınca üstü çizilsin.</p>`,
     },
     watchers: {
       title: 'Watcher’lar',
-      body: `<p><code>watch()</code> reaktif bir değer değiştiğinde, yeni ve eski değerle birlikte kod çalıştırır. Kaydetme, loglama ya da bir API çağırma gibi yan etkiler için kullanın.</p>
-<p><strong>Deneyin:</strong> watcher içinde <code>name</code> değerini <code>localStorage</code>'a kaydedin ve bileşen başlarken geri okuyun. Kodu düzenleyerek önizlemeyi yenileyin: ad korunur.</p>`,
+      body: `<p><code>watch()</code> reaktif bir değer değişince, yeni ve eski değerle birlikte kod çalıştırır. Kaydetmek, loglamak ya da bir API'yi çağırmak gibi yan etkiler için birebirdir.</p>
+<p><strong>Sıra sende:</strong> watcher içinde <code>name</code> değerini <code>localStorage</code>'a kaydet, bileşen açılırken de oradan oku. Kodda bir şey değiştirip önizlemeyi yenile: adın yerinde duruyor olmalı.</p>`,
     },
     lifecycle: {
-      title: 'Yaşam döngüsü ve template ref’leri',
-      body: `<p><code>onMounted</code> bileşen sayfaya yerleştiğinde çalışır; <code>onBeforeUnmount</code> sayfadan ayrılmadan önce çalışır ve <code>onMounted</code>'ın kurduklarını geri alabilir. <code>useTemplateRef</code> eşleşen <code>ref</code>'e sahip elemanı verir.</p>
-<p><strong>Deneyin:</strong> pencere genişliğini gösterin ve güncel tutun: <code>onMounted</code> içinde bir <code>resize</code> dinleyicisi ekleyip <code>onBeforeUnmount</code> içinde kaldırın.</p>`,
+      title: 'Yaşam döngüsü ve şablon ref’leri',
+      body: `<p><code>onMounted</code> bileşen sayfaya yerleşince çalışır. <code>onBeforeUnmount</code> ise bileşen sayfadan kalkmadan hemen önce çalışır; <code>onMounted</code>'da kurduğun şeyi burada toplarsın. <code>useTemplateRef</code> sana aynı <code>ref</code> adını taşıyan elemanı verir.</p>
+<p><strong>Sıra sende:</strong> pencere genişliğini göster ve güncel tut: <code>onMounted</code>'da bir <code>resize</code> dinleyicisi ekle, <code>onBeforeUnmount</code>'ta kaldır.</p>`,
     },
     'provide-inject': {
       title: 'Provide ve inject',
-      body: `<p><code>provide()</code> bir değeri altındaki tüm bileşenlere açar; <code>inject()</code> onu ne kadar derinde olursa olsun, her seviyeden props geçirmeden okur. Bir <code>InjectionKey</code> değerin tipini taşır.</p>
-<p><strong>Deneyin:</strong> <code>App.vibe</code> içinde <code>user</code> değerini <code>USER</code> anahtarıyla provide edin; böylece <code>Avatar.vibe</code> adı göstersin. Input'a yazın: avatar da değişir.</p>`,
+      body: `<p><code>provide()</code> bir değeri altındaki bütün bileşenlerin erişimine açar. <code>inject()</code> da onu ne kadar derinde olursa olsun okur; arada her seviyeden prop geçirmen gerekmez. Değerin tipini <code>InjectionKey</code> taşır.</p>
+<p><strong>Sıra sende:</strong> <code>App.vibe</code>'da <code>user</code> değerini <code>USER</code> anahtarıyla provide et, <code>Avatar.vibe</code> adı göstersin. Sonra input'a bir şey yaz; avatar da değişecek.</p>`,
     },
     'global-styles': {
       title: 'main.ts ve global stiller',
-      body: `<p>Bir uygulama <code>main.ts</code> ile başlar: kök bileşenden uygulamayı oluşturur ve mount eder. Global CSS de orada, sade bir <code>import './styles.css'</code> ile gelir. Global kurallar her yerde geçerlidir; <code>&lt;style scoped&gt;</code> ise kendi bileşeninin içinde kalır.</p>
-<p><strong>Deneyin:</strong> <code>main.ts</code> içinde <code>styles.css</code>'i import edin, sonra içindeki <code>--accent</code> değerini değiştirip başlığın ve butonun birlikte değiştiğini görün.</p>`,
+      body: `<p>Bir uygulama <code>main.ts</code>'ten başlar: kök bileşenden uygulamayı oluşturur ve sayfaya bağlar. Global CSS de buradan, düz bir <code>import './styles.css'</code> ile gelir. Global kurallar her yerde geçerlidir; <code>&lt;style scoped&gt;</code> ise kendi bileşeninin dışına çıkmaz.</p>
+<p><strong>Sıra sende:</strong> <code>main.ts</code>'te <code>styles.css</code>'i import et, sonra dosyadaki <code>--accent</code> rengini değiştir. Başlık da buton da birlikte değişecek.</p>`,
     },
     routing: {
       title: 'Yönlendirme',
-      body: `<p>Router yolları sayfa bileşenlerine eşler. <code>RouterView</code> geçerli sayfayı gösterir, <code>RouterLink</code> sayfayı yeniden yüklemeden geçiş yapar. Bir yoldaki <code>:id</code>, <code>route.params.id</code> olur.</p>
-<p><strong>Deneyin:</strong> <code>App.vibe</code>'a kullanıcı 2 için bir link ekleyin, ardından onu açıp ana sayfaya geri dönün.</p>`,
+      body: `<p>Router her adresi bir sayfa bileşenine bağlar. <code>RouterView</code> o anki sayfayı gösterir, <code>RouterLink</code> da sayfayı yenilemeden geçiş yapar. Yoldaki <code>:id</code> gibi bir parça, <code>route.params.id</code> olarak elinin altındadır.</p>
+<p><strong>Sıra sende:</strong> <code>App.vibe</code>'a 2 numaralı kullanıcı için bir link ekle; açıp ana sayfaya geri dön.</p>`,
     },
     'loading-data': {
       title: 'Veri yükleme',
-      body: `<p><code>useAsync()</code> bileşen mount olduğunda async bir fonksiyon çalıştırır ve size <code>data</code>, <code>error</code>, <code>loading</code> ve <code>refresh()</code> verir. Artık gerekmeyen bir çalıştırmayı, verdiği <code>signal</code> üzerinden iptal eder.</p>
-<p><strong>Deneyin:</strong> çalışırken “Yükleniyor…” gösterin ve <code>refresh()</code>'i çağıran bir <em>Tekrar at</em> butonu ekleyin.</p>`,
+      body: `<p><code>useAsync()</code> bileşen açılınca bir async fonksiyonu çalıştırır ve sana <code>data</code>, <code>error</code>, <code>loading</code> ve <code>refresh()</code> verir. Artık gerekmeyen bir isteği de verdiği <code>signal</code> ile iptal eder.</p>
+<p><strong>Sıra sende:</strong> istek sürerken “Yükleniyor…” yazsın; bir de <code>refresh()</code>'i çağıran <em>Tekrar at</em> butonu ekle.</p>`,
     },
     contracts: {
-      title: 'Tipli contract’lar',
-      body: `<p>vibe.js'i full-stack yapan şey budur. <code>contract.ts</code> her route'u bir kez tanımlar. Sunucu onu karşılar; <code>createClient</code> ise arayüze aynı contract'tan tiplenmiş, her route için bir fonksiyon verir: adı değişen bir alan iki tarafta da tip hatası olur. Bir çağrı asla hata fırlatmaz; <code>{ ok: true, data }</code> ya da <code>{ ok: false, error }</code> döndürür.</p>
-<p><strong>Deneyin:</strong> id'si 3 olan todo'yu <code>api.todos.one</code> ile yükleyin ve başlığını gösterin; <code>error.code</code> <code>TODO_NOT_FOUND</code> olduğunda “Bulunamadı” gösterin.</p>`,
+      title: 'Tipli sözleşmeler',
+      body: `<p>vibe.js'i full-stack yapan parça bu. <code>contract.ts</code> her rotayı bir kez tanımlar. Sunucu onu karşılar, <code>createClient</code> de arayüze aynı sözleşmeden tiplenmiş, her rota için bir fonksiyon verir. Bir alanın adını değiştirirsen iki tarafta da tip hatası alırsın. Çağrı hiçbir zaman hata fırlatmaz; ya <code>{ ok: true, data }</code> ya da <code>{ ok: false, error }</code> döner.</p>
+<p><strong>Sıra sende:</strong> id'si 3 olan görevi <code>api.todos.one</code> ile yükle ve başlığını göster. <code>error.code</code> <code>TODO_NOT_FOUND</code> gelirse “Bulunamadı” yazsın.</p>`,
     },
   },
   ar: {
     components: {
       title: 'مكوّنك الأول',
-      body: `<p>ملف <code>.vibe</code> هو مكوّن واحد: <code>&lt;script setup&gt;</code> مكتوب بـ TypeScript و<code>&lt;template&gt;</code> يحتوي الترميز. كل ما يعرّفه السكربت متاح في القالب، و<code>{{ }}</code> تطبع قيمة.</p>
-<p><strong>جرّب:</strong> غيّر <code>name</code> إلى اسمك. تتحدّث المعاينة أثناء الكتابة.</p>`,
+      body: `<p>كل ملف <code>.vibe</code> مكوّن قائم بذاته: فيه <code>&lt;script setup&gt;</code> تكتب فيه بـ TypeScript، و<code>&lt;template&gt;</code> يضم ما يظهر على الشاشة. كل ما تعرّفه في السكربت تستخدمه مباشرة في القالب، و<code>{{ }}</code> تعرض القيمة.</p>
+<p><strong>دورك:</strong> غيّر <code>name</code> إلى اسمك، وستتحدّث المعاينة وأنت تكتب.</p>`,
     },
     reactivity: {
       title: 'الحالة التفاعلية',
-      body: `<p>تجعل <code>ref()</code> القيمة تفاعلية: عندما تتغيّر، يتحدّث النص الذي يقرؤها ولا يُعاد عرض أي شيء آخر. تشغّل <code>@click</code> شيفرة عند النقر. في القالب يُقرأ الـ ref كقيمته مباشرة، أما في السكربت فاستخدم <code>.value</code>.</p>
-<p><strong>جرّب:</strong> أضف زر <em>إعادة الضبط</em> يعيد <code>count</code> إلى 0.</p>`,
+      body: `<p><code>ref()</code> تجعل القيمة تفاعلية: إذا تغيّرت، يتحدّث النص الذي يقرؤها، ولا يُعاد رسم شيء آخر. و<code>@click</code> تشغّل شيفرة عند النقر. في القالب تقرأ الـ ref كقيمة عادية، أما في السكربت فتصل إليها عبر <code>.value</code>.</p>
+<p><strong>دورك:</strong> أضف زر <em>إعادة الضبط</em> يعيد <code>count</code> إلى الصفر.</p>`,
     },
     computed: {
       title: 'القيم المحسوبة',
-      body: `<p>تشتق <code>computed()</code> قيمة من قيم تفاعلية أخرى. لا تُعاد حسابها إلا عندما تتغيّر إحدى تلك القيم، وتُخزَّن نتيجتها مؤقتًا بين ذلك.</p>
-<p><strong>جرّب:</strong> أضف قيمة محسوبة <code>isEven</code> واعرض “زوجي” أو “فردي” بجانب الرقم.</p>`,
+      body: `<p><code>computed()</code> تشتق قيمة جديدة من قيم تفاعلية أخرى. تحتفظ بالنتيجة، ولا تعيد الحساب إلا إذا تغيّرت إحدى القيم التي تعتمد عليها.</p>
+<p><strong>دورك:</strong> أضف قيمة محسوبة باسم <code>isEven</code>، واكتب بجانب الرقم إن كان زوجيًا أو فرديًا.</p>`,
     },
     lists: {
       title: 'الشروط والقوائم',
-      body: `<p>تعرض <code>v-if</code> و<code>v-else</code> أحد الفرعين. وتعرض <code>v-for</code> عنصرًا لكل بند؛ ويحتاج كل بند إلى <code>:key</code> ثابت.</p>
-<p><strong>جرّب:</strong> عندما لا توجد مهام، اعرض “لا شيء للقيام به.” بدل القائمة. انقر <em>امسح</em> للتحقق.</p>`,
+      body: `<p><code>v-if</code> و<code>v-else</code> تعرضان أحد خيارين. و<code>v-for</code> ترسم عنصرًا لكل بند في القائمة، ولكل بند <code>:key</code> ثابت لا يتغيّر.</p>
+<p><strong>دورك:</strong> إذا فرغت القائمة، اعرض بدلها «لا شيء للقيام به.». جرّب ذلك بالنقر على <em>امسح</em>.</p>`,
     },
     forms: {
       title: 'النماذج',
-      body: `<p>تربط <code>v-model</code> حقل إدخال بـ ref في الاتجاهين. وتعالج <code>@submit.prevent</code> النموذج دون إعادة تحميل الصفحة.</p>
-<p><strong>جرّب:</strong> اجعل <em>أضف</em> يضيف العنوان المكتوب إلى <code>todos</code> ويفرّغ الحقل.</p>`,
+      body: `<p><code>v-model</code> تربط حقل الإدخال بـ ref في الاتجاهين: إن تغيّر أحدهما تغيّر الآخر. و<code>@submit.prevent</code> ترسل النموذج دون إعادة تحميل الصفحة.</p>
+<p><strong>دورك:</strong> عند النقر على <em>أضف</em>، أضف العنوان المكتوب إلى <code>todos</code> وفرّغ الحقل.</p>`,
     },
     props: {
       title: 'المكوّنات والخصائص',
-      body: `<p>استورد ملف <code>.vibe</code> آخر لتستخدمه كوسم. تعرّف <code>defineProps</code> ما يقبله المكوّن، بأنواع يتحقق منها المترجم في كل قالب يستخدمه.</p>
-<p><strong>جرّب:</strong> افتح <code>TodoItem.vibe</code> وأضف خاصية <code>done</code>؛ مرّرها من <code>App.vibe</code> واعرض ✓ عندما تكون true.</p>`,
+      body: `<p>استورد ملف <code>.vibe</code> آخر واستخدمه كوسم. <code>defineProps</code> تحدّد القيم التي يستقبلها المكوّن، ويتحقق المترجم من أنواعها في كل قالب يستخدمه.</p>
+<p><strong>دورك:</strong> أضف خاصية <code>done</code> إلى <code>TodoItem.vibe</code>، ومرّرها من <code>App.vibe</code>، واعرض ✓ حين تكون <code>true</code>.</p>`,
     },
     events: {
       title: 'الأحداث',
-      body: `<p>يخبر المكوّن الابن أباه بأن شيئًا ما حدث بإطلاق حدث. تعرّف <code>defineEmits</code> الأحداث وحمولاتها، ويستمع الأب إليها بـ <code>@</code>.</p>
-<p><strong>جرّب:</strong> اجعل زر <em>احذف</em> يطلق الحدث <code>remove</code>، واحذف المهمة في <code>App.vibe</code>.</p>`,
+      body: `<p>حين يقع شيء في المكوّن الابن، يخبر الأب بإطلاق حدث. <code>defineEmits</code> تحدّد الأحداث والبيانات التي يحملها كل حدث، ويستمع الأب إليها بـ <code>@</code>.</p>
+<p><strong>دورك:</strong> اجعل زر <em>احذف</em> يطلق الحدث <code>remove</code>، ودع <code>App.vibe</code> يحذف المهمة من القائمة.</p>`,
     },
     slots: {
-      title: 'الفتحات (Slots)',
-      body: `<p>يمكن للمكوّن أن يستقبل ترميزًا من أبيه. يحدّد <code>&lt;slot&gt;</code> مكانه؛ وتأخذ الفتحات المسمّاة <code>name</code>، ويملؤها الأب بـ <code>&lt;template #name&gt;</code>.</p>
-<p><strong>جرّب:</strong> اجعل “بلا عنوان” القيمة الافتراضية لفتحة <code>title</code>، ثم أضف بطاقة ثالثة دون عنوان.</p>`,
+      title: 'الفتحات (slots)',
+      body: `<p>يمكن للمكوّن أن يستقبل محتوى من أبيه. <code>&lt;slot&gt;</code> تحدّد أين يظهر هذا المحتوى. والفتحات المسمّاة تأخذ <code>name</code>، ويملؤها الأب بـ <code>&lt;template #name&gt;</code>.</p>
+<p><strong>دورك:</strong> إذا لم تصل فتحة <code>title</code>، اعرض «بلا عنوان»، ثم أضف بطاقة ثالثة دون عنوان.</p>`,
     },
     'v-model': {
       title: 'v-model على المكوّنات',
-      body: `<p>تمنح <code>defineModel()</code> المكوّن قيمة باتجاهين: قراءتها تقرأ قيمة الأب، والإسناد إليها يحدّث الأب. ويربطها الأب بـ <code>v-model</code> كما في حقل الإدخال.</p>
-<p><strong>جرّب:</strong> اجعل النقر على المفتاح يعكس <code>on</code>، فيتبعه النص في <code>App.vibe</code>.</p>`,
+      body: `<p><code>defineModel()</code> تعطي المكوّن قيمة باتجاهين: حين تقرؤها تقرأ قيمة الأب، وحين تُسند إليها تحدّث الأب. ويربطها الأب بـ <code>v-model</code> تمامًا كما يربط حقل إدخال.</p>
+<p><strong>دورك:</strong> عند النقر على المفتاح اعكس <code>on</code>، فيتبعه النص في <code>App.vibe</code>.</p>`,
     },
     styles: {
       title: 'الأنماط المحصورة',
-      body: `<p>تنطبق <code>&lt;style scoped&gt;</code> على ترميز هذا المكوّن فقط. وتبدّل <code>:class</code> الأصناف حسب الحالة.</p>
-<p><strong>جرّب:</strong> أعطِ العنصر الصنف <code>done</code> عندما تكون <code>done</code> صحيحة، ليُشطب بنقرة.</p>`,
+      body: `<p>قواعد <code>&lt;style scoped&gt;</code> تنطبق على ترميز هذا المكوّن وحده، ولا تتسرّب إلى غيره. و<code>:class</code> تضيف الأصناف أو تزيلها حسب الحالة.</p>
+<p><strong>دورك:</strong> حين تصبح <code>done</code> صحيحة، أعطِ العنصر الصنف <code>done</code> ليُشطب بنقرة.</p>`,
     },
     watchers: {
       title: 'المراقِبات',
-      body: `<p>تشغّل <code>watch()</code> شيفرة عندما تتغيّر قيمة تفاعلية، مع القيمة الجديدة والقديمة. استخدمها للتأثيرات الجانبية مثل الحفظ أو التسجيل أو استدعاء واجهة برمجية.</p>
-<p><strong>جرّب:</strong> احفظ <code>name</code> في <code>localStorage</code> داخل المراقِب واقرأه عند بدء المكوّن. أعد تحميل المعاينة بتعديل الشيفرة: يبقى الاسم.</p>`,
+      body: `<p><code>watch()</code> تشغّل شيفرة كلما تغيّرت قيمة تفاعلية، وتعطيك القيمة الجديدة والقديمة. هي المكان المناسب للتأثيرات الجانبية: الحفظ والتسجيل واستدعاء الواجهات البرمجية.</p>
+<p><strong>دورك:</strong> احفظ <code>name</code> في <code>localStorage</code> داخل المراقِب، واقرأه منه عند بدء المكوّن. عدّل الشيفرة لتُعيد تحميل المعاينة، وسيبقى الاسم كما هو.</p>`,
     },
     lifecycle: {
       title: 'دورة الحياة ومراجع القوالب',
-      body: `<p>تعمل <code>onMounted</code> بعد أن يصبح المكوّن في الصفحة؛ وتعمل <code>onBeforeUnmount</code> قبل مغادرته، فتستطيع التراجع عمّا أعدّته <code>onMounted</code>. وتعطيك <code>useTemplateRef</code> العنصر الذي يحمل <code>ref</code> مطابقًا.</p>
-<p><strong>جرّب:</strong> اعرض عرض النافذة وأبقه محدّثًا: أضف مستمعًا لـ <code>resize</code> في <code>onMounted</code> وأزله في <code>onBeforeUnmount</code>.</p>`,
+      body: `<p><code>onMounted</code> تعمل بعد أن يستقر المكوّن في الصفحة، و<code>onBeforeUnmount</code> تعمل قبل أن يغادرها مباشرة، وفيها تتراجع عمّا أعددته في <code>onMounted</code>. أما <code>useTemplateRef</code> فتعطيك العنصر الذي يحمل اسم <code>ref</code> نفسه.</p>
+<p><strong>دورك:</strong> اعرض عرض النافذة وأبقه محدّثًا: أضف مستمعًا لـ <code>resize</code> في <code>onMounted</code>، وأزله في <code>onBeforeUnmount</code>.</p>`,
     },
     'provide-inject': {
       title: 'التزويد والحقن',
-      body: `<p>تتيح <code>provide()</code> قيمة لكل المكوّنات التي تحته، وتقرؤها <code>inject()</code> مهما كان العمق، دون تمرير الخصائص عبر كل مستوى. ويحمل <code>InjectionKey</code> نوع القيمة.</p>
-<p><strong>جرّب:</strong> زوّد <code>user</code> في <code>App.vibe</code> تحت المفتاح <code>USER</code>، ليعرض <code>Avatar.vibe</code> الاسم. اكتب في الحقل: يتبعك الأفاتار.</p>`,
+      body: `<p><code>provide()</code> تتيح قيمة لكل المكوّنات التي تحتها، و<code>inject()</code> تقرؤها مهما كان العمق، دون أن تمرّر الخصائص من مستوى إلى مستوى. ونوع القيمة يحمله <code>InjectionKey</code>.</p>
+<p><strong>دورك:</strong> زوّد <code>user</code> في <code>App.vibe</code> تحت المفتاح <code>USER</code> ليعرض <code>Avatar.vibe</code> الاسم. ثم اكتب في الحقل، وسيتغيّر الاسم في الأعلى معك.</p>`,
     },
     'global-styles': {
       title: 'main.ts والأنماط العامة',
-      body: `<p>يبدأ التطبيق في <code>main.ts</code>: ينشئ التطبيق من المكوّن الجذر ويركّبه. ومن هناك تأتي أنماط CSS العامة أيضًا، باستيراد بسيط <code>import './styles.css'</code>. تنطبق القواعد العامة في كل مكان، أما <code>&lt;style scoped&gt;</code> فيبقى داخل مكوّنه.</p>
-<p><strong>جرّب:</strong> استورد <code>styles.css</code> في <code>main.ts</code>، ثم غيّر <code>--accent</code> فيه وشاهد العنوان والزر يتبعانه.</p>`,
+      body: `<p>يبدأ التطبيق من <code>main.ts</code>: هناك يُنشأ من المكوّن الجذر ويُركَّب في الصفحة. ومن هناك أيضًا تأتي أنماط CSS العامة، باستيراد بسيط: <code>import './styles.css'</code>. القواعد العامة تسري في كل مكان، أما <code>&lt;style scoped&gt;</code> فلا تتجاوز مكوّنها.</p>
+<p><strong>دورك:</strong> استورد <code>styles.css</code> في <code>main.ts</code>، ثم غيّر لون <code>--accent</code> في الملف، وسيتغيّر العنوان والزر معًا.</p>`,
     },
     routing: {
       title: 'التوجيه',
-      body: `<p>يربط الموجّه المسارات بمكوّنات الصفحات. يعرض <code>RouterView</code> الصفحة الحالية، وينتقل <code>RouterLink</code> دون إعادة تحميل. ويصبح <code>:id</code> في المسار <code>route.params.id</code>.</p>
-<p><strong>جرّب:</strong> أضف رابطًا إلى المستخدم 2 في <code>App.vibe</code>، ثم افتحه وعُد إلى الرئيسية.</p>`,
+      body: `<p>يربط الموجِّه كل عنوان بمكوّن صفحة. <code>RouterView</code> تعرض الصفحة الحالية، و<code>RouterLink</code> تنتقل بين الصفحات دون إعادة تحميل. وأي جزء مثل <code>:id</code> في المسار تجده في <code>route.params.id</code>.</p>
+<p><strong>دورك:</strong> أضف في <code>App.vibe</code> رابطًا إلى المستخدم 2، ثم افتحه وعُد إلى الرئيسية.</p>`,
     },
     'loading-data': {
       title: 'تحميل البيانات',
-      body: `<p>تشغّل <code>useAsync()</code> دالة غير متزامنة عند تركيب المكوّن، وتعطيك <code>data</code> و<code>error</code> و<code>loading</code> و<code>refresh()</code>. وتلغي التشغيل الذي لم يعد مطلوبًا عبر <code>signal</code> التي تمرّرها.</p>
-<p><strong>جرّب:</strong> اعرض “جارٍ التحميل…” أثناء التشغيل، وأضف زر <em>ارمِ مجددًا</em> يستدعي <code>refresh()</code>.</p>`,
+      body: `<p><code>useAsync()</code> تشغّل دالة غير متزامنة عند فتح المكوّن، وتعطيك <code>data</code> و<code>error</code> و<code>loading</code> و<code>refresh()</code>. وإذا لم يعد الطلب مطلوبًا ألغته عبر <code>signal</code> التي تمرّرها إليك.</p>
+<p><strong>دورك:</strong> اعرض «جارٍ التحميل…» أثناء الطلب، وأضف زر <em>ارمِ مجددًا</em> يستدعي <code>refresh()</code>.</p>`,
     },
     contracts: {
       title: 'العقود ذات الأنواع',
-      body: `<p>هذا ما يجعل vibe.js متكاملًا. يعرّف <code>contract.ts</code> كل مسار مرة واحدة. يعالجه الخادم، ويعطي <code>createClient</code> الواجهة دالة لكل مسار، مستمدّة أنواعها من العقد نفسه: الحقل الذي يتغيّر اسمه يصبح خطأ أنواع في الطرفين. لا يرمي الاستدعاء أخطاءً أبدًا؛ بل يعيد <code>{ ok: true, data }</code> أو <code>{ ok: false, error }</code>.</p>
-<p><strong>جرّب:</strong> حمّل المهمة ذات المعرّف 3 عبر <code>api.todos.one</code> واعرض عنوانها، أو “غير موجود” عندما يكون <code>error.code</code> هو <code>TODO_NOT_FOUND</code>.</p>`,
+      body: `<p>هذا ما يجعل vibe.js إطارًا متكاملًا. يعرّف <code>contract.ts</code> كل مسار مرة واحدة، فيعالجه الخادم، وتعطي <code>createClient</code> الواجهة دالة لكل مسار بأنواع مأخوذة من العقد نفسه. غيّر اسم حقل، وستحصل على خطأ أنواع في الطرفين. والاستدعاء لا يرمي خطأً أبدًا: يعيد إما <code>{ ok: true, data }</code> وإما <code>{ ok: false, error }</code>.</p>
+<p><strong>دورك:</strong> حمّل المهمة رقم 3 عبر <code>api.todos.one</code> واعرض عنوانها، أو اعرض «غير موجود» إذا كان <code>error.code</code> هو <code>TODO_NOT_FOUND</code>.</p>`,
     },
   },
 };

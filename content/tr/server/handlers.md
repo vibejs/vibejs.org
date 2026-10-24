@@ -1,6 +1,6 @@
 # Controller'lar ve handler'lar
 
-Controller tek bir contract'ı sunar. Contract'ın her route'unun, `@Handle(route)` ile işaretlenmiş tam olarak bir handler metodu vardır:
+Bir controller tek bir sözleşmeye hizmet eder. Sözleşmedeki her rotanın, `@Handle(route)` ile işaretlenmiş tam olarak bir handler method'u olur:
 
 ```ts
 @Controller(todos)
@@ -24,34 +24,34 @@ export class TodosController {
 }
 ```
 
-Controller'ı bir modülün `controllers` listesine kaydedin. Uygulama başlangıçta şunları denetler: her route'un bir handler'ı olması ([VIBE9303](https://vibejs.org/v0/errors/VIBE9303), [VIBE9304](https://vibejs.org/v0/errors/VIBE9304)), her handler'ın controller'ın contract'ına ait olması ([VIBE9305](https://vibejs.org/v0/errors/VIBE9305)) ve her contract'ın bir controller'ı olması ([VIBE9306](https://vibejs.org/v0/errors/VIBE9306)).
+Controller'ı bir modülün `controllers` listesine kaydet. Uygulama açılırken şunları kontrol eder: her rotanın tek bir handler'ı var mı ([VIBE9303](https://vibejs.org/v0/errors/VIBE9303), [VIBE9304](https://vibejs.org/v0/errors/VIBE9304)), her handler controller'ın sözleşmesine mi ait ([VIBE9305](https://vibejs.org/v0/errors/VIBE9305)) ve her sözleşmenin tek bir controller'ı var mı ([VIBE9306](https://vibejs.org/v0/errors/VIBE9306)).
 
 ## Context {#the-context}
 
-Bir handler tek bir argüman alır: `ctx: Ctx<typeof contract.route>`:
+Handler tek bir argüman alır: `ctx: Ctx<typeof contract.route>`.
 
 | Alan                                 | Değer                                                                                                     |
 | ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `params`, `query`, `headers`, `body` | Doğrulanmış istek parçaları; her biri yalnızca route bildirdiğinde bulunur (params her zaman).            |
-| `fail(code, detail?)`                | İsteği route'un bildirilmiş bir hata koduyla sonlandırır.                                                 |
-| `req`, `url`                         | `Request` ve ayrıştırılmış URL'si.                                                                        |
-| `requestId`                          | `x-request-id` başlığı ya da üretilmiş bir id; yanıtta geri gönderilir.                                   |
+| `params`, `query`, `headers`, `body` | İsteğin doğrulanmış parçaları. Her biri sadece rota onu tanımlıyorsa vardır (params her zaman vardır).    |
+| `fail(code, detail?)`                | İsteği, rotanın tanımladığı bir hata koduyla bitirir.                                                     |
+| `req`, `url`                         | `Request` ve onun parse edilmiş URL'si.                                                                   |
+| `requestId`                          | `x-request-id` header'ı ya da üretilen bir id. Yanıtta geri gönderilir.                                   |
 | `log`                                | `requestId` eklenmiş uygulama logger'ı.                                                                   |
-| `cookies`                            | `get`, `set` ve `delete`; bkz. [Yapılandırma](https://vibejs.org/v0/server/configuration#cookies).        |
-| `responseHeaders`                    | Yanıta eklenen başlıklar.                                                                                 |
-| `signal`                             | İstemci bağlantıyı kestiğinde iptal edilir.                                                               |
+| `cookies`                            | `get`, `set` ve `delete`. Bak: [Yapılandırma](https://vibejs.org/v0/server/configuration#cookies).        |
+| `responseHeaders`                    | Yanıta eklenen header'lar.                                                                                |
+| `signal`                             | İstemci bağlantıyı kesince iptal olur.                                                                    |
 | `state`                              | Guard'ların ve interceptor'ların handler ile paylaştığı değerler.                                         |
-| `getMetadata(key)`                   | `createMetadata` ile ayarlanan metadata; bkz. [Pipeline](https://vibejs.org/v0/server/pipeline#metadata). |
+| `getMetadata(key)`                   | `createMetadata` ile ayarlanan metadata. Bak: [Pipeline](https://vibejs.org/v0/server/pipeline#metadata). |
 
-Bir handler async olabilir. Route'un yanıt türünü döndürür: JSON yanıt için şemanın girdi türünü, yanıtı olmayan bir route için hiçbir şeyi, bir `raw()` route için ise bir `Response` ya da gövde. Herhangi bir handler'dan `Response` döndürmek onu olduğu gibi gönderir.
+Handler async olabilir. Rotanın yanıt tipini döner: JSON yanıt için schema'nın input tipini, yanıtı olmayan bir rota için hiçbir şey, `raw()` rotası için de bir `Response` ya da bir body. Herhangi bir handler'dan `Response` dönersen olduğu gibi gönderilir.
 
 ## Hatalar {#errors}
 
-- **Bildirilmiş hatalar.** `ctx.fail('CODE', detail?)`, contract'ın bildirdiği durumla bir `HttpError` fırlatır. Kodlar tiplidir: yalnızca route'un bildirdiği kodlar kabul edilir.
-- **Diğer istemci hataları.** Bir handler, guard, interceptor ya da servisten `throw new HttpError(status, code, detail?)`. Bildirilmiş bir kodu ya da `NOT_FOUND` gibi yerleşik birini tercih edin; bildirilmemiş bir kod yine de gönderilir, ancak [VIBE9502](https://vibejs.org/v0/errors/VIBE9502) uyarısıyla.
-- **Hatalar (bug).** Diğer her hata nedeniyle birlikte loglanır ([VIBE9503](https://vibejs.org/v0/errors/VIBE9503)) ve ayrıntı vermeden 500 `INTERNAL_ERROR` ile yanıtlanır.
+- **Tanımlı hatalar.** `ctx.fail('CODE', detail?)`, sözleşmenin tanımladığı durumla bir `HttpError` fırlatır. Kodlar tiplidir: sadece rotanın tanımladığı kodları kabul eder.
+- **Diğer istemci hataları.** Bir handler, guard, interceptor ya da servis içinden `throw new HttpError(status, code, detail?)` yaz. Tanımlı bir kodu ya da `NOT_FOUND` gibi yerleşik bir kodu tercih et. Tanımsız bir kod da gönderilir, ama [VIBE9502](https://vibejs.org/v0/errors/VIBE9502) uyarısıyla.
+- **Bug'lar.** Uygulama diğer her hatayı sebebiyle beraber loglar ([VIBE9503](https://vibejs.org/v0/errors/VIBE9503)) ve ayrıntı vermeden 500 `INTERNAL_ERROR` döner.
 
-Her hata yanıtı `application/problem+json` biçimindedir: `{ type, title, status, code, detail?, errors?, requestId }`.
+Her hata yanıtı `application/problem+json` olur: `{ type, title, status, code, detail?, errors?, requestId }`.
 
 ```ts
 export function requireUser(id: string | undefined): string {
@@ -62,29 +62,29 @@ export function requireUser(id: string | undefined): string {
 
 ## Doğrulama {#validation}
 
-Handler çalışmadan önce uygulama `params`, `query`, `headers` ve `body` değerlerini route'un şemalarına karşı doğrular ve şema çıktısını `ctx` üzerine koyar. Herhangi bir parça başarısız olursa istemci, her sorunu `errors` içinde taşıyan 400 `VALIDATION_FAILED` alır ve handler çalışmaz. JSON olmayan bir gövde 400 `INVALID_JSON`, `bodyLimit` değerini aşan bir gövde 413 `BODY_TOO_LARGE` olur.
+Handler çalışmadan önce uygulama `params`, `query`, `headers` ve `body` değerlerini rotanın schema'larına göre doğrular ve schema çıktısını `ctx` üzerine koyar. Herhangi bir parça geçersizse istemci, her sorunu `errors` içinde listeleyen 400 `VALIDATION_FAILED` alır ve handler hiç çalışmaz. JSON olmayan bir body 400 `INVALID_JSON` alır. `bodyLimit` sınırını aşan bir body de 413 `BODY_TOO_LARGE` alır.
 
-`validateResponses` ile (varsayılan olarak açık), handler'ın sonucu yanıt şemasına karşı doğrulanır ve şema çıktısı gönderilir. Uyumsuzluk bir sunucu hatasıdır (bug): [VIBE9501](https://vibejs.org/v0/errors/VIBE9501) olarak loglanır ve 500 ile yanıtlanır.
+`validateResponses` açıksa (varsayılan olarak açık), handler'ın sonucu yanıt schema'sına göre doğrulanır ve schema çıktısı gönderilir. Uyuşmazlık bir sunucu bug'ıdır: [VIBE9501](https://vibejs.org/v0/errors/VIBE9501) olarak loglanır ve 500 ile cevaplanır.
 
-Şema çıktısının gönderilmesi, istemciye hangi anahtarların ulaşacağına şemanın karar vermesi demektir:
+Schema çıktısını göndermek, istemciye hangi anahtarların gideceğine schema'nın karar vermesi demek:
 
-- valibot `v.object()` ve zod `z.object()`, şemanın bildirmediği anahtarları atar; bu yüzden `passwordHash` gibi dahili bir alan gönderilmez.
-- arktype, tür `"+": "delete"` ayarlamadıkça bildirilmemiş anahtarları korur.
-- `validateResponses: false` ile sonuç değiştirilmeden gönderilir.
+- valibot `v.object()` ve zod `z.object()` schema'da tanımlı olmayan anahtarları atar. Yani `passwordHash` gibi iç bir alan gönderilmez.
+- arktype, tip `"+": "delete"` ayarlamadıkça tanımsız anahtarları tutar.
+- `validateResponses: false` verirsen sonuç hiç değişmeden gönderilir.
 
-Saklanan veri döndüren her route için açık bir yanıt şeması bildirin ve `validateResponses` ayarını açık tutun.
+Kayıtlı veri dönen her rota için açık bir yanıt schema'sı tanımla ve `validateResponses` seçeneğini açık tut.
 
 ## @Handle üzerinde TS1241 {#ts1241-on-handle}
 
-Bir `@Handle(...)` satırındaki `TS1241: Unable to resolve signature of method decorator when called as an expression` hatası, metodun route ile uyuşmadığı anlamına gelir. `vibejs check` bunu şu çözümle raporlar:
+Bir `@Handle(...)` satırında `TS1241: Unable to resolve signature of method decorator when called as an expression` görüyorsan, method rotayla uyuşmuyor demektir. `vibejs check` bunu şu düzeltmeyle raporlar:
 
 > the handler must be `(ctx: Ctx<typeof contract.route>)` and return the route response type; do not cast or use `any`
 
-Şu sırayla kontrol edin:
+Şu sırayla kontrol et:
 
-1. Parametre, `@Handle` içinde adı geçen aynı route için `ctx: Ctx<typeof contract.route>` olmalıdır; ya da metodun parametresi olmamalıdır.
-2. Dönüş türü yanıt türüdür: döndürülen nesnedeki eksik bir alan ya da yanlış bir tür olağan nedendir. Hatadaki tam alanı görmek için metoda açık bir dönüş türü ekleyin.
-3. `response` olmayan bir route `void` döndürür.
+1. Parametre, `@Handle` ile verdiğin rotanın aynısı için `ctx: Ctx<typeof contract.route>` mi, ya da method'un hiç parametresi yok mu?
+2. Dönüş tipi yanıt tipi mi? Genelde sebep, dönen nesnede eksik bir alan ya da yanlış bir tiptir. Hatada tam olarak hangi alanın sorunlu olduğunu görmek için method'a açık bir dönüş tipi yaz.
+3. `response` tanımı olmayan bir rota `void` döner.
 
 ```ts
 @Controller(users)
@@ -97,4 +97,4 @@ export class UsersController {
 }
 ```
 
-Çözüm, dönüş türü `{ id: string }` iken `{ id: ctx.params.id }` döndürmektir. Hatayı asla bir cast ya da `any` ile susturmayın: handler ile istemciyi senkron tutan şey decorator'dır.
+Düzeltme, `{ id: string }` dönüş tipiyle `{ id: ctx.params.id }` dönmek. Hatayı asla bir cast ya da `any` ile susturma. Handler'ı ve istemciyi senkron tutan şey tam olarak bu decorator.

@@ -2,7 +2,7 @@
 
 ## Modüller {#modules}
 
-Modül, `@Module()` ile işaretlenmiş bir sınıftır. Neleri sağladığını, hangi controller'ları kaydettiğini, hangi modülleri içe aktardığını ve provider'larından hangilerini diğer modüllerin kullanabileceğini listeler:
+Modül, `@Module()` ile işaretlenmiş bir class'tır. Neleri provide ettiğini, hangi controller'ları kaydettiğini, hangi modülleri import ettiğini ve provider'larından hangilerini başka modüllerin kullanabileceğini listeler:
 
 ```ts
 class TodosService {
@@ -18,13 +18,13 @@ export class TodosModule {}
 export class AppModule {}
 ```
 
-Bir modül kendi provider'larını, içe aktardığı modüllerin export'larını ve global modüllerin export'larını görür. Bunların dışındaki her şey başlangıçta, modülü ve token'ı isteyen zinciri adlandıran [VIBE9102](https://vibejs.org/v0/errors/VIBE9102) ile başarısız olur. Modüller döngü oluşturacak şekilde birbirini içe aktaramaz ([VIBE9202](https://vibejs.org/v0/errors/VIBE9202)) ve içe aktarılan her sınıfın kendi `@Module()` bildirimi olmalıdır ([VIBE9201](https://vibejs.org/v0/errors/VIBE9201)).
+Bir modül kendi provider'larını, import ettiği modüllerin export'larını ve global modüllerin export'larını görür. Başka bir şey isterse uygulama açılırken [VIBE9102](https://vibejs.org/v0/errors/VIBE9102) hatası verir. Hata, modülün ismini ve token'ı isteyen zinciri gösterir. Modüller birbirini döngüsel olarak import edemez ([VIBE9202](https://vibejs.org/v0/errors/VIBE9202)). Import edilen her class'ın da kendi `@Module()` decorator'ı olmalı ([VIBE9201](https://vibejs.org/v0/errors/VIBE9201)).
 
-Bir modül, içe aktardığı bir modülü export edebilir; bu, o modülün export'larını kendi içe aktaranlarına iletir. `@Module({ global: true })`, export'ları içe aktarma olmadan her yerde görünür kılar; veritabanı istemcisi gibi kesişen (cross-cutting) servisler için kullanın.
+Bir modül, import ettiği bir modülü export edebilir. O zaman o modülün export'ları, onu import eden modüllere de geçer. `@Module({ global: true })` export'ları import gerektirmeden her yerde görünür yapar. Bunu veritabanı istemcisi gibi her yerde gereken servisler için kullan.
 
-## Bağımlılıkları enjekte etmek {#injecting-dependencies}
+## Bağımlılıkları inject etmek {#injecting-dependencies}
 
-Bağımlılıklar, `inject(Token)` ile başlatılan alanlardır:
+Bağımlılıklar, `inject(Token)` ile başlatılan field'lardır:
 
 ```ts
 class TodosService {
@@ -36,14 +36,14 @@ class TodosService {
 }
 ```
 
-- Provider'lar `new Cls()` ile oluşturulur. Parametreli bir constructor [VIBE9104](https://vibejs.org/v0/errors/VIBE9104) ile reddedilir; her parametreyi bir `inject()` alanına taşıyın.
-- `inject()`, container bir nesneyi oluştururken çalışır: alan başlatıcılarında, constructor gövdesinde ve bir factory'nin eşzamanlı kısmında. Başka her yerde [VIBE9101](https://vibejs.org/v0/errors/VIBE9101) hatası fırlatır.
-- Enjekte edilen alanları `private` yapın. Public bir alan sınıfın bildirilen türünün parçasıdır; bu yüzden `isolatedDeclarations` ile açık bir tür notasyonu gerekir (TS9012): `readonly db: Db = inject(Db)`.
-- `inject(Token, { optional: true })`, görünür bir provider yoksa `undefined` döndürür.
+- Provider'lar `new Cls()` ile oluşturulur. Parametre alan bir constructor yazarsan [VIBE9104](https://vibejs.org/v0/errors/VIBE9104) hatası alırsın. Her parametreyi bir `inject()` field'ına taşı.
+- `inject()`, container bir nesneyi kurarken çalışır: field initializer'larında, constructor gövdesinde ve bir factory'nin senkron kısmında. Başka bir yerde [VIBE9101](https://vibejs.org/v0/errors/VIBE9101) fırlatır.
+- Inject ettiğin field'ları `private` yap. Public bir field class'ın tanımlı tipinin parçasıdır. Bu yüzden `isolatedDeclarations` açıksa ona açık bir tip yazman gerekir (TS9012): `readonly db: Db = inject(Db)`.
+- `inject(Token, { optional: true })`, görünür bir provider yoksa `undefined` döner.
 
 ## Provider'lar {#providers}
 
-Provider, bir sınıf ya da `provide` içinde bir token adlandıran ve değerinin nasıl oluşturulacağını söyleyen bir nesnedir:
+Provider ya bir class'tır ya da `provide` içinde bir token veren ve değerinin nasıl oluşturulacağını söyleyen bir nesnedir:
 
 ```ts
 const ApiUrl = token<string>('ApiUrl');
@@ -58,9 +58,9 @@ export const providers: Provider[] = [
 ];
 ```
 
-`token<T>(description)`, sınıf olmayan bir değer için tipli bir token oluşturur. Sınıf kendi token'ıdır. Bir modül aynı token'ı iki kez listelerse son kayıt kazanır.
+`token<T>(description)`, class olmayan bir değer için tipli bir token oluşturur. Class zaten kendi token'ıdır. Bir modül aynı token'ı iki kere listelerse son kayıt kazanır.
 
-Bir factory, `inject` içinde listelenen token'ları parametre olarak alır ve async olabilir:
+Factory, `inject` içinde listelenen token'ları parametre olarak alır ve async olabilir:
 
 ```ts
 const DatabaseUrl = token<string>('DatabaseUrl');
@@ -72,18 +72,18 @@ export const database: Provider[] = [
 ];
 ```
 
-Her factory, herhangi bir sınıf oluşturulmadan önce tamamlanır; bu yüzden sınıflar bir factory'nin değerini doğrudan enjekte edebilir. Bir factory oluşturulurken ihtiyaç duyduğu bir sınıf yalnızca tamamlanmış factory'leri enjekte edebilir; böyle bir bağımlılığı, önce tamamlansın diye factory'nin `inject` dizisinde listeleyin ([VIBE9106](https://vibejs.org/v0/errors/VIBE9106)).
+Hiçbir class oluşmadan önce bütün factory'ler tamamlanır. Bu yüzden class'lar bir factory'nin değerini doğrudan inject edebilir. Bir factory'nin kurulurken ihtiyaç duyduğu bir class ise sadece önceden tamamlanmış factory'leri inject edebilir. Böyle bir bağımlılığı önce tamamlanması için factory'nin `inject` dizisine yaz ([VIBE9106](https://vibejs.org/v0/errors/VIBE9106)).
 
-## Lifecycle hook'ları {#lifecycle-hooks}
+## Yaşam döngüsü hook'ları {#lifecycle-hooks}
 
-Bir provider, controller, enhancer ya da modül sınıfı şu hook'ları uygulayabilir:
+Bir provider, controller, enhancer ya da modül class'ı şu hook'ları uygulayabilir:
 
-| Hook                             | Ne zaman                                                                      |
-| -------------------------------- | ----------------------------------------------------------------------------- |
-| `onModuleInit()`                 | Her nesne oluşturulduktan sonra, modül sırasıyla (en derin içe aktarma önce). |
-| `onApplicationBootstrap()`       | Her `onModuleInit` sonrasında.                                                |
-| `onModuleDestroy()`              | `close()` sırasında, ters sırayla.                                            |
-| `onApplicationShutdown(signal?)` | Her `onModuleDestroy` sonrasında.                                             |
+| Hook                             | Ne zaman                                                                     |
+| -------------------------------- | ---------------------------------------------------------------------------- |
+| `onModuleInit()`                 | Bütün nesneler oluştuktan sonra, modül sırasıyla (en derindeki import önce). |
+| `onApplicationBootstrap()`       | Bütün `onModuleInit` hook'larından sonra.                                    |
+| `onModuleDestroy()`              | `close()` sırasında, ters sırayla.                                           |
+| `onApplicationShutdown(signal?)` | Bütün `onModuleDestroy` hook'larından sonra.                                 |
 
 ```ts
 class Migrations implements OnModuleInit, OnModuleDestroy {
@@ -99,4 +99,4 @@ class Migrations implements OnModuleInit, OnModuleDestroy {
 }
 ```
 
-Init hook'ları tek tek await edilir ve ilk hata başlangıcı durdurur. Shutdown hook'larının hepsi, biri başarısız olsa bile çalışır; hatalar birlikte [VIBE9204](https://vibejs.org/v0/errors/VIBE9204) olarak bildirilir.
+Init hook'ları tek tek await edilir ve ilk hata açılışı durdurur. Kapanış hook'ları ise biri başarısız olsa bile hepsi çalışır. Hatalar topluca [VIBE9204](https://vibejs.org/v0/errors/VIBE9204) olarak raporlanır.

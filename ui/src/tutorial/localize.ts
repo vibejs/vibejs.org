@@ -19,7 +19,7 @@ export const PHRASES: [en: string, tr: string, ar: string][] = [
     "{{ count }} عدد {{ isEven ? 'زوجي' : 'فردي' }}.",
   ],
   ['Read the docs', 'Dokümanları oku', 'اقرأ التوثيق'],
-  ['Build something', 'Bir şey yap', 'ابنِ شيئًا'],
+  ['Build something', 'Bir şeyler geliştir', 'ابنِ شيئًا'],
   ['>Clear</button>', '>Temizle</button>', '>امسح</button>'],
   ['Nothing to do.', 'Yapılacak bir şey yok.', 'لا شيء للقيام به.'],
   ['placeholder="What next?"', 'placeholder="Sırada ne var?"', 'placeholder="ما التالي؟"'],
@@ -28,17 +28,17 @@ export const PHRASES: [en: string, tr: string, ar: string][] = [
   ['>Remove</button>', '>Sil</button>', '>احذف</button>'],
   [
     '<template #title>Contracts</template>',
-    "<template #title>Contract'lar</template>",
+    '<template #title>Sözleşmeler</template>',
     '<template #title>العقود</template>',
   ],
   [
     'Routes typed once, for both sides.',
-    "Route'lar bir kez, iki taraf için tiplenir.",
+    'Rotalar bir kez tiplenir, iki taraf da kullanır.',
     'مسارات تُكتب أنواعها مرة واحدة للطرفين.',
   ],
   [
     '<template #title>Templates</template>',
-    "<template #title>Template'ler</template>",
+    '<template #title>Şablonlar</template>',
     '<template #title>القوالب</template>',
   ],
   [
@@ -54,7 +54,7 @@ export const PHRASES: [en: string, tr: string, ar: string][] = [
     "الإشعارات {{ notifications ? 'مفعّلة' : 'معطّلة' }}.",
   ],
   ["{{ on ? 'On' : 'Off' }}", "{{ on ? 'Açık' : 'Kapalı' }}", "{{ on ? 'تشغيل' : 'إيقاف' }}"],
-  ['>Ship v0.1</p>', ">v0.1'i yayınla</p>", '>أطلق الإصدار 0.1</p>'],
+  ['>Ship v0.1</p>', ">v0.1'i yayına al</p>", '>أطلق الإصدار 0.1</p>'],
   ['placeholder="Your name"', 'placeholder="Adınız"', 'placeholder="اسمك"'],
   [
     "Hello, {{ name || 'stranger' }}. Changed {{ changes }} times.",
@@ -86,14 +86,14 @@ export const PHRASES: [en: string, tr: string, ar: string][] = [
     '// تحتفظ المعاينة بعنوانها في الذاكرة؛ يستخدم التطبيق createWebHistory().',
   ],
   ['// Pretends to be a slow request.', '// Yavaş bir isteği taklit eder.', '// يحاكي طلبًا بطيئًا.'],
-  ['You rolled {{ data }}.', 'Zar: {{ data }}.', 'النتيجة: {{ data }}.'],
+  ['You rolled {{ data }}.', 'Zarda {{ data }} geldi.', 'حصلت على {{ data }}.'],
   ['>Loading…</p>', '>Yükleniyor…</p>', '>جارٍ التحميل…</p>'],
   ['>Roll again</button>', '>Tekrar at</button>', '>ارمِ مجددًا</button>'],
   ["return 'Loading…';", "return 'Yükleniyor…';", "return 'جارٍ التحميل…';"],
   ["? 'Not found' :", "? 'Bulunamadı' :", "? 'غير موجود' :"],
   [
     '<p>Todo 3: {{ third }}</p>',
-    '<p>3 numaralı todo: {{ third }}</p>',
+    '<p>3 numaralı görev: {{ third }}</p>',
     '<p>المهمة 3: {{ third }}</p>',
   ],
   [

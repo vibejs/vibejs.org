@@ -1,27 +1,27 @@
 # Adım adım eğitim
 
-Bu eğitimde yeni bir uygulamaya `users` API'si eklersiniz, kullanıcıları listeleyen bir sayfa yazarsınız, `vibejs check` komutunun bir template'teki tip hatasını yakalamasını sağlarsınız, ardından uygulamayı derleyip sunarsınız. Yaklaşık on dakika sürer. Node.js `^24.15.0 || >=26` ve pnpm gerekir.
+Bu eğitimde yeni bir uygulamaya `users` API'si ekleyeceksin, kullanıcıları listeleyen bir sayfa yazacaksın, şablondaki bir tip hatasını `vibejs check` ile yakalayacaksın ve sonunda uygulamanın build'ini alıp sunacaksın. Yaklaşık on dakika sürer. Node.js `^24.15.0 || >=26` ve pnpm gerekiyor.
 
-Bu sayfadaki her komut ve dosya, her değişiklikte vibe.js test paketi tarafından bu sırayla çalıştırılır; yani adımlar yazıldığı gibi çalışır.
+Bu sayfadaki her komutu ve dosyayı vibe.js test paketi her değişiklikte aynı sırayla çalıştırıyor. Yani adımlar yazıldığı gibi çalışır.
 
-## 1. Uygulamayı oluşturun {#1-create-the-app}
+## 1. Uygulamayı oluştur {#1-create-the-app}
 
 ```sh
 pnpm create vibejs my-app
 cd my-app
 ```
 
-Uygulamanın üç parçası vardır: API contract'ları için `contracts/`, sunucu için `server/` ve UI için `ui/`. Yapı ve editör kurulumu için [Başlarken](https://vibejs.org/v0/guides/getting-started) sayfasına bakın.
+Uygulamanın üç parçası var: API sözleşmeleri (contract) için `contracts/`, sunucu için `server/` ve UI için `ui/`. Dosya yapısı ve editör kurulumu için [Başlarken](https://vibejs.org/v0/guides/getting-started) sayfasına bak.
 
-## 2. Denetleyin {#2-check-it}
+## 2. Denetle {#2-check-it}
 
 ```sh
 pnpm vibejs check
 ```
 
-`vibejs check` TypeScript ve `.vibe` template'leri üzerinde tip denetleyicisini, linter'ı, biçim denetimini ve kapsamlı testleri çalıştırır. Yeni bir uygulama, her dosyası tam kapsanmış olarak geçer.
+`vibejs check`, TypeScript'in ve `.vibe` şablonlarının tip denetimini, linter'ı, format kontrolünü ve coverage'lı testleri çalıştırır. Yeni bir uygulama bu denetimden geçer ve her dosyanın coverage'ı tamdır.
 
-## 3. Bir kaynak, bir sayfa ve bir bileşen üretin {#3-generate-a-resource-a-page-and-a-component}
+## 3. Bir kaynak, bir sayfa ve bir bileşen üret {#3-generate-a-resource-a-page-and-a-component}
 
 ```sh
 pnpm vibejs g resource users
@@ -30,13 +30,13 @@ pnpm vibejs g component UserCard
 pnpm vibejs check
 ```
 
-Her generator dosyalarını testleriyle birlikte yazar ve ait oldukları yerlere kaydeder:
+Her generator dosyalarını testleriyle yazar ve gereken yerlere kaydeder:
 
-- `g resource users`, kullanıcıları listeleme, getirme, oluşturma, güncelleme ve silme rotalarını içeren `contracts/src/users.contract.ts` contract'ını; ayrıca bir controller, bellek içi bir servis ve bir test içeren bir sunucu modülünü yazar. Modülü `server/src/app.module.ts` dosyasına, contract'ı da `ui/src/api.ts` içindeki UI'ın API istemcisine ekler.
-- `g page Users`, testiyle birlikte `ui/src/pages/UsersPage.vibe` dosyasını yazar ve `/users` rotasını `ui/src/routes.ts` dosyasına ekler.
-- `g component UserCard`, `title` prop'u olan bir bileşen olan `ui/src/components/UserCard.vibe` dosyasını ve testini yazar.
+- `g resource users`, `contracts/src/users.contract.ts` sözleşmesini yazar. İçinde kullanıcıları listeleme, getirme, oluşturma, güncelleme ve silme rotaları var. Ayrıca bir controller, bellekte çalışan bir servis ve bir test içeren bir sunucu modülü yazar. Modülü `server/src/app.module.ts` dosyasına, sözleşmeyi de UI'ın `ui/src/api.ts` içindeki API istemcisine ekler.
+- `g page Users`, `ui/src/pages/UsersPage.vibe` dosyasını testiyle yazar ve `ui/src/routes.ts` dosyasına `/users` rotasını ekler.
+- `g component UserCard`, `ui/src/components/UserCard.vibe` dosyasını testiyle yazar. Bu, `title` prop'u olan bir bileşen.
 
-Bir contract her rotayı parametreleri, gövdesi, yanıtı ve hatalarıyla bir kez tanımlar; iki taraf da tiplerini ondan alır. Örnek todo uygulamasının contract'ı da aynı görünür:
+Sözleşmede her rotayı parametreleri, gövdesi, yanıtı ve hatalarıyla bir kez tanımlarsın. İki taraf da tiplerini oradan alır. Örnek todo uygulamasının sözleşmesi de aynı görünüyor:
 
 ```ts
 import { defineContract, del, get, patch, post } from '@usevibejs/contract';
@@ -56,11 +56,11 @@ export const todos = defineContract('/todos', {
 });
 ```
 
-Sunucu, contract'ın her rotasını tipli bir handler ile karşılar ([Controller'lar ve handler'lar](https://vibejs.org/v0/server/handlers)); UI ise kod üretimi olmadan tipli bir istemci üzerinden çağırır ([Contract'lar](https://vibejs.org/v0/server/contracts)). Generator'lar yaptığınız değişikliklerin üzerine asla yazmaz: birini yeniden çalıştırırsanız var olan dosyaları atlar.
+Sunucu, sözleşmedeki her rotayı tipli bir handler ile karşılar ([Controller'lar ve handler'lar](https://vibejs.org/v0/server/handlers)). UI ise onu kod üretmeden, tipli bir istemciyle çağırır ([Sözleşmeler](https://vibejs.org/v0/server/contracts)). Generator'lar senin değişikliklerinin üstüne asla yazmaz: birini tekrar çalıştırırsan var olan dosyaları atlar.
 
-## 4. Kullanıcıları listeleyin {#4-list-the-users}
+## 4. Kullanıcıları listele {#4-list-the-users}
 
-Sayfanın kullanıcıları API'den yüklemesini ve her kullanıcı için numaralı bir `UserCard` göstermesini sağlayın. Önce sayfanın testi: uygulamayı `/users` adresinde, `fetch`'i tek bir kullanıcıyla yanıt veren bir API istemcisiyle mount eder.
+Sayfa kullanıcıları API'den çeksin ve her kullanıcı için numaralı bir `UserCard` göstersin. Önce sayfanın testi: uygulamayı `/users` adresinde mount ediyor. API istemcisinin `fetch`'i de tek bir kullanıcıyla yanıt veriyor.
 
 ```ts [ui/src/pages/UsersPage.test.ts]
 import { createMemoryHistory, createRouter } from '@usevibejs/ui/router';
@@ -81,7 +81,7 @@ it('lists the users from the API at /users', async () => {
 });
 ```
 
-Sonra sayfa. `useAsync` sayfa mount edildiğinde listeyi yükler; istemcinin sonucu ya `{ ok: true, data }` ya da `{ ok: false, error }` olur ([Veri yükleme](https://vibejs.org/v0/ui/data)). Bu ilk sürümde bir hata var:
+Sonra sayfanın kendisi. `useAsync` listeyi sayfa mount olunca yükler. İstemcinin sonucu ya `{ ok: true, data }` ya da `{ ok: false, error }` olur ([Veri yükleme](https://vibejs.org/v0/ui/data)). Bu ilk sürümde bir hata var:
 
 ```vibe [ui/src/pages/UsersPage.vibe]
 <script setup lang="ts">
@@ -101,20 +101,20 @@ const users = computed(() => (data.value?.ok ? data.value.data : []));
 </template>
 ```
 
-## 5. Hatayı check'in bulmasını sağlayın {#5-let-check-find-the-mistake}
+## 5. Hatayı check bulsun {#5-let-check-find-the-mistake}
 
 ```sh exit=1
 pnpm vibejs check
 ```
 
-Denetim başarısız olur. Template'ler TypeScript gibi tip denetiminden geçer; bu yüzden tip hatası, `.vibe` dosyasında satırı ve sütunuyla bildirilir. Kart `1` gösterdiği için sayfanın testi de başarısız olur:
+Denetim başarısız olur. Şablonlar da TypeScript gibi tip denetiminden geçer, o yüzden tip hatası `.vibe` dosyasında satırı ve sütunuyla gelir. Kart `1` gösterdiği için sayfanın testi de patlar:
 
 ```txt
 ui/src/pages/UsersPage.vibe:14:60  error  TS2322  Type 'number' is not assignable to type 'string'.
 ui/src/pages/UsersPage.test.ts:8:1  error  test-failed  AssertionError: expected [ '1' ] to deeply equal [ '1. Ada' ]
 ```
 
-`title` bir `string` prop'tur, `index + 1` ise bir sayı. Editörünüz aynı hatayı siz yazarken gösterir. Bir string geçin:
+`title` bir `string` prop'u, `index + 1` ise bir sayı. Editörün de aynı hatayı sen yazarken gösterir. Bir string ver:
 
 ```vibe [ui/src/pages/UsersPage.vibe]
 <script setup lang="ts">
@@ -138,33 +138,33 @@ const users = computed(() => (data.value?.ok ? data.value.data : []));
 pnpm vibejs check
 ```
 
-Denetim yeniden geçer; testler ve tam kapsama dahil.
+Denetim yine geçer; testler ve tam coverage dahil.
 
-## 6. Derleyin ve sunun {#6-build-and-serve}
+## 6. Build al ve sun {#6-build-and-serve}
 
 ```sh
 pnpm vibejs build
 pnpm start
 ```
 
-`vibejs build` UI'ı `ui/dist` içine, sunucuyu `server/dist/main.js` içine yazar. `pnpm start`, derlenmiş sunucuyu 3000 portunda veya `PORT` içindeki portta çalıştırır: `/api/health` `{"status":"ok"}` yanıtını verir, `/api/users` ise kullanıcı listesini verir; şimdilik boştur. Ctrl+C ile durdurun. İki çıktı ayrı ayrı dağıtılır: UI statik dosyalar olarak, sunucu bir Node.js süreci olarak ([Dağıtım](https://vibejs.org/v0/server/#deploying)).
+`vibejs build`, UI'ı `ui/dist` altına, sunucuyu `server/dist/main.js` dosyasına yazar. `pnpm start` derlenmiş sunucuyu 3000 portunda ya da `PORT` içindeki portta çalıştırır. `/api/health` adresi `{"status":"ok"}` döner, `/api/users` ise kullanıcı listesini. Liste şimdilik boş. Ctrl+C ile durdur. İki çıktıyı ayrı ayrı deploy edersin: UI'ı statik dosya olarak, sunucuyu bir Node.js süreci olarak ([Deploy](https://vibejs.org/v0/server/#deploying)).
 
-## 7. Geliştirin {#7-develop}
+## 7. Geliştir {#7-develop}
 
 ```sh
 pnpm dev
 ```
 
-`pnpm dev` UI'ı ve API'yi tek bir portta sunar ve URL'sini yazdırır; üzerinde `/users` adresini açın. Çalışırken açık bırakın:
+`pnpm dev`, UI'ı ve API'yi aynı portta sunar ve adresini yazdırır; o adreste `/users` sayfasını aç. Çalışırken açık bırak:
 
-- `ui/src/components/UserCard.vibe` dosyasını düzenleyin, örneğin markup'ını: sayfa yerinde güncellenir ve durumunu korur.
-- `server/` altındaki bir dosyayı düzenleyin, örneğin servisi: sunucu bir saniyenin çok altında yeniden başlar ve sonraki istek yeni koda ulaşır.
-- Build, tarayıcı ve sunucu hataları `.vibejs/dev.log` dosyasına gider; `pnpm vibejs errors` bunları listeler.
+- `ui/src/components/UserCard.vibe` dosyasını, mesela işaretlemesini değiştir: sayfa yerinde güncellenir ve durumunu korur.
+- `server/` altındaki bir dosyayı, mesela servisi değiştir: sunucu bir saniyeden çok daha kısa sürede yeniden başlar ve sonraki istek yeni koda gider.
+- Build'in, tarayıcının ve sunucunun hataları `.vibejs/dev.log` dosyasına düşer; `pnpm vibejs errors` onları listeler.
 
-Aynı uygulamada ikinci bir `pnpm dev`, yeni bir sunucu başlatmak yerine çalışan sunucuyu bildirir.
+Aynı uygulamada ikinci bir `pnpm dev` çalıştırırsan yeni bir sunucu başlatmaz, çalışan sunucuyu bildirir.
 
 ## Sonraki adım {#next}
 
-- UI için [Yönlendirme](https://vibejs.org/v0/ui/routing) ve [Bileşenleri test etme](https://vibejs.org/v0/ui/testing).
+- UI için [Yönlendirme](https://vibejs.org/v0/ui/routing) ve [Bileşenleri test etmek](https://vibejs.org/v0/ui/testing).
 - Sunucu için [Sunucu](https://vibejs.org/v0/server/) ve [Modüller ve provider'lar](https://vibejs.org/v0/server/modules).
-- Bir kodlama ajanının uygulama üzerinde aynı komutlarla çalışması için [CLI ve yapay zekâ ajanları](https://vibejs.org/v0/guides/ai-agents).
+- Bir kodlama ajanının uygulamada aynı komutlarla çalışması için [CLI ve yapay zekâ ajanları](https://vibejs.org/v0/guides/ai-agents).

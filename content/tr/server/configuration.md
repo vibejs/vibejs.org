@@ -2,7 +2,7 @@
 
 ## Ortam yapılandırması {#environment-config}
 
-`defineConfig(schema)`, constructor'ı şema anahtarlarının adlandırdığı ortam değişkenlerini doğrulayan bir sınıf döndürür. Onu diğer sınıflar gibi sağlayın ve gerektiği yerde enjekte edin:
+`defineConfig(schema)` bir class döner. Bu class'ın constructor'ı, isimleri schema anahtarlarından gelen ortam değişkenlerini doğrular. Onu her class gibi provide et ve gerektiği yerde inject et:
 
 ```ts
 export class AppConfig extends defineConfig({
@@ -22,11 +22,11 @@ class Db {
 export class CoreModule {}
 ```
 
-Yapılandırma, uygulama oluşturulurken bir kez doğrulanır. Başarısız olan her anahtar tek seferde [VIBE9601](https://vibejs.org/v0/errors/VIBE9601) olarak bildirilir; mesaj anahtarları adlandırır ve değerleri asla yazdırmaz. Şemalar eşzamanlı olmalıdır ([VIBE9602](https://vibejs.org/v0/errors/VIBE9602)). Doğrulanmış nesne dondurulur (frozen).
+Yapılandırma bir kere, uygulama oluşurken doğrulanır. Geçersiz olan bütün anahtarlar tek seferde [VIBE9601](https://vibejs.org/v0/errors/VIBE9601) olarak raporlanır. Mesaj anahtarların ismini verir ama değerleri asla yazmaz. Schema'lar senkron olmalı ([VIBE9602](https://vibejs.org/v0/errors/VIBE9602)). Doğrulanan nesne dondurulur (frozen).
 
 ## Loglama {#logging}
 
-Uygulama logger'ı her modülde `Logger` olarak sağlanır. Framework ile aynı çıkışa log yazmak için onu enjekte edin:
+Uygulamanın logger'ı her modülde `Logger` olarak provide edilir. Framework ile aynı hedefe log yazmak istiyorsan onu inject et:
 
 ```ts
 class Mailer {
@@ -38,7 +38,7 @@ class Mailer {
 }
 ```
 
-Varsayılan logger, her kayıt için bir JSON satırı yazan `JsonLogger`'dır: `{ time, level, msg, ...fields }`. Başka birini `AppOptions.logger` içinde verin:
+Varsayılan logger `JsonLogger` olur. Her kayıt için tek bir JSON satırı yazar: `{ time, level, msg, ...fields }`. Başka bir logger kullanmak istiyorsan onu `AppOptions.logger` içinde ver:
 
 ```ts
 export const appOptions: AppOptions = {
@@ -47,11 +47,11 @@ export const appOptions: AppOptions = {
 };
 ```
 
-Seviyeler `debug`, `info` (varsayılan), `warn`, `error` ve `silent` değerleridir. Her istek `debug` seviyesinde metodu, yolu, durumu ve süresiyle loglanır. Bir handler'daki `ctx.log`, `requestId` ekleyen bir alt logger'dır. Logları başka bir yere göndermek için soyut `Logger` sınıfını genişletin ya da `JsonLogger`'a `write` verin.
+Seviyeler şunlar: `debug`, `info` (varsayılan), `warn`, `error` ve `silent`. Her istek `debug` seviyesinde method, path, status ve süresiyle loglanır. Bir handler içindeki `ctx.log`, `requestId` değerini ekleyen bir alt logger'dır. Logları başka bir yere göndermek istiyorsan soyut `Logger` class'ını extend et ya da `JsonLogger` için `write` ver.
 
 ## CORS {#cors}
 
-`cors(options)` bir middleware'dir. Preflight isteklerini yanıtlar ve izin verilen origin'lere giden yanıtlara CORS başlıklarını ekler:
+`cors(options)` bir middleware'dir. Preflight isteklerine cevap verir ve izin verilen origin'lere giden yanıtlara CORS header'larını ekler:
 
 ```ts
 export const appOptions: AppOptions = {
@@ -60,11 +60,11 @@ export const appOptions: AppOptions = {
 };
 ```
 
-`origin`; `'*'`, bir origin listesi ya da bir predicate'tir. `'*'` değerinin `credentials: true` ile birlikte kullanılması reddedilir ([VIBE9404](https://vibejs.org/v0/errors/VIBE9404)), çünkü tarayıcılar bunu yok sayar. UI ve API aynı origin'i paylaştığında, ki varsayılan düzen budur, CORS gerekmez.
+`origin` değeri `'*'`, bir origin listesi ya da bir predicate olabilir. `'*'` ile `credentials: true` birlikte kullanılamaz ([VIBE9404](https://vibejs.org/v0/errors/VIBE9404)), çünkü tarayıcılar bu birleşimi yok sayar. UI ve API aynı origin'i paylaşıyorsa, ki varsayılan yapı böyledir, CORS'a hiç gerek yoktur.
 
 ## Cookie'ler {#cookies}
 
-`ctx.cookies` istek cookie'lerini okur ve yanıt cookie'lerini ayarlar. Seçenekler aksini söylemedikçe yeni cookie'ler `HttpOnly`, `Secure`, `SameSite=Lax` ve `Path=/` olur:
+`ctx.cookies` isteğin cookie'lerini okur ve yanıta cookie yazar. Seçeneklerde aksini söylemezsen yeni cookie'ler `HttpOnly`, `Secure`, `SameSite=Lax` ve `Path=/` olur:
 
 ```ts
 @Controller(session)
@@ -81,20 +81,20 @@ export class SessionController {
 }
 ```
 
-Cookie adı bir RFC 9110 token'ı olmalıdır ([VIBE9504](https://vibejs.org/v0/errors/VIBE9504)).
+Cookie ismi bir RFC 9110 token'ı olmalı ([VIBE9504](https://vibejs.org/v0/errors/VIBE9504)).
 
-## Limitler ve kapatma {#limits-and-shutdown}
+## Limitler ve kapanış {#limits-and-shutdown}
 
-| Seçenek             | Varsayılan | Anlamı                                                                                                              |
-| ------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
-| `basePath`          | `''`       | Her route'un öneki; örneğin `/api` ([VIBE9405](https://vibejs.org/v0/errors/VIBE9405)).                             |
-| `bodyLimit`         | 1 MiB      | Bayt cinsinden en büyük istek gövdesi; daha büyük gövdeler 413 alır.                                                |
-| `shutdownTimeout`   | 10 000 ms  | `close()` fonksiyonunun çalışan istekleri ne kadar bekleyeceği ([VIBE9402](https://vibejs.org/v0/errors/VIBE9402)). |
-| `validateResponses` | `true`     | Handler sonuçlarını doğrular; bkz. [Handler'lar](https://vibejs.org/v0/server/handlers#validation).                 |
+| Seçenek             | Varsayılan | Anlamı                                                                                                         |
+| ------------------- | ---------- | -------------------------------------------------------------------------------------------------------------- |
+| `basePath`          | `''`       | Her rotanın öneki, örneğin `/api` ([VIBE9405](https://vibejs.org/v0/errors/VIBE9405)).                         |
+| `bodyLimit`         | 1 MiB      | Byte cinsinden en büyük istek body'si. Daha büyük body'ler 413 alır.                                           |
+| `shutdownTimeout`   | 10 000 ms  | `close()` çağrısının süren istekleri ne kadar bekleyeceği ([VIBE9402](https://vibejs.org/v0/errors/VIBE9402)). |
+| `validateResponses` | `true`     | Handler sonuçlarını doğrular. Bak: [Handler'lar](https://vibejs.org/v0/server/handlers#validation).            |
 
 ## TypeScript kurulumu {#typescript-setup}
 
-Sunucu decorator'ları TypeScript legacy decorator'larıdır. Sunucunun `tsconfig.json` dosyası bunları etkinleştirir:
+Sunucu decorator'ları TypeScript'in legacy decorator'larıdır. Sunucunun `tsconfig.json` dosyası bunları açar:
 
 ```json
 {
@@ -104,6 +104,6 @@ Sunucu decorator'ları TypeScript legacy decorator'larıdır. Sunucunun `tsconfi
 }
 ```
 
-- `emitDecoratorMetadata` ayarını asla etkinleştirmeyin ve `reflect-metadata` paketini asla içe aktarmayın: bağımlılıklar türlerden okunmaz, `inject()` ile bildirilir.
-- `experimentalDecorators` olmadan, decorator'lar dekore edilen sınıf tanımlandığında [VIBE9301](https://vibejs.org/v0/errors/VIBE9301) hatası fırlatır.
-- Vite ve Vitest decorator'ları, yardımcı fonksiyonlarını `@oxc-project/runtime` paketinden içe aktaran Oxc ile derler. Yardımcıların çözümlenebilmesi için `@oxc-project/runtime` paketini sunucu paketinin doğrudan bağımlılığı olarak tutun.
+- `emitDecoratorMetadata` seçeneğini asla açma ve `reflect-metadata` paketini asla import etme. Bağımlılıkları tiplerden okumazsın, `inject()` ile tanımlarsın.
+- `experimentalDecorators` kapalıysa decorator'lar, süsledikleri class tanımlanırken [VIBE9301](https://vibejs.org/v0/errors/VIBE9301) fırlatır.
+- Vite ve Vitest decorator'ları Oxc ile derler. Oxc da yardımcı fonksiyonlarını `@oxc-project/runtime` paketinden import eder. Bu yardımcıların çözülebilmesi için `@oxc-project/runtime` paketini sunucu paketinin doğrudan bağımlılığı olarak tut.

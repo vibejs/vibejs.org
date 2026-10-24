@@ -1,6 +1,6 @@
 # العقود
 
-يصرّح العقد (contract) بمسارات مورد واحد: الطريقة والمسار والمدخلات والاستجابة والأخطاء. يقدّمه الخادم، وتستدعيه الواجهة، ويُفحص كلاهما نوعيًا مقابل التصريح نفسه، دون توليد شيفرة.
+يعرّف العقد مسارات مورد واحد: الطريقة، والمسار، والمدخلات، والاستجابة، والأخطاء. يقدّمه الخادم، وتستدعيه الواجهة، ويُتحقق من أنواع الطرفين على التعريف نفسه، دون أي توليد للكود.
 
 ```ts
 import { defineContract, del, get, patch, post } from '@usevibejs/contract';
@@ -20,26 +20,26 @@ export const todos = defineContract('/todos', {
 });
 ```
 
-ملفات العقود (`*.contract.ts`) لا تستورد سوى `@usevibejs/contract` ومكتبة مخططات، ولذلك تستطيع الواجهة استيرادها دون جلب شيفرة الخادم.
+ملفات العقود (`*.contract.ts`) لا تستورد إلا `@usevibejs/contract` ومكتبة مخططات، فتستطيع الواجهة استيرادها دون أن تجرّ معها كود الخادم.
 
 ## المسارات {#routes}
 
-دوال المساعدة للمسارات هي `get` و`post` و`put` و`patch` و`del`. تأخذ كلٌّ منها مسارًا وتعريفًا اختياريًا:
+دوال المسارات هي `get` و`post` و`put` و`patch` و`del`. كل واحدة تأخذ مسارًا وتعريفًا اختياريًا:
 
-| الحقل                    | المعنى                                                                                               |
-| ------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `params`                 | مخطط لمعاملات المسار؛ وبدونه تكون سلاسل نصية.                                                          |
-| `query`                  | مخطط لسلسلة الاستعلام. المفتاح المكرر في URL، أو المُنمَّط كمصفوفة، يكون مصفوفة.                          |
-| `headers`                | مخطط لترويسات الطلب، بأسماء بأحرف صغيرة.                                                             |
-| `body`                   | مخطط لجسم الطلب بصيغة JSON؛ غير مسموح على `get` ([VIBE9004](https://vibejs.org/v0/errors/VIBE9004)). |
-| `response`               | مخطط لجسم النجاح بصيغة JSON، أو `raw()`. وبدونه يجيب المسار بالحالة 204.                             |
-| `status`                 | حالة النجاح: 200 (الافتراضي) أو 201 أو 202.                                                           |
-| `errors`                 | رموز الأخطاء التي يطلقها المسار، لكلٍّ منها حالة HTTP الخاصة به.                                        |
-| `summary`, `description` | نص لمستند OpenAPI.                                                                                   |
+| الحقل                    | المعنى                                                                                              |
+| ------------------------ | --------------------------------------------------------------------------------------------------- |
+| `params`                 | مخطط لمعاملات المسار. دونه تكون نصوصًا.                                                               |
+| `query`                  | مخطط لنص الاستعلام. المفتاح المكرّر في URL، أو المعرَّف نوعه مصفوفة، يكون مصفوفة.                        |
+| `headers`                | مخطط لترويسات الطلب، بأسماء بأحرف صغيرة.                                                            |
+| `body`                   | مخطط لجسم الطلب بصيغة JSON. غير مسموح في `get` ([VIBE9004](https://vibejs.org/v0/errors/VIBE9004)). |
+| `response`               | مخطط لجسم النجاح بصيغة JSON، أو `raw()`. دونه يجيب المسار بـ 204.                                   |
+| `status`                 | حالة النجاح: 200 (الافتراضي) أو 201 أو 202.                                                          |
+| `errors`                 | رموز الأخطاء التي يرفعها المسار، ومع كل رمز حالة HTTP الخاصة به.                                     |
+| `summary`، `description` | نص لمستند OpenAPI.                                                                                  |
 
-المسارات هي `/` أو مقاطع مثل `/users/:id/posts`؛ وتبدأ المعاملات بـ `:` ([VIBE9001](https://vibejs.org/v0/errors/VIBE9001)). المسار الكامل لمسار ما هو بادئة العقد متبوعة بمسار المسار، ويُسبق بـ `basePath` الخاص بالتطبيق عند تقديمه.
+المسار إما `/` وإما مقاطع مثل `/users/:id/posts`، وتبدأ المعاملات بـ `:` ([VIBE9001](https://vibejs.org/v0/errors/VIBE9001)). المسار الكامل للمسار هو بادئة العقد يليها مسار المسار نفسه، ويُضاف `basePath` الخاص بالتطبيق في أوله عند التقديم.
 
-تصرّح `raw(contentType?)` باستجابة تُرسل كما هي، مثل ملف. يعيد المعالج `Response` أو جسمًا مثل سلسلة نصية أو تدفق (stream)، ويستقبل العميل `Response`:
+يعرّف `raw(contentType?)` استجابة تُرسل كما هي، مثل ملف. يعيد المعالج `Response` أو جسمًا مثل نص أو stream، ويستقبل العميل الـ `Response`:
 
 ```ts
 export const reports = defineContract('/reports', {
@@ -49,7 +49,7 @@ export const reports = defineContract('/reports', {
 
 ## الأخطاء {#errors}
 
-يصرّح المسار بالأخطاء التي ينبغي للعميل معالجتها بالصيغة `errors: { CODE: status }`. يطلقها المعالج بـ `ctx.fail('CODE', detail?)`، ويتلقى العميل استجابة `application/problem+json`:
+يعرّف المسار الأخطاء التي ينبغي أن يعالجها العميل بالصيغة `errors: { CODE: status }`. ويرفعها المعالج بـ `ctx.fail('CODE', detail?)`، فيستقبل العميل استجابة `application/problem+json`:
 
 ```json
 {
@@ -62,20 +62,20 @@ export const reports = defineContract('/reports', {
 }
 ```
 
-إضافة إلى الرموز المصرَّح بها، يمكن لكل مسار أن يجيب بالرموز المضمَّنة `BAD_REQUEST` و`VALIDATION_FAILED` و`INVALID_JSON` و`UNAUTHORIZED` و`FORBIDDEN` و`NOT_FOUND` و`METHOD_NOT_ALLOWED` و`BODY_TOO_LARGE` و`UNSUPPORTED_MEDIA_TYPE` و`INTERNAL_ERROR` و`SERVICE_UNAVAILABLE`. وتسرد مشكلة `VALIDATION_FAILED` كل خلل في `errors` بالصيغة `{ in, pointer, message }`.
+إلى جانب الرموز المعرَّفة، يستطيع كل مسار أن يجيب بالرموز المدمجة `BAD_REQUEST` و`VALIDATION_FAILED` و`INVALID_JSON` و`UNAUTHORIZED` و`FORBIDDEN` و`NOT_FOUND` و`METHOD_NOT_ALLOWED` و`BODY_TOO_LARGE` و`UNSUPPORTED_MEDIA_TYPE` و`INTERNAL_ERROR` و`SERVICE_UNAVAILABLE`. ومشكلة `VALIDATION_FAILED` تذكر كل خلل في `errors` بالصيغة `{ in, pointer, message }`.
 
 ## مكتبات المخططات {#schema-libraries}
 
-تعمل أي مكتبة [Standard Schema](https://standardschema.dev)، ويمكن للعقد الواحد أن يخلط بينها.
+تعمل أي مكتبة تدعم [Standard Schema](https://standardschema.dev)، ويمكن أن يخلط العقد الواحد بينها.
 
-- **valibot** هي الخيار الافتراضي الموصى به للشيفرة التي تُشحن إلى المتصفح، لأن المدقّقات التي تستخدمها فقط هي التي تنتهي في الحزمة.
-- **zod** تعمل أيضًا. تنتقل التواريخ كسلاسل نصية في JSON، لذا صرّح بها بـ `z.iso.datetime()` بدلًا من `z.date()`.
+- **valibot** هي الخيار الافتراضي الموصى به للكود الذي يصل إلى المتصفح، لأن الحزمة النهائية لا تضم إلا أدوات التحقق التي تستخدمها.
+- **zod** تعمل أيضًا. التواريخ تنتقل نصوصًا في JSON، فعرّفها بـ `z.iso.datetime()` لا بـ `z.date()`.
 
-تعمل المخططات على الخادم. فهو يتحقق من أجزاء الطلب قبل تشغيل المعالج ويمرّر ناتج المخطط إلى المعالج، ولذلك فإن `v.trim()` في مخطط الجسم يقص الفراغات على الخادم. أما العميل فيرسل مدخله المُنمَّط بصيغة JSON دون تحقق، ويُنمِّط الاستجابة من المخطط دون تحقق ثانٍ.
+المخططات تعمل على الخادم. يتحقق الخادم من أجزاء الطلب قبل تشغيل المعالج، ويمرّر إليه ناتج المخطط، لذلك يقصّ `v.trim()` في مخطط الجسم المسافات على الخادم. أما العميل فيرسل مدخلاته ذات الأنواع بصيغة JSON دون التحقق منها، ويستمد نوع الاستجابة من المخطط دون أن يتحقق منها مرة أخرى.
 
-## استدعاء عقد {#calling-a-contract}
+## استدعاء العقد {#calling-a-contract}
 
-تعيد `createClient(contracts, options)` دالة واحدة لكل مسار. لا يرمي الاستدعاء أبدًا عند فشل HTTP أو الشبكة؛ بل يُحَلّ إلى `ApiResult` تضيّقه على `ok`، ثم على `error.code`:
+تعيد `createClient(contracts, options)` دالة لكل مسار. لا يرمي الاستدعاء أبدًا عند فشل HTTP أو الشبكة، بل ينتهي إلى `ApiResult` تضيّق نوعه بفحص `ok`، ثم `error.code`:
 
 ```ts
 const api = createClient({ todos }, { baseUrl: '/api' });
@@ -91,14 +91,14 @@ if (result.ok) {
 }
 ```
 
-- كائن المدخل فيه `params` و`query` و`headers` و`body`، كلٌّ منها مُنمَّط من المسار.
-- يأخذ الوسيط الثاني `{ signal, headers }`. وقد تكون `options.headers` دالة تُستدعى لكل طلب، مثل دالة تضيف ترويسة تفويض.
-- فشل الشبكة يُحَلّ بـ `code: 'NETWORK_ERROR'` و`status: 0`، والإلغاء بـ `ABORTED`، والاستجابة الفاشلة التي ليست مشكلة (problem)، أو الجسم الذي ليس JSON، بـ `UNEXPECTED_RESPONSE`.
-- تمرّر الاختبارات `fetch: app.fetch` لاستدعاء تطبيق داخل العملية نفسها؛ انظر [الاختبار](https://vibejs.org/v0/server/testing).
+- لكائن المدخلات `params` و`query` و`headers` و`body`، ونوع كل منها مأخوذ من المسار.
+- يقبل الوسيط الثاني `{ signal, headers }`. ويمكن أن تكون `options.headers` دالة تُستدعى مع كل طلب، كدالة تضيف ترويسة التفويض.
+- فشل الشبكة ينتهي إلى `code: 'NETWORK_ERROR'` و`status: 0`، والإلغاء إلى `ABORTED`. والاستجابة الفاشلة التي ليست problem، أو الجسم الذي ليس JSON، تنتهي إلى `UNEXPECTED_RESPONSE`.
+- تمرّر الاختبارات `fetch: app.fetch` لتستدعي التطبيق داخل العملية نفسها؛ انظر [الاختبار](https://vibejs.org/v0/server/testing).
 
 ## OpenAPI {#openapi}
 
-تعيد `generateOpenApi(contracts, options)` من `@usevibejs/server/openapi` مستند OpenAPI 3.1 لسجل العقود نفسه الذي يأخذه العميل. قدِّمه عبر middleware. يرى الـ middleware مسار الطلب الكامل، بما فيه المسار الأساسي، ولذلك تجيب الوصفة أدناه عن `/api/openapi.json` تحت المسار الأساسي `/api`:
+تعيد `generateOpenApi(contracts, options)` من `@usevibejs/server/openapi` مستند OpenAPI 3.1 لسجلّ العقود نفسه الذي يأخذه العميل. قدّمه عبر middleware. يرى الـ middleware المسار الكامل للطلب، بما فيه المسار الأساسي، لذلك تجيب الوصفة التالية عن `/api/openapi.json` تحت المسار الأساسي `/api`:
 
 ```ts
 const doc = generateOpenApi(
@@ -112,4 +112,4 @@ export const openapi: Middleware = (req, next) =>
     : next();
 ```
 
-يُحوَّل كل مخطط بمحوّل Standard JSON Schema الخاص به. مخططات zod تحمل واحدًا؛ أما مخططات valibot فغلّفها بـ `toStandardJsonSchema()` من `@valibot/to-json-schema`، أو مرّر دالة بديلة `toJsonSchema(schema, io)`. المخطط الذي لا يمكن تحويله يرمي [VIBE9801](https://vibejs.org/v0/errors/VIBE9801)، ومخططان مختلفان بالاسم نفسه يرميان [VIBE9802](https://vibejs.org/v0/errors/VIBE9802)، وحالة خطأ خارج 400–599 ترمي [VIBE9803](https://vibejs.org/v0/errors/VIBE9803).
+يُحوَّل كل مخطط بمحوِّل Standard JSON Schema الخاص به. مخططات zod تحمل محوِّلها. أما مخططات valibot فغلّفها بـ `toStandardJsonSchema()` من `@valibot/to-json-schema`، أو مرّر بديلًا `toJsonSchema(schema, io)`. المخطط الذي لا يمكن تحويله يرمي [VIBE9801](https://vibejs.org/v0/errors/VIBE9801)، ومخططان مختلفان باسم واحد يرميان [VIBE9802](https://vibejs.org/v0/errors/VIBE9802)، وحالة خطأ خارج النطاق 400–599 ترمي [VIBE9803](https://vibejs.org/v0/errors/VIBE9803).

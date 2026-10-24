@@ -1,12 +1,12 @@
 # توسيع vibe.js
 
-كل ما يستخدمه التطبيق لتوسيع vibe.js هو API عام، لذا يمكن نقل ميزة من تطبيق إلى حزمة دون تغييرات.
+كل ما يستخدمه التطبيق لتوسيع vibe.js جزء من الـ API العامة، لذا يمكنك نقل ميزة من التطبيق إلى حزمة مستقلة دون تعديلها.
 
 ## الخادم {#server}
 
-### الوحدات القابلة للضبط {#configurable-modules}
+### وحدات قابلة للضبط {#configurable-modules}
 
-الوحدة التي تحتاج إلى خيارات تكشف دالة ثابتة `forRoot(options)` تُرجع `DynamicModule`: صنف الوحدة مع مزوّدات وصادرات إضافية. تصبح الخيارات مزوّدًا، فتحقنها أصناف الوحدة نفسها:
+الوحدة التي تحتاج إلى خيارات تعرض دالة ثابتة `forRoot(options)` تعيد `DynamicModule`، أي صنف الوحدة مع مزوّدات وصادرات إضافية. تصبح الخيارات مزوّدًا، فتحقنها أصناف الوحدة نفسها:
 
 ```ts
 export interface MailOptions {
@@ -36,11 +36,11 @@ export class MailModule {
 }
 ```
 
-يستورد التطبيق `MailModule.forRoot({ ... })`. تُضاف المزوّدات والمتحكمات والواردات والصادرات في الكائن المُرجَع إلى ما في `@Module()`. يُرجع كل استدعاء لـ `forRoot()` كائنًا جديدًا، وهو نسخة وحدة منفصلة؛ استورد النتيجة مرة واحدة وصدّرها، أو اجعلها `global`، لتشارك نسخة واحدة. وللخيارات القادمة من مزوّدات أخرى، وفّرها بـ `useFactory` و`inject` بدلًا من `useValue`.
+يستورد التطبيق `MailModule.forRoot({ ... })`. ويُضاف ما في الكائن المُعاد من مزوّدات ومتحكمات وواردات وصادرات إلى ما في `@Module()`. كل استدعاء لـ `forRoot()` يعيد كائنًا جديدًا، أي نسخة منفصلة من الوحدة. لتتشارك نسخة واحدة، استورد الناتج مرة واحدة وصدّره، أو اجعله `global`. وإذا كانت الخيارات تأتي من مزوّدات أخرى، فزوّدها بـ `useFactory` و`inject` بدل `useValue`.
 
 ### حزم الـ middleware {#middleware-packages}
 
-الـ middleware دالة، لذا تصدّر الحزمة مصنعًا يأخذ الخيارات ويُرجع `Middleware`:
+الـ middleware دالة، لذا تصدّر الحزمة دالة مصنع تأخذ الخيارات وتعيد `Middleware`:
 
 ```ts
 export function requireHeader(name: string): Middleware {
@@ -51,15 +51,15 @@ export function requireHeader(name: string): Middleware {
 }
 ```
 
-يضيفه التطبيق إلى `AppOptions.middleware`. يُجاب عن الخطأ المرمي في middleware على أنه مشكلة (problem)، كما في الخطأ داخل handler.
+يضيفها التطبيق إلى `AppOptions.middleware`. وإذا رمى الـ middleware خطأً، جاء الرد وصفًا للمشكلة (problem)، تمامًا كما يحدث مع الخطأ داخل المعالج.
 
-### الـ guards والـ interceptors والمرشّحات القابلة لإعادة الاستخدام {#reusable-guards-interceptors-and-filters}
+### guards وinterceptors ومرشّحات قابلة لإعادة الاستخدام {#reusable-guards-interceptors-and-filters}
 
-المعزِّزات (enhancers) أصناف بلا معاملات في الباني (constructor) تستدعي `inject()` لما تحتاجه، لذا يمكن لحزمة تصديرها بجانب وحدة توفّر اعتمادياتها. اضبطها عبر رمز خيارات (token) من `forRoot()`، كما سبق، لا عبر معاملات الباني التي لا تمرّرها الحاوية.
+المحسِّنات (enhancers) أصناف بلا معاملات في الباني، تجلب ما تحتاج إليه عبر `inject()`. لذا تستطيع الحزمة أن تصدّرها بجانب وحدة تزوّد اعتمادياتها. اضبطها عبر رمز (token) للخيارات يأتي من `forRoot()` كما في المثال السابق، لا عبر معاملات الباني، فالحاوية لا تمرّرها.
 
 ### البيانات الوصفية {#metadata}
 
-يمنح `createMetadata<T>(name)` الحزمة مزخرفًا (decorator) مُنمَّطًا ومفتاحًا لقراءته مجددًا في guards وinterceptors الخاصة بها عبر `ctx.getMetadata(key)`:
+تعطي `createMetadata<T>(name)` الحزمة مزخرفًا (decorator) ذا نوع، ومفتاحًا تقرأ به القيمة لاحقًا في الـ guards والـ interceptors عبر `ctx.getMetadata(key)`:
 
 ```ts
 export const CacheFor = createMetadata<number>('cacheFor');
@@ -73,17 +73,17 @@ export class CacheHeaders implements Interceptor {
 }
 ```
 
-ثم تكتب التطبيقات `@CacheFor(60)` على handler وتسجّل `CacheHeaders` بشكل عام أو بـ `@UseInterceptors()`.
+بعدها يكتب التطبيق `@CacheFor(60)` على المعالج، ويسجّل `CacheHeaders` على مستوى التطبيق كله أو عبر `@UseInterceptors()`.
 
-راجع [الوحدات والمزوّدات](https://vibejs.org/v0/server/modules) و[الـ middleware والـ guards والـ interceptors والمرشّحات](https://vibejs.org/v0/server/pipeline) لمعرفة القواعد التي تتبعها هذه اللبنات.
+راجع [الوحدات والمزوّدات](https://vibejs.org/v0/server/modules) و[middleware وguards وinterceptors والمرشّحات](https://vibejs.org/v0/server/pipeline) لتعرف القواعد التي تتبعها هذه اللبنات.
 
 ## الواجهة {#ui}
 
 ### الإضافات {#plugins}
 
-الإضافة (plugin) دالة تستقبل التطبيق، أو كائن له الدالة `install(app)`. يثبّتها `app.use(plugin, ...options)` مرة واحدة، ويفحص الخيارات مقابل النوع `Plugin<Options>` للإضافة؛ واستدعاء ثانٍ بالإضافة نفسها يُصدر التحذير [VIBE5304](https://vibejs.org/v0/errors/VIBE5304) ولا يفعل شيئًا. تزوّد الإضافة كل مكوّن بقيم عبر `app.provide()`، وتسجّل التنظيف عبر `app.onUnmount()`.
+الإضافة (plugin) دالة تستقبل التطبيق، أو كائن فيه الدالة `install(app)`. يثبّتها `app.use(plugin, ...options)` مرة واحدة، ويتحقق من أن الخيارات تطابق نوعها `Plugin<Options>`. وإذا استدعيته مرة ثانية بالإضافة نفسها أطلق التحذير [VIBE5304](https://vibejs.org/v0/errors/VIBE5304) ولم يفعل شيئًا. تزوّد الإضافة كل المكوّنات بالقيم عبر `app.provide()`، وتسجّل التنظيف عبر `app.onUnmount()`.
 
-تصدّر حزمة أعلام الميزات (feature flags) في تطبيق المهام التجريبي مصنع إضافة: يأخذ خيارات، ويحمّل الأعلام مرة واحدة، ويوفّرها تحت مفتاح حقن خاص.
+حزمة رايات الميزات (feature flags) في مثال تطبيق المهام تصدّر مصنع إضافة: يأخذ الخيارات، ويجلب الرايات مرة واحدة، ويزوّدها تحت مفتاح حقن خاص.
 
 ```ts
 export interface FlagsPluginOptions {
@@ -110,7 +110,7 @@ export const flagsPlugin =
   };
 ```
 
-يثبّتها التطبيق بجانب الموجّه (router):
+ويثبّتها التطبيق بجانب الموجِّه:
 
 ```ts
 createApp(App).use(flagsPlugin()).mount('#app');
@@ -118,11 +118,11 @@ createApp(App).use(flagsPlugin()).mount('#app');
 
 ### التزويد والحقن {#provide-and-inject}
 
-يجعل `app.provide(key, value)` القيمة متاحة لكل مكوّن في التطبيق؛ ويجعلها `provide(key, value)` داخل setup مكوّن متاحة لأحفاد ذلك المكوّن. يقرأ `inject(key)` أقرب قيمة، ويُرجع `inject(key, fallback)` القيمة `fallback` عندما لا يوفّر أحد `key`. نمّط المفاتيح بـ `InjectionKey<T>`، وهو رمز (symbol) يحمل نوع قيمته، فيُرجع `inject()` ذلك النوع.
+يجعل `app.provide(key, value)` القيمة متاحة لكل مكوّنات التطبيق، أما `provide(key, value)` داخل setup في مكوّن فيجعلها متاحة لأحفاد ذلك المكوّن. يقرأ `inject(key)` أقرب قيمة مزوَّدة، ويعيد `inject(key, fallback)` القيمة `fallback` إذا لم يزوّد أحد `key`. اكتب أنواع المفاتيح بـ `InjectionKey<T>`، وهو رمز (symbol) يحمل نوع قيمته، فيعيد `inject()` ذلك النوع.
 
 ### الـ composables {#composables}
 
-الـ composable دالة يستدعيها setup لإعادة استخدام منطق ذي حالة: يمكنها قراءة الحقن، وإنشاء refs وقيم computed، وتسجيل خطافات دورة حياة المكوّن المستدعي. تقرأ حزمة الأعلام حقنها داخل composable، فلا ترى المكوّنات المفتاح أبدًا، ويحصل تطبيق بلا الإضافة على `false` لكل علم:
+الـ composable دالة تستدعيها داخل setup لتعيد استخدام منطق له حالة. يمكنها أن تقرأ القيم المحقونة، وتنشئ refs وقيم computed، وتسجّل خطافات دورة الحياة للمكوّن الذي استدعاها. حزمة الرايات تقرأ قيمتها المحقونة داخل composable، فلا ترى المكوّنات المفتاح أبدًا، والتطبيق الذي لا يستخدم الإضافة يحصل على `false` لكل راية:
 
 ```ts
 /** Whether the flag `name` is on; always `false` in an app without `flagsPlugin()`. */
@@ -132,9 +132,9 @@ export function useFlag(name: string): Readonly<Ref<boolean>> {
 }
 ```
 
-ثم تستدعي الصفحة `useFlag('removeDone')` في setup الخاص بها وتستخدم الـ ref في قالبها.
+بعدها تستدعي الصفحة `useFlag('removeDone')` في setup، وتستخدم الـ ref في قالبها.
 
 ### الحدود {#limits}
 
-- لا توجد مكوّنات عامة (global) ولا موجّهات (directives) مخصصة ولا mixins ولا خصائص عامة: تُصدر `app.component()` و`app.directive()` و`app.mixin()` الخطأ [VIBE5301](https://vibejs.org/v0/errors/VIBE5301). صدّر المكوّنات ليُستورَد، وسلوك العناصر كـ composables تأخذ ref للقالب، والقيم المشتركة عبر `app.provide()`.
-- الحزم التي تشحن مكوّنات `.vibe` مخطط لها في الإصدار v0.2. وإلى ذلك الحين تصدّر الحزمة إضافات وcomposables ومفاتيح حقن وأنواعًا.
+- لا توجد مكوّنات عامة (global components)، ولا توجيهات مخصّصة (custom directives)، ولا mixins، ولا خصائص عامة: `app.component()` و`app.directive()` و`app.mixin()` ترمي [VIBE5301](https://vibejs.org/v0/errors/VIBE5301). صدّر المكوّنات ليستوردها من يحتاج إليها، واجعل سلوك العناصر composables تأخذ template ref، وشارك القيم عبر `app.provide()`.
+- الحزم التي تضم مكوّنات `.vibe` مخطط لها في v0.2. وحتى ذلك الحين تصدّر الحزمة إضافات وcomposables ومفاتيح حقن وأنواعًا.
