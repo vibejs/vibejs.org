@@ -340,3 +340,59 @@
     background-color 1s ease-out,
     box-shadow 1s ease-out;
 }
+
+/* Tutorial editor tokens, in the palette of the site's code blocks. */
+.code-editor .tok-keyword,
+.code-editor .tok-operator.tok-definition {
+  color: #cf222e;
+}
+.code-editor .tok-string,
+.code-editor .tok-string2 {
+  color: #0a3069;
+}
+.code-editor .tok-number,
+.code-editor .tok-bool,
+.code-editor .tok-propertyName,
+.code-editor .tok-attributeName {
+  color: #0550ae;
+}
+.code-editor .tok-typeName,
+.code-editor .tok-className {
+  color: #953800;
+}
+.code-editor .tok-variableName.tok-definition,
+.code-editor .tok-function {
+  color: #8250df;
+}
+.code-editor .tok-tagName {
+  color: #116329;
+}
+.code-editor .tok-comment {
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+.dark .code-editor .tok-keyword,
+.dark .code-editor .tok-operator.tok-definition {
+  color: #ff7b72;
+}
+.dark .code-editor .tok-string,
+.dark .code-editor .tok-string2 {
+  color: #a5d6ff;
+}
+.dark .code-editor .tok-number,
+.dark .code-editor .tok-bool,
+.dark .code-editor .tok-propertyName,
+.dark .code-editor .tok-attributeName {
+  color: #79c0ff;
+}
+.dark .code-editor .tok-typeName,
+.dark .code-editor .tok-className {
+  color: #ffa657;
+}
+.dark .code-editor .tok-variableName.tok-definition,
+.dark .code-editor .tok-function {
+  color: #d2a8ff;
+}
+.dark .code-editor .tok-tagName {
+  color: #7ee787;
+}

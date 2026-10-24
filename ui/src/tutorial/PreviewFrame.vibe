@@ -1,0 +1,72 @@
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from '@usevibejs/ui';
+import { compileFiles, type Problem } from './compile.ts';
+import { run, type Running } from './run.ts';
+
+const { files } = defineProps<{ files: Record<string, string> }>();
+const host = useTemplateRef<HTMLDivElement>('host');
+const problems = ref<Problem[]>([]);
+const runtimeError = ref('');
+
+// The preview's own styles: the app renders in a shadow root, so the site's styles stay out.
+const BASE = `:host { display: block; font: 15px/1.6 Inter, system-ui, sans-serif; color: CanvasText; }
+#app { padding: 20px; }
+h1 { font-size: 1.6rem; margin: 0 0 .5em; }
+button { font: inherit; padding: 6px 12px; margin: 4px 6px 4px 0; border-radius: 8px; border: 1px solid #8884; background: Canvas; color: CanvasText; cursor: pointer; }
+input { font: inherit; padding: 6px 10px; border-radius: 8px; border: 1px solid #8886; margin-right: 6px; }
+ul { padding-left: 1.2em; }`;
+
+let shadow: ShadowRoot | undefined;
+let running: Running | undefined;
+let timer: ReturnType<typeof setTimeout> | undefined;
+let generation = 0;
+
+async function refresh() {
+  const current = ++generation;
+  const compiled = compileFiles(files);
+  problems.value = compiled.problems;
+  runtimeError.value = '';
+  if (compiled.problems.length || !shadow) return;
+  running?.stop();
+  shadow.innerHTML = `<style>${BASE}\n${compiled.css}</style><div id="app"></div>`;
+  const next = await run(compiled.modules, shadow.getElementById('app')!, (error) => {
+    runtimeError.value = error instanceof Error ? error.message : String(error);
+  });
+  if (current === generation) running = next;
+  else next.stop();
+}
+
+onMounted(() => {
+  shadow = host.value!.attachShadow({ mode: 'open' });
+  void refresh();
+});
+// Recompile shortly after the last keystroke.
+watch(
+  () => JSON.stringify(files),
+  () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => void refresh(), 250);
+  },
+);
+onBeforeUnmount(() => {
+  clearTimeout(timer);
+  running?.stop();
+});
+</script>
+
+<template>
+  <div class="relative h-full">
+    <div ref="host" class="h-full overflow-auto"></div>
+    <div
+      v-if="problems.length || runtimeError"
+      class="bg-background/95 absolute inset-x-0 bottom-0 max-h-[60%] overflow-auto border-t p-4 font-mono text-[12.5px] backdrop-blur"
+      role="alert"
+    >
+      <p class="mb-2 font-sans text-sm font-semibold">{{ problems.length ? 'The compiler found a problem' : 'The app threw an error' }}</p>
+      <p v-for="(p, i) in problems" :key="i" class="text-muted-foreground mb-1 whitespace-pre-wrap">
+        <span class="text-foreground">{{ p.file }}{{ p.line ? `:${p.line}:${p.column}` : '' }}</span> {{ p.message }}
+      </p>
+      <p v-if="runtimeError" class="text-muted-foreground whitespace-pre-wrap">{{ runtimeError }}</p>
+    </div>
+  </div>
+</template>
