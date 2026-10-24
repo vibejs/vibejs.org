@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from '@usevibejs/ui';
 import { compileFiles, type Problem } from './compile.ts';
 import { run, type Running } from './run.ts';
-import { t } from '../i18n.ts';
+import { locale, t } from '../i18n.ts';
 
 const { files } = defineProps<{ files: Record<string, string> }>();
 const host = useTemplateRef<HTMLDivElement>('host');
@@ -29,7 +29,9 @@ async function refresh() {
   runtimeError.value = '';
   if (compiled.problems.length || !shadow) return;
   running?.stop();
-  shadow.innerHTML = `<style>${BASE}\n${compiled.css}</style><div id="app"></div>`;
+  // The lesson's app reads the way its language does.
+  const dir = locale.value === 'ar' ? 'rtl' : 'ltr';
+  shadow.innerHTML = `<style>${BASE}\n${compiled.css}</style><div id="app" dir="${dir}"></div>`;
   const next = await run(compiled.modules, shadow.getElementById('app')!, (error) => {
     runtimeError.value = error instanceof Error ? error.message : String(error);
   });

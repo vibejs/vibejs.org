@@ -5,6 +5,7 @@ import CodeEditor from '../tutorial/CodeEditor.vibe';
 import PreviewFrame from '../tutorial/PreviewFrame.vibe';
 import { STEPS } from '../tutorial/steps.ts';
 import { LESSONS } from '../tutorial/lessons.ts';
+import { localizeFiles } from '../tutorial/localize.ts';
 import { locale, localePath, t } from '../i18n.ts';
 import type { MessageKey } from '../messages.ts';
 
@@ -32,13 +33,13 @@ const solved = ref(false);
 const panel = ref<'learn' | 'code' | 'result'>('learn');
 
 function load(source: Record<string, string>, isSolution: boolean) {
-  files.value = { ...source };
+  files.value = localizeFiles(source, locale.value);
   solved.value = isSolution;
   if (!(activeFile.value in source)) activeFile.value = 'App.vibe';
 }
 watch(
-  step,
-  (current) => {
+  [step, locale],
+  ([current]) => {
     load(current.files, false);
     activeFile.value = 'App.vibe';
     panel.value = 'learn';

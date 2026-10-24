@@ -1,13 +1,19 @@
 <script setup lang="ts">
-import { t } from '../i18n.ts';
-import { onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from '@usevibejs/ui';
-import counter from '../snippets/counter.md';
+import { locale, t } from '../i18n.ts';
+
+// The source in each language: what the button shows is the text its template renders.
+const SOURCES = { en: counterEn, tr: counterTr, ar: counterAr };
+const source = computed(() => SOURCES[locale.value].html);
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from '@usevibejs/ui';
+import counterAr from '../snippets/counter.ar.md';
+import counterEn from '../snippets/counter.md';
+import counterTr from '../snippets/counter.tr.md';
 
 const count = ref(0);
 const writes = ref<number | null>(null);
 const total = ref(0);
 const output = useTemplateRef<HTMLButtonElement>('output');
-const source = useTemplateRef<HTMLDivElement>('source');
+const sourceEl = useTemplateRef<HTMLDivElement>('source');
 let live: HTMLElement | undefined;
 let fade: ReturnType<typeof setTimeout> | undefined;
 let observer: MutationObserver | undefined;
@@ -55,12 +61,17 @@ watch(count, () => {
 
 // Counts what the runtime really changes in the button's DOM after each tap.
 onMounted(() => {
-  live = wrapBinding(source.value!, '{{ count }}');
+  live = wrapBinding(sourceEl.value!, '{{ count }}');
   observer = new MutationObserver((records) => {
     writes.value = records.length;
     total.value += records.length;
   });
   observer.observe(output.value!, { characterData: true, childList: true, subtree: true, attributes: true });
+});
+// A new language renders a new source; find its binding again.
+watch(source, async () => {
+  await nextTick();
+  live = wrapBinding(sourceEl.value!, '{{ count }}');
 });
 onBeforeUnmount(() => observer?.disconnect());
 </script>
@@ -72,7 +83,7 @@ onBeforeUnmount(() => observer?.disconnect());
         <span class="bg-card text-foreground relative -mb-px flex items-center gap-2 rounded-t-lg border border-b-transparent px-3.5 py-2 font-mono text-sm font-semibold [overflow-wrap:anywhere]"><svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 shrink-0 fill-none stroke-current stroke-2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke-linejoin="round" /><path d="M14 3v5h5" stroke-linejoin="round" /></svg>Counter.vibe</span>
       </div>
     </figcaption>
-    <div ref="source" dir="ltr" class="code-block bg-muted/40" :aria-label="t('demo.source')" v-html="counter.html"></div>
+    <div ref="source" dir="ltr" class="code-block bg-muted/40" :aria-label="t('demo.source')" v-html="source"></div>
     <div class="grid gap-3 border-t p-4">
       <button
         ref="output"
@@ -80,7 +91,7 @@ onBeforeUnmount(() => observer?.disconnect());
         dir="ltr"
         class="bg-primary text-primary-foreground h-11 w-full touch-manipulation rounded-md text-sm font-medium tabular-nums shadow-xs transition-transform active:scale-[0.98]"
         @click="count++"
-      >Tapped {{ count }} times</button>
+      >{{ t('demo.tapped', { count }) }}</button>
       <p class="text-muted-foreground m-0 min-h-10 text-sm" aria-live="polite">
         <template v-if="writes === null">{{ t('demo.idle') }}</template>
         <template v-else>
