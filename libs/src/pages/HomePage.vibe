@@ -1,0 +1,76 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import { RouterLink } from '@usevibejs/ui/router';
+import HeroBackdrop from '../../../ui/src/components/HeroBackdrop.vibe';
+import { npm, pages, sidebar, site } from '../docs.ts';
+
+const install = `pnpm add ${site.pkg}`;
+const start = sidebar[0]?.items[1]?.link ?? '/v0/';
+const copied = ref(false);
+
+async function copy() {
+  try {
+    await navigator.clipboard.writeText(install);
+    copied.value = true;
+    setTimeout(() => (copied.value = false), 1500);
+  } catch {
+    // Without clipboard access the command stays selectable on the page.
+  }
+}
+
+const primary =
+  'bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-10 items-center justify-center rounded-md px-5 text-sm font-medium shadow-xs';
+const outline =
+  'bg-background hover:bg-accent inline-flex h-10 items-center justify-center gap-2 rounded-md border px-5 text-sm font-medium shadow-xs';
+</script>
+
+<template>
+  <main class="mx-auto max-w-screen-xl px-4 pb-24 sm:px-6 lg:pb-16">
+    <section class="relative isolate pt-16 pb-16 lg:pt-28 lg:pb-24" aria-labelledby="hero-title">
+      <HeroBackdrop />
+      <a
+        href="https://vibejs.org"
+        class="animate-fade-up bg-background/70 mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium backdrop-blur"
+      >
+        <img src="/logo.png" alt="" width="16" height="16" class="size-4 rounded-sm" />
+        Part of the vibe.js ecosystem
+      </a>
+      <h1 id="hero-title" class="text-4xl font-semibold tracking-tight text-balance sm:text-6xl">{{ site.name }}</h1>
+      <p class="text-muted-foreground mt-4 max-w-2xl text-lg leading-8 text-balance">{{ site.tagline }}</p>
+
+      <div class="bg-muted/40 mt-8 flex max-w-md items-center gap-3 rounded-lg border px-4 py-2.5 font-mono text-sm">
+        <span class="text-muted-foreground select-none">$</span>
+        <code class="min-w-0 flex-1 truncate">{{ install }}</code>
+        <button type="button" class="text-muted-foreground hover:text-foreground text-xs font-sans font-medium" @click="copy">
+          {{ copied ? 'Copied' : 'Copy' }}
+        </button>
+      </div>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <RouterLink :to="start" :class="primary">Get started</RouterLink>
+        <a :href="npm" :class="outline">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-current"><path d="M0 7.33v8h6.67v1.34H12v-1.34h12v-8zm6.67 6.67H5.33v-4H4v4H1.33V8.67h5.34zm4 0v1.33H8V8.67h5.33V14h-2.66zm12 0h-1.34v-4H20v4h-1.33v-4h-1.34v4h-2.66V8.67h8zm-12-4H12v2.67h-1.33z" /></svg>
+          {{ site.pkg }}
+        </a>
+        <a :href="site.github" :class="outline">GitHub</a>
+      </div>
+    </section>
+
+    <section class="border-t py-12" aria-label="Docs sections">
+      <p class="text-muted-foreground mb-6 text-sm">{{ pages.length }} pages of docs</p>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div v-for="group in sidebar" :key="group.text" class="bg-card rounded-xl border p-5">
+          <h2 class="font-semibold">{{ group.text }}</h2>
+          <ul class="mt-3 grid gap-1.5 text-sm">
+            <li v-for="item in group.items.slice(0, 6)" :key="item.link">
+              <RouterLink :to="item.link" class="text-muted-foreground hover:text-foreground">{{ item.text }}</RouterLink>
+            </li>
+            <li v-if="group.items.length > 6">
+              <RouterLink :to="group.items[6]!.link" class="font-medium underline underline-offset-4">{{ group.items.length - 6 }} more</RouterLink>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</template>
