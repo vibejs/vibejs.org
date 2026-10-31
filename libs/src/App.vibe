@@ -1,0 +1,115 @@
+<script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref } from '@usevibejs/ui';
+import { RouterLink, RouterView, useRoute } from '@usevibejs/ui/router';
+import { setTheme, theme } from '../../ui/src/theme.ts';
+import SearchDialog from './components/SearchDialog.vibe';
+import { npm, sidebar, site } from './docs.ts';
+
+const searching = ref(false);
+const route = useRoute();
+const inDocs = computed(() => route.path.startsWith('/v0'));
+const dark = computed(() => theme.value === 'dark');
+const start = sidebar[0]?.items[1]?.link ?? '/v0/';
+
+const navLink = 'rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground';
+const iconButton =
+  'inline-flex size-8 shrink-0 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-accent hover:text-foreground';
+const tab =
+  'flex min-h-12 flex-col items-center justify-center gap-1 rounded-lg text-[11px] font-medium text-muted-foreground active:bg-accent';
+
+function onKey(event: KeyboardEvent) {
+  const typing = (event.target as HTMLElement | null)?.closest('input, textarea, [contenteditable]');
+  if ((event.key === 'k' && (event.metaKey || event.ctrlKey)) || (event.key === '/' && !typing)) {
+    event.preventDefault();
+    searching.value = true;
+  }
+}
+onMounted(() => window.addEventListener('keydown', onKey));
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
+</script>
+
+<template>
+  <header
+    class="bg-background/80 sticky top-0 z-30 border-b pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-background/60"
+  >
+    <div class="mx-auto flex h-14 max-w-screen-xl items-center gap-4 px-4 sm:px-6">
+      <RouterLink to="/" class="flex items-center gap-2.5 font-semibold tracking-tight" :aria-label="`${site.name} home`">
+        <img src="/logo.png" alt="" width="28" height="28" class="size-7 rounded-md" />
+        <span>{{ site.name }}</span>
+      </RouterLink>
+      <nav class="ms-2 hidden items-center lg:flex" aria-label="Main">
+        <RouterLink :to="start" :class="navLink">Get started</RouterLink>
+        <RouterLink to="/v0/" :class="navLink">Docs</RouterLink>
+        <a :href="npm" :class="navLink">npm</a>
+        <a href="https://vibejs.org" :class="navLink">vibe.js</a>
+      </nav>
+      <div class="ms-auto flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-1 lg:flex-none">
+        <button
+          type="button"
+          aria-label="Search docs"
+          class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-accent hover:text-foreground gap-2 text-sm whitespace-nowrap sm:h-8 sm:w-full sm:max-w-56 sm:min-w-0 sm:shrink sm:justify-start sm:border sm:bg-muted/40 sm:px-3 sm:text-muted-foreground sm:hover:bg-muted lg:w-56 xl:w-64 xl:max-w-none"
+          @click="searching = true"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 shrink-0 fill-none stroke-current stroke-2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <span class="hidden truncate sm:inline">Search docs</span>
+          <kbd class="pointer-events-none ms-auto hidden h-5 min-w-5 items-center justify-center rounded-sm bg-muted px-1 font-sans text-xs font-medium text-muted-foreground select-none sm:inline-flex">⌘K</kbd>
+        </button>
+        <a :href="npm" :class="iconButton" :aria-label="`${site.pkg} on npm`">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-current"><path d="M0 7.33v8h6.67v1.34H12v-1.34h12v-8zm6.67 6.67H5.33v-4H4v4H1.33V8.67h5.34zm4 0v1.33H8V8.67h5.33V14h-2.66zm12 0h-1.34v-4H20v4h-1.33v-4h-1.34v4h-2.66V8.67h8zm-12-4H12v2.67h-1.33z" /></svg>
+        </a>
+        <a :href="site.github" :class="iconButton" :aria-label="`${site.name} on GitHub`">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-current"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z" /></svg>
+        </a>
+        <button
+          type="button"
+          :class="iconButton"
+          :aria-label="dark ? 'Switch to light theme' : 'Switch to dark theme'"
+          @click="setTheme(dark ? 'light' : 'dark')"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="size-4 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round">
+            <template v-if="dark"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></template>
+            <path v-else d="M20.99 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.78 9.79Z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <RouterView />
+
+  <nav
+    class="bg-background/90 fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 gap-1 border-t px-3 pt-1.5 pb-[max(env(safe-area-inset-bottom),0.5rem)] backdrop-blur lg:hidden"
+    aria-label="Main"
+  >
+    <RouterLink to="/" :class="[tab, route.path === '/' && 'text-foreground']">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
+        <path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z" stroke-linejoin="round" />
+      </svg>
+      Home
+    </RouterLink>
+    <RouterLink to="/v0/" :class="[tab, inDocs && 'text-foreground']">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
+        <path d="M5 4h10l4 4v12H5zM9 12h6M9 16h6" stroke-linejoin="round" stroke-linecap="round" />
+      </svg>
+      Docs
+    </RouterLink>
+    <a :href="npm" :class="tab">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
+        <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5zM4 7.5l8 4.5 8-4.5M12 12v9" stroke-linejoin="round" />
+      </svg>
+      npm
+    </a>
+    <button type="button" :class="tab" @click="searching = true">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" stroke-linecap="round" />
+      </svg>
+      Search
+    </button>
+  </nav>
+
+  <SearchDialog v-model:open="searching" />
+</template>
