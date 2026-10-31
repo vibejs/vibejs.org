@@ -36,6 +36,18 @@ const heading = 'text-2xl font-semibold tracking-tight text-balance sm:text-3xl'
 const lede = 'text-muted-foreground mt-3 max-w-2xl text-base leading-7';
 
 const FACTS = [1, 2, 3, 4] as const;
+const PACKAGES = [
+  { key: 'use', name: 'VibeUse' },
+  { key: 'query', name: 'VibeQuery' },
+  { key: 'table', name: 'VibeTable' },
+  { key: 'motion', name: 'VibeMotion' },
+  { key: 'dnd', name: 'VibeDND' },
+  { key: 'socket', name: 'VibeSocket' },
+  { key: 'auth', name: 'VibeAuth' },
+  { key: 'form', name: 'VibeForm' },
+  { key: 'i18n', name: 'VibeI18n' },
+  { key: 'virtual', name: 'VibeVirtual' },
+] as const;
 </script>
 
 <template>
@@ -156,6 +168,22 @@ const FACTS = [1, 2, 3, 4] as const;
         </div>
         <a href="https://vibecn.dev" :class="[outline, 'shrink-0']">{{ t('home.vibecn.cta') }}</a>
       </div>
+    </section>
+
+    <section :class="section" aria-labelledby="packages-title">
+      <h2 id="packages-title" :class="heading">{{ t('home.packages.title') }}</h2>
+      <p :class="lede">{{ t('home.packages.text') }}</p>
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+        <li v-for="p in PACKAGES" :key="p.key">
+          <a :href="`https://${p.key}.vibejs.org`" class="bg-card hover:bg-accent/50 block h-full rounded-xl border p-5 shadow-xs transition-colors">
+            <span class="flex items-baseline justify-between gap-3">
+              <span class="text-sm font-semibold">{{ p.name }}</span>
+              <code dir="ltr" class="text-muted-foreground font-mono text-xs">@usevibejs/{{ p.key }}</code>
+            </span>
+            <span class="text-muted-foreground mt-1.5 block text-sm leading-6">{{ t(`home.packages.${p.key}`) }}</span>
+          </a>
+        </li>
+      </ul>
     </section>
 
     <section class="bg-muted/50 my-6 rounded-2xl border px-5 py-10 sm:px-10 sm:py-14" aria-labelledby="start-title">
