@@ -76,13 +76,21 @@ export function loadPage(path: string, locale: Locale): Promise<DocModule> | und
 
 /** The sidebar groups in a locale; links are site paths under `/v0`, without a locale prefix. */
 export function sidebar(locale: Locale): SidebarGroup[] {
-  return index.sidebar.map((group) => ({
-    text: group.text,
-    items: group.items.map((item) => ({
+  return index.sidebar.map((group) => {
+    const items = group.items.map((item) => ({
       text: pageTitle(contentPath(item.link.split('/')), locale) ?? item.text,
       link: `/v0${item.link}`,
-    })),
-  }));
+    }));
+    // Beginners hit UI essentials first; the synced order puts Components ahead of it.
+    if (group.text === 'UI') {
+      const essentials = items.findIndex((item) => item.link === '/v0/ui/');
+      if (essentials > 0) {
+        const [page] = items.splice(essentials, 1);
+        items.unshift(page!);
+      }
+    }
+    return { text: group.text, items };
+  });
 }
 
 /** Pages whose title (translated or English) or path matches every word of the query. */

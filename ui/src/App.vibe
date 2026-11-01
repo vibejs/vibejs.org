@@ -50,7 +50,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
         <img src="/logo.png" alt="" width="28" height="28" class="size-7 rounded-md" />
         <span>vibe.js</span>
       </RouterLink>
-      <nav class="ms-2 hidden items-center lg:flex" aria-label="Main">
+      <nav class="ms-2 hidden items-center lg:flex" :aria-label="t('nav.main')">
         <RouterLink :to="lp('/tutorial')" :class="navLink">{{ t('nav.tutorial') }}</RouterLink>
         <RouterLink :to="lp('/v0/guides/getting-started')" :class="navLink">{{ t('nav.getStarted') }}</RouterLink>
         <RouterLink :to="lp('/v0/')" :class="navLink">{{ t('nav.docs') }}</RouterLink>
@@ -103,7 +103,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
 
   <nav
     class="bg-background/90 fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 gap-1 border-t px-3 pt-1.5 pb-[max(env(safe-area-inset-bottom),0.5rem)] backdrop-blur lg:hidden"
-    aria-label="Main"
+    :aria-label="t('nav.main')"
   >
     <RouterLink :to="lp('/')" :class="[tab, bare === '/' && 'text-foreground']">
       <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
@@ -111,11 +111,14 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
       </svg>
       {{ t('tab.home') }}
     </RouterLink>
-    <RouterLink :to="lp('/v0/')" :class="[tab, inDocs && 'text-foreground']">
+    <RouterLink
+      :to="lp('/v0/guides/getting-started')"
+      :class="[tab, bare.startsWith('/v0/guides/getting-started') && 'text-foreground']"
+    >
       <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
-        <path d="M5 4h10l4 4v12H5zM9 12h6M9 16h6" stroke-linejoin="round" stroke-linecap="round" />
+        <path d="M5 12h14M12 5l7 7-7 7" stroke-linejoin="round" stroke-linecap="round" />
       </svg>
-      {{ t('tab.docs') }}
+      {{ t('nav.getStarted') }}
     </RouterLink>
     <RouterLink :to="lp('/tutorial')" :class="[tab, bare.startsWith('/tutorial') && 'text-foreground']">
       <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
@@ -123,13 +126,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
       </svg>
       {{ t('tab.learn') }}
     </RouterLink>
-    <button type="button" :class="tab" @click="searching = true">
+    <RouterLink :to="lp('/v0/')" :class="[tab, inDocs && !bare.startsWith('/v0/guides/getting-started') && 'text-foreground']">
       <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-none stroke-current stroke-[1.8]">
-        <circle cx="11" cy="11" r="7" />
-        <path d="m20 20-3.5-3.5" stroke-linecap="round" />
+        <path d="M5 4h10l4 4v12H5zM9 12h6M9 16h6" stroke-linejoin="round" stroke-linecap="round" />
       </svg>
-      {{ t('tab.search') }}
-    </button>
+      {{ t('tab.docs') }}
+    </RouterLink>
   </nav>
 
   <SearchDialog v-model:open="searching" />
