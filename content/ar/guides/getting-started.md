@@ -59,4 +59,5 @@ pnpm vibejs check
 
 ## الخطوة التالية {#next}
 
-تابع [الدرس التطبيقي](https://vibejs.org/v0/guides/tutorial) لتضيف موردًا إلى الـ API وصفحة تعرضه.
+- تعلّم مكوّنات `.vibe` في المتصفح عبر [تعلّم بالتطبيق](https://vibejs.org/tutorial).
+- أو تابع [الدرس التطبيقي](https://vibejs.org/v0/guides/tutorial) لتضيف موردًا إلى الـ API وصفحة تعرضه.
