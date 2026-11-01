@@ -8,6 +8,7 @@ const { files } = defineProps<{ files: Record<string, string> }>();
 const host = useTemplateRef<HTMLDivElement>('host');
 const problems = ref<Problem[]>([]);
 const runtimeError = ref('');
+const loadingCompiler = ref(true);
 
 // The preview's own styles: the app renders in a shadow root, so the site's styles stay out.
 const BASE = `:host { display: block; font: 15px/1.6 Inter, system-ui, sans-serif; color: CanvasText; }
@@ -24,7 +25,10 @@ let generation = 0;
 
 async function refresh() {
   const current = ++generation;
-  const compiled = compileFiles(files);
+  loadingCompiler.value = true;
+  const compiled = await compileFiles(files);
+  if (current !== generation) return;
+  loadingCompiler.value = false;
   problems.value = compiled.problems;
   runtimeError.value = '';
   if (compiled.problems.length || !shadow) return;
@@ -60,6 +64,13 @@ onBeforeUnmount(() => {
 <template>
   <div class="relative h-full" dir="ltr">
     <div ref="host" class="h-full overflow-auto"></div>
+    <p
+      v-if="loadingCompiler && !problems.length && !runtimeError"
+      class="text-muted-foreground absolute inset-0 flex items-center justify-center bg-background/60 p-4 text-sm backdrop-blur-sm"
+      aria-live="polite"
+    >
+      {{ t('tutorial.loadingCompiler') }}
+    </p>
     <div
       v-if="problems.length || runtimeError"
       class="bg-background/95 absolute inset-x-0 bottom-0 max-h-[60%] overflow-auto border-t p-4 font-mono text-[12.5px] backdrop-blur"

@@ -16,7 +16,7 @@ export default defineConfig({
       { find: /^path$/, replacement: path('../build/path-browser.js') },
     ],
   },
-  // The tutorial's in-browser compiler is one large chunk, loaded only on /tutorial.
+  // Tutorial UI loads on /tutorial; the oxc WASM compiler is a further async import from there.
   build: { target: 'es2022', chunkSizeWarningLimit: 1600 },
   optimizeDeps: { exclude: ['@oxc-parser/binding-wasm32-wasip1'] },
   // Lets a sandboxed preview use a fresh cache folder; Vite's default otherwise.
