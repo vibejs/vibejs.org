@@ -6,6 +6,7 @@ import { EditorState } from '@codemirror/state';
 import { EditorView, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
 import { classHighlighter } from '@lezer/highlight';
 import { onBeforeUnmount, onMounted, useTemplateRef, watch } from '@usevibejs/ui';
+import { t } from '../i18n.ts';
 
 const code = defineModel<string>({ required: true });
 const host = useTemplateRef<HTMLDivElement>('host');
@@ -40,7 +41,11 @@ onMounted(() => {
         keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
         EditorState.tabSize.of(2),
         theme,
-        EditorView.contentAttributes.of({ 'aria-label': 'Code editor', autocapitalize: 'off', spellcheck: 'false' }),
+        EditorView.contentAttributes.of({
+          'aria-label': t('tutorial.codeEditor'),
+          autocapitalize: 'off',
+          spellcheck: 'false',
+        }),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) code.value = update.state.doc.toString();
         }),

@@ -4,8 +4,20 @@ vibe.js: npm scope `@usevibejs`, CLI `vibejs` (never `vibe`). Not monday.com Vib
 
 A full-stack TypeScript framework where the UI, the server and the contract between them are type-checked end to end, and every tool speaks to coding agents as well as to people.
 
-- [Getting started](https://vibejs.org/v0/guides/getting-started): create an app, run it and check it.
-- [Interactive tutorial](https://vibejs.org/tutorial): learn `.vibe` components in the browser, step by step.
-- [Full-stack tutorial](https://vibejs.org/v0/guides/tutorial): add an API resource and a page, catch a type error, then build and serve the app.
-- [CLI reference](https://vibejs.org/v0/cli/): every `vibejs` command, its options and examples.
-- [Error codes](https://vibejs.org/v0/errors/): every `VIBE####` code with its message and fixes.
+## Start here
+
+1. [Getting started](https://vibejs.org/v0/guides/getting-started) — create an app, run it and check it.
+2. [Interactive tutorial](https://vibejs.org/tutorial) — learn `.vibe` components in the browser, step by step.
+3. [Full-stack tutorial](https://vibejs.org/v0/guides/tutorial) — add an API resource and a page, catch a type error, then build and serve the app.
+
+## Build with it
+
+- [UI essentials](https://vibejs.org/v0/ui/) — components, templates and reactivity.
+- [Server](https://vibejs.org/v0/server/) — modules, handlers and the request pipeline.
+- [Contracts](https://vibejs.org/v0/server/contracts) — typed routes shared by both sides.
+
+## Look things up
+
+- [CLI reference](https://vibejs.org/v0/cli/) — every `vibejs` command, its options and examples.
+- [Error codes](https://vibejs.org/v0/errors/) — every `VIBE####` code with its message and fixes.
+- [Coming from Vue](https://vibejs.org/v0/guides/coming-from-vue) or [NestJS](https://vibejs.org/v0/guides/coming-from-nestjs) — map what you already know.

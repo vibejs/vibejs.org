@@ -111,7 +111,7 @@ function onMenuClick(event: MouseEvent) {
       </button>
     </div>
 
-    <aside class="sticky top-14 hidden max-h-[calc(100dvh-3.5rem)] overflow-y-auto py-8 lg:block" aria-label="Docs">
+    <aside class="sticky top-14 hidden max-h-[calc(100dvh-3.5rem)] overflow-y-auto py-8 lg:block" :aria-label="t('docs.sidebar')">
       <nav class="grid gap-6">
         <div v-for="g in groups" :key="g.text">
           <p class="mb-1 px-3 text-sm font-semibold">{{ g.text }}</p>

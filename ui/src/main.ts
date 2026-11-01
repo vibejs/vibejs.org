@@ -1,7 +1,7 @@
 import { createApp, isVibeError } from '@usevibejs/ui';
 import { createRouter, createWebHistory, type RouterScrollBehavior } from '@usevibejs/ui/router';
 import App from './App.vibe';
-import { applyLocale, localePath, preferredLocale, splitLocale } from './i18n.ts';
+import { applyLocale, localePath, preferredLocale, splitLocale, t } from './i18n.ts';
 import { routes, titleOf } from './routes.ts';
 import './styles.css';
 
@@ -33,12 +33,24 @@ declare module '@usevibejs/ui/router' {
   }
 }
 
+const routeStatus = document.createElement('p');
+routeStatus.setAttribute('aria-live', 'polite');
+routeStatus.className = 'sr-only';
+document.body.append(routeStatus);
+let announceRoute = false;
+
 // The URL prefix decides the language of every page.
 router.beforeEach((to) => {
   applyLocale(splitLocale(to.path).locale);
 });
-router.afterEach((to) => {
+router.afterEach((to, _from, failure) => {
   document.title = titleOf(to.fullPath);
+  // Skip the first load: the browser already announces the document title.
+  if (failure || !announceRoute) {
+    announceRoute = true;
+    return;
+  }
+  routeStatus.textContent = t('a11y.pageLoaded', { title: document.title });
 });
 // After a deploy, an open tab can ask for a page chunk that is gone: load the page again.
 router.onError((error, to) => {

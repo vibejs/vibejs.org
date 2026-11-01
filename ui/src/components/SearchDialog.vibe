@@ -74,7 +74,7 @@ function onBackdrop(event: MouseEvent) {
           v-model="query"
           type="search"
           :placeholder="t('search.placeholder')"
-          aria-label="Search"
+          :aria-label="t('search.label')"
           enterkeyhint="go"
           autocomplete="off"
           class="placeholder:text-muted-foreground h-12 min-w-0 flex-1 bg-transparent text-base outline-none sm:text-sm"

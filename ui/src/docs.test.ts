@@ -25,6 +25,10 @@ it('knows every page and links the sidebar under /v0', () => {
     text: 'Getting started',
     link: '/v0/guides/getting-started',
   });
+  expect(sidebar('en').find((group) => group.text === 'UI')!.items[0]).toEqual({
+    text: 'UI essentials',
+    link: '/v0/ui/',
+  });
 });
 
 it('titles pages in a locale and falls back to English', () => {
