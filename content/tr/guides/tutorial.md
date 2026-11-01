@@ -2,6 +2,8 @@
 
 Bu eğitimde yeni bir uygulamaya `users` API'si ekleyeceksin, kullanıcıları listeleyen bir sayfa yazacaksın, şablondaki bir tip hatasını `vibejs check` ile yakalayacaksın ve sonunda uygulamanın build'ini alıp sunacaksın. Yaklaşık on dakika sürer. Node.js `^24.15.0 || >=26` ve pnpm gerekiyor.
 
+`.vibe` bileşenlerine yenisin? Önce tarayıcıdaki [uygulamalı eğitime](https://vibejs.org/tutorial) bak, sonra buraya dön.
+
 Bu sayfadaki her komutu ve dosyayı vibe.js test paketi her değişiklikte aynı sırayla çalıştırıyor. Yani adımlar yazıldığı gibi çalışır.
 
 ## 1. Uygulamayı oluştur {#1-create-the-app}

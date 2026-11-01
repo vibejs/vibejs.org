@@ -21,10 +21,23 @@ const { data, loading } = useAsync(async () => {
   return load ? await load : null;
 });
 
-const groups = computed(() => [
-  ...sidebar(locale.value).map((g) => ({ ...g, text: t(`group.${g.text}` as MessageKey) })),
-  { text: t('docs.reference'), items: [{ text: t('docs.errorCodes'), link: '/v0/errors/' }] },
-]);
+const groups = computed(() => {
+  const [gettingStarted, ...rest] = sidebar(locale.value).map((g) => ({
+    ...g,
+    text: t(`group.${g.text}` as MessageKey),
+  }));
+  return [
+    {
+      text: gettingStarted!.text,
+      items: [
+        { text: t('docs.interactiveTutorial'), link: '/tutorial' },
+        ...gettingStarted!.items,
+      ],
+    },
+    ...rest,
+    { text: t('docs.reference'), items: [{ text: t('docs.errorCodes'), link: '/v0/errors/' }] },
+  ];
+});
 const links = computed(() => groups.value.flatMap((group) => group.items));
 const here = computed(() => bare.value.replace(/\/$/, '') || '/v0');
 const isHere = (link: string) => link.replace(/\/$/, '') === here.value;
@@ -152,7 +165,13 @@ function onMenuClick(event: MouseEvent) {
         <div class="bg-muted h-4 w-full animate-pulse rounded"></div>
         <div class="bg-muted h-4 w-5/6 animate-pulse rounded"></div>
       </div>
-      <p v-if="englishOnly && data" class="bg-muted text-muted-foreground mb-6 max-w-3xl rounded-lg border px-4 py-2.5 text-sm">
+      <p
+        v-if="locale !== 'en' && path === 'index' && data"
+        class="bg-muted text-muted-foreground mb-6 max-w-3xl rounded-lg border px-4 py-2.5 text-sm"
+      >
+        {{ t('docs.localeCoverage') }}
+      </p>
+      <p v-else-if="englishOnly && data" class="bg-muted text-muted-foreground mb-6 max-w-3xl rounded-lg border px-4 py-2.5 text-sm">
         {{ t('docs.englishOnly') }}
       </p>
       <article v-if="data && !(loading && !data)" :dir="englishOnly ? 'ltr' : undefined" class="doc" @click="onArticleClick" v-html="data.html"></article>

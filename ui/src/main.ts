@@ -5,7 +5,8 @@ import { applyLocale, localePath, preferredLocale, splitLocale } from './i18n.ts
 import { routes, titleOf } from './routes.ts';
 import './styles.css';
 
-// A first visit to an English URL opens in the browser's language when the site has it.
+// Honor an explicit language-picker choice on English URLs. Do not sniff the browser language:
+// shared English links and crawlers must keep the path they were given.
 if (splitLocale(location.pathname).locale === 'en') {
   const preferred = preferredLocale();
   if (preferred !== 'en') {

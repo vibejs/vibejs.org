@@ -1,6 +1,8 @@
-# Tutorial
+# Full-stack tutorial
 
 In this tutorial you add a `users` API to a new app, write a page that lists the users, let `vibejs check` catch a type error in a template, then build and serve the app. It takes about ten minutes. You need Node.js `^24.15.0 || >=26` and pnpm.
+
+New to `.vibe` components? Start with the [interactive tutorial](https://vibejs.org/tutorial) in the browser, then come back here.
 
 Every command and file on this page is run, in this order, by the vibe.js test suite on each change, so the steps work as written.
 
