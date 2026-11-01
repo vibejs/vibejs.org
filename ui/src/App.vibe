@@ -70,7 +70,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
           <span class="hidden truncate sm:inline">{{ t('nav.searchDocs') }}</span>
           <kbd class="pointer-events-none ms-auto hidden h-5 min-w-5 items-center justify-center rounded-sm bg-muted px-1 font-sans text-xs font-medium text-muted-foreground select-none sm:inline-flex">⌘K</kbd>
         </button>
-        <label class="relative">
+        <label class="relative" :title="locale === 'en' ? undefined : t('nav.localePartial')">
           <span class="sr-only">{{ t('nav.language') }}</span>
           <select
             ref="picker"

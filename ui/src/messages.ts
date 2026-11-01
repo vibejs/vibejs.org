@@ -1,7 +1,7 @@
 // Interface text in each locale. Keys missing from a locale fall back to English. Values that
 // contain <code> are our own markup and are rendered as HTML.
 const en = {
-  'nav.tutorial': 'Tutorial',
+  'nav.tutorial': 'Learn',
   'nav.getStarted': 'Get started',
   'nav.docs': 'Docs',
   'nav.errors': 'Errors',
@@ -9,6 +9,7 @@ const en = {
   'nav.home': 'vibe.js home',
   'nav.githubLabel': 'vibe.js on GitHub',
   'nav.language': 'Language',
+  'nav.localePartial': 'Guides, UI and server are localized; CLI and error codes stay in English.',
   'tab.home': 'Home',
   'tab.docs': 'Docs',
   'tab.learn': 'Learn',
@@ -112,7 +113,11 @@ const en = {
   'docs.missingTitle': 'This page does not exist.',
   'docs.missingText': 'There is no docs page at <code>{path}</code>.',
   'docs.home': 'Go to the docs home',
-  'docs.englishOnly': 'This page is only available in English.',
+  'docs.englishOnly':
+    'This page is only in English. Guides, UI and server docs are localized; CLI reference and error codes are not yet.',
+  'docs.interactiveTutorial': 'Interactive tutorial',
+  'docs.localeCoverage':
+    'Turkish and Arabic cover the guides, UI and server docs. CLI reference and error codes are English-only for now.',
   'group.Getting started': 'Getting started',
   'group.UI': 'UI',
   'group.Server': 'Server',
@@ -125,7 +130,7 @@ const en = {
   'notFound.home': 'Home',
   'notFound.docs': 'Docs',
 
-  'tutorial.title': 'Tutorial',
+  'tutorial.title': 'Interactive tutorial',
   'tutorial.progress': '{chapter}, step {n} of {total}',
   'tutorial.progressShort': '{chapter}, {n} of {total}',
   'tutorial.panels': 'Panels',
@@ -152,7 +157,7 @@ const en = {
   'chapter.Data': 'Data',
 
   'title.home': 'vibe.js: if it compiles, both sides agree',
-  'title.tutorial': 'Tutorial',
+  'title.tutorial': 'Interactive tutorial',
   'title.notFound': 'Page not found',
 };
 
@@ -168,6 +173,8 @@ const tr: Messages = {
   'nav.home': 'vibe.js ana sayfası',
   'nav.githubLabel': 'vibe.js GitHub’da',
   'nav.language': 'Dil',
+  'nav.localePartial':
+    'Rehberler, arayüz ve sunucu çevrili; CLI başvurusu ve hata kodları şimdilik İngilizce.',
   'tab.home': 'Ana sayfa',
   'tab.docs': 'Doküman',
   'tab.learn': 'Öğren',
@@ -272,7 +279,11 @@ const tr: Messages = {
   'docs.missingTitle': 'Böyle bir sayfa yok.',
   'docs.missingText': '<code>{path}</code> adresinde bir doküman sayfası yok.',
   'docs.home': 'Dokümanların başına dön',
-  'docs.englishOnly': 'Bu sayfanın şimdilik yalnızca İngilizcesi var.',
+  'docs.englishOnly':
+    'Bu sayfanın şimdilik yalnızca İngilizcesi var. Rehberler, arayüz ve sunucu çevrili; CLI başvurusu ve hata kodları henüz değil.',
+  'docs.interactiveTutorial': 'Uygulamalı eğitim',
+  'docs.localeCoverage':
+    'Türkçe ve Arapça rehberleri, arayüz ve sunucu dokümanlarını kapsıyor. CLI başvurusu ve hata kodları şimdilik yalnızca İngilizce.',
   'group.Getting started': 'Başlarken',
   'group.UI': 'Arayüz',
   'group.Server': 'Sunucu',
@@ -325,6 +336,8 @@ const ar: Messages = {
   'nav.home': 'الصفحة الرئيسية لـ vibe.js',
   'nav.githubLabel': 'vibe.js على GitHub',
   'nav.language': 'اللغة',
+  'nav.localePartial':
+    'الأدلة وواجهة المستخدم والخادم مترجمة؛ مرجع سطر الأوامر ورموز الأخطاء بالإنجليزية حاليًا.',
   'tab.home': 'الرئيسية',
   'tab.docs': 'التوثيق',
   'tab.learn': 'تعلّم',
@@ -424,7 +437,11 @@ const ar: Messages = {
   'docs.missingTitle': 'هذه الصفحة غير موجودة.',
   'docs.missingText': 'لا توجد صفحة توثيق على <code>{path}</code>.',
   'docs.home': 'العودة إلى بداية التوثيق',
-  'docs.englishOnly': 'هذه الصفحة متاحة بالإنجليزية فقط حاليًا.',
+  'docs.englishOnly':
+    'هذه الصفحة بالإنجليزية فقط حاليًا. الأدلة وواجهة المستخدم والخادم مترجمة؛ مرجع سطر الأوامر ورموز الأخطاء ليست كذلك بعد.',
+  'docs.interactiveTutorial': 'تعلّم بالتطبيق',
+  'docs.localeCoverage':
+    'العربية والتركية تغطيان الأدلة وواجهة المستخدم ووثائق الخادم. مرجع سطر الأوامر ورموز الأخطاء بالإنجليزية فقط حاليًا.',
   'group.Getting started': 'البداية',
   'group.UI': 'الواجهة',
   'group.Server': 'الخادم',

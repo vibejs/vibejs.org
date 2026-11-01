@@ -1132,7 +1132,7 @@
     },
     {
       "path": "guides/tutorial",
-      "title": "Tutorial",
+      "title": "Full-stack tutorial",
       "description": "Build a users API and a page that lists the users, find a template type error with vibejs check, then build, serve and develop the app."
     },
     {
@@ -1230,7 +1230,7 @@
           "link": "/guides/getting-started"
         },
         {
-          "text": "Tutorial",
+          "text": "Full-stack tutorial",
           "link": "/guides/tutorial"
         },
         {

@@ -48,19 +48,15 @@ export function applyLocale(code: Locale, remember = false): void {
 }
 
 /**
- * The locale a first visit to an English URL should see: the stored choice, or else the first
- * browser language we have; English otherwise.
+ * The locale a returning visitor chose in the language picker. English URLs stay English on a
+ * first visit: browser language is never sniffed, so shared deep links and crawlers keep their path.
  */
 export function preferredLocale(): Locale {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (isLocale(stored)) return stored;
   } catch {
-    // No storage: fall through to the browser languages.
-  }
-  for (const language of navigator.languages ?? [navigator.language]) {
-    const code = language.toLowerCase().split('-')[0];
-    if (isLocale(code)) return code;
+    // Private windows can refuse storage; keep English.
   }
   return 'en';
 }

@@ -59,4 +59,5 @@ Neovim ve diğer editörler, bilinen kısıtlar ve sorun giderme için [Editör 
 
 ## Sonraki adım {#next}
 
-Bir API kaynağı ve onu gösteren bir sayfa eklemek için [eğitimi](https://vibejs.org/v0/guides/tutorial) takip et.
+- `.vibe` bileşenlerini tarayıcıda öğrenmek için [uygulamalı eğitime](https://vibejs.org/tutorial) bak.
+- Ya da bir API kaynağı ve onu gösteren bir sayfa eklemek için [adım adım eğitimi](https://vibejs.org/v0/guides/tutorial) takip et.

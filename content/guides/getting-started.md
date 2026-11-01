@@ -59,4 +59,5 @@ For Neovim and other editors, the known limitations and troubleshooting, see [Ed
 
 ## Next
 
-Follow the [tutorial](https://vibejs.org/v0/guides/tutorial) to add an API resource and a page that shows it.
+- Learn `.vibe` components in the browser with the [interactive tutorial](https://vibejs.org/tutorial).
+- Or follow the [full-stack tutorial](https://vibejs.org/v0/guides/tutorial) to add an API resource and a page that shows it.
