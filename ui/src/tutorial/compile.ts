@@ -1,4 +1,3 @@
-import { compile, compileStyle } from '@usevibejs/compiler';
 import { transform } from 'sucrase';
 
 /** One problem in a file, with a 1-based line and column when the compiler knows them. */
@@ -16,6 +15,12 @@ export interface Compiled {
   problems: Problem[];
 }
 
+type Compiler = typeof import('@usevibejs/compiler');
+
+// The oxc WASM binding is large: load the compiler (and its parser) on first compile only.
+let compiler: Promise<Compiler> | undefined;
+const loadCompiler = (): Promise<Compiler> => (compiler ??= import('@usevibejs/compiler'));
+
 /** The 8-hex scope id of a file, stable across compiles so styles and markup keep matching. */
 function scopeId(name: string): string {
   let hash = 0x811c9dc5;
@@ -24,7 +29,8 @@ function scopeId(name: string): string {
 }
 
 /** Compiles a step's `.vibe` files with the vibe.js compiler and strips the types of its `.ts` files. */
-export function compileFiles(files: Record<string, string>): Compiled {
+export async function compileFiles(files: Record<string, string>): Promise<Compiled> {
+  const { compile, compileStyle } = await loadCompiler();
   const modules: Record<string, string> = {};
   const css: string[] = [];
   const problems: Problem[] = [];
