@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>%NAME%: %TAGLINE%</title>
+    <meta name="description" content="%TAGLINE%" />
+    <meta name="theme-color" content="#ffffff" />
+    <script>
+      // Applies the saved or system theme before the first paint, so the page never flashes.
+      (() => {
+        let saved = null;
+        try {
+          saved = localStorage.getItem('theme');
+        } catch {}
+        const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
+        document.querySelector('meta[name=theme-color]').content = dark ? '#0a0a0a' : '#ffffff';
+      })();
+    </script>
+    <meta property="og:title" content="%NAME%" />
+    <meta property="og:description" content="%TAGLINE%" />
+    <meta property="og:image" content="%URL%logo.png" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Geist+Mono:wght@400..600&display=swap"
+    />
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>%NAME% renders its docs in the browser. Turn on JavaScript to read them.</noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

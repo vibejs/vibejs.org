@@ -56,7 +56,7 @@ const escape = (text: string): string =>
   text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
 /** Renders one docs page; site links become paths, so the router handles them. */
-export function render(markdown: string, highlighter: Highlighter): DocModule {
+export function render(markdown: string, highlighter: Highlighter, site = SITE): DocModule {
   const headings: Heading[] = [];
   const seen = new Map<string, number>();
   const marked = new Marked({
@@ -92,14 +92,15 @@ export function render(markdown: string, highlighter: Highlighter): DocModule {
   });
   // Tables scroll sideways on their own, so a wide one never widens the page on a phone.
   const html = (marked.parse(markdown) as string)
-    .replaceAll(`href="${SITE}`, 'href="/v0/')
+    .replaceAll(`href="${site}`, 'href="/v0/')
     .replaceAll('<table>', '<div class="table-wrap"><table>')
     .replaceAll('</table>', '</table></div>');
   return { html, headings };
 }
 
-/** Turns `*.md` imports into `{ html, headings }` modules, highlighted at build time. */
-export function markdown(): Plugin {
+/** Turns `*.md` imports into `{ html, headings }` modules, highlighted at build time; links to
+ * `site` become router paths. */
+export function markdown(site = SITE): Plugin {
   let highlighter: Promise<Highlighter> | undefined;
   return {
     name: 'vibejs-site-markdown',
@@ -115,7 +116,7 @@ export function markdown(): Plugin {
         langs: [...LANGS, ...vibeGrammars()],
       });
       return {
-        code: `export default ${JSON.stringify(render(code, await highlighter))};`,
+        code: `export default ${JSON.stringify(render(code, await highlighter, site))};`,
         map: null,
       };
     },

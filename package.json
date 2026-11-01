@@ -7,7 +7,9 @@
     "build": "vite build ui",
     "preview": "vite preview ui",
     "check": "vibejs check",
-    "sync-docs": "node scripts/sync-docs.ts"
+    "sync-docs": "node scripts/sync-docs.ts",
+    "libs:dev": "vite libs",
+    "libs:deploy": "node libs/deploy.ts"
   },
   "dependencies": {
     "@usevibejs/contract": "0.1.0",

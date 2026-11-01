@@ -18,6 +18,8 @@ it('renders the home page with the live counter', async () => {
   const button = wrapper.findAll('button').find((b) => b.text().startsWith('Tapped'))!;
   await button.trigger('click');
   expect(button.text()).toBe('Tapped 1 times');
+  const packages = wrapper.findAll('a').map((a) => a.attributes('href'));
+  expect(packages).toContain('https://query.vibejs.org');
 });
 
 it('renders a docs page and its title', async () => {

@@ -1,0 +1,96 @@
+<script setup lang="ts">
+import { computed, ref, useTemplateRef, watch } from '@usevibejs/ui';
+import { useRouter } from '@usevibejs/ui/router';
+import { search } from '../docs.ts';
+
+const open = defineModel<boolean>('open', { default: () => false });
+const dialog = useTemplateRef<HTMLDialogElement>('dialog');
+const input = useTemplateRef<HTMLInputElement>('input');
+const query = ref('');
+const active = ref(0);
+const router = useRouter();
+
+const hits = computed(() => search(query.value));
+const href = (path: string) => `/v0/${path}`;
+const hitClass = (index: number) => [
+  'flex flex-col gap-0.5 rounded-md px-3 py-2.5',
+  index === active.value ? 'bg-accent text-accent-foreground' : '',
+];
+
+watch(open, (value) => {
+  const el = dialog.value;
+  if (!el) return;
+  if (value && !el.open) {
+    el.showModal();
+    input.value?.focus();
+  } else if (!value && el.open) el.close();
+});
+watch(query, () => {
+  active.value = 0;
+});
+
+function go(path: string) {
+  open.value = false;
+  query.value = '';
+  void router.push(href(path));
+}
+
+function onKey(event: KeyboardEvent) {
+  const count = hits.value.length;
+  if (event.key === 'ArrowDown' && count) {
+    event.preventDefault();
+    active.value = (active.value + 1) % count;
+  } else if (event.key === 'ArrowUp' && count) {
+    event.preventDefault();
+    active.value = (active.value - 1 + count) % count;
+  } else if (event.key === 'Enter' && hits.value[active.value]) {
+    event.preventDefault();
+    go(hits.value[active.value]!.path);
+  }
+}
+
+function onBackdrop(event: MouseEvent) {
+  if (event.target === dialog.value) open.value = false;
+}
+</script>
+
+<template>
+  <dialog
+    ref="dialog"
+    class="text-foreground backdrop:bg-black/50 m-0 mx-auto mt-[max(env(safe-area-inset-top),0.75rem)] w-[calc(100vw-1.5rem)] max-w-lg bg-transparent p-0 sm:mt-[12vh]"
+    aria-label="Search docs"
+    @close="open = false"
+    @click="onBackdrop"
+  >
+    <div class="bg-popover text-popover-foreground overflow-hidden rounded-xl border shadow-lg">
+      <div class="flex items-center gap-2 border-b px-3">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="text-muted-foreground size-4 shrink-0 fill-none stroke-current stroke-2">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" stroke-linecap="round" />
+        </svg>
+        <input
+          ref="input"
+          v-model="query"
+          type="search"
+          placeholder="Search the docs"
+          aria-label="Search"
+          enterkeyhint="go"
+          autocomplete="off"
+          class="placeholder:text-muted-foreground h-12 min-w-0 flex-1 bg-transparent text-base outline-none sm:text-sm"
+          @keydown="onKey"
+        />
+        <button type="button" class="text-muted-foreground hover:bg-accent rounded-md border px-2 py-1 text-xs" @click="open = false">Esc</button>
+      </div>
+      <ul v-if="hits.length" class="max-h-[60dvh] overflow-y-auto overscroll-contain p-1.5" role="listbox" aria-label="Results">
+        <li v-for="(page, index) in hits" :key="page.path" role="presentation">
+          <a :href="href(page.path)" role="option" :aria-selected="index === active" :class="hitClass(index)" @click.prevent="go(page.path)">
+            <span class="text-sm font-medium">{{ page.title }}</span>
+            <span class="text-muted-foreground font-mono text-xs [overflow-wrap:anywhere]">{{ href(page.path) }}</span>
+          </a>
+        </li>
+      </ul>
+      <p v-else-if="query" class="text-muted-foreground px-4 py-8 text-center text-sm">No page matches “{{ query }}”.</p>
+      <p v-else class="text-muted-foreground px-4 py-8 text-center text-sm">Type to search page titles.</p>
+    </div>
+  </dialog>
+</template>
