@@ -2,6 +2,8 @@
 
 The Turkish and Arabic pages are localized, not translated word for word. Write the page the way a developer who speaks the language would explain it to a colleague: same facts, same structure, natural sentences. If a sentence sounds translated, rewrite it.
 
+`pnpm sync-docs` regenerates English Markdown under `content/` from a vibe.js checkout. It **backs up and restores** `content/tr/` and `content/ar/` — never hand-edit English synced pages expecting them to survive a sync, and never delete the locale trees before syncing.
+
 ## Rules for every language
 
 - Keep the facts and the Markdown structure: the same headings in the same order, lists, tables and links. Never change code blocks, inline code, URLs, file paths, package, API and CLI names, `VIBE####` codes or the name vibe.js.

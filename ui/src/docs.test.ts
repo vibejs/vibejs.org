@@ -48,6 +48,13 @@ it('loads a page rendered at build time, with site links turned into paths', asy
   expect(loadPage('nope', 'en')).toBeUndefined();
 });
 
+it('turns absolute tutorial and home links into site paths', async () => {
+  const page = await loadPage('index', 'tr')!;
+  expect(page.html).toContain('href="/tutorial"');
+  expect(page.html).not.toContain('https://vibejs.org/tutorial');
+  expect(page.html).not.toContain('https://vibejs.org/v0/');
+});
+
 it('keeps the English anchors in translated pages', async () => {
   const page = await loadPage('ui/routing', 'tr')!;
   expect(page.headings[0]!.id).toBe('routes');
@@ -61,4 +68,9 @@ it('ranks guides above error pages and finds codes', () => {
   expect(search('contracts', 'en')[0]!.path).toBe('server/contracts');
   expect(search('VIBE7103', 'tr')[0]!.path).toBe('errors/VIBE7103');
   expect(search('zzzz', 'en')).toEqual([]);
+});
+
+it('matches words from the body of a guide, not only its title', () => {
+  // "virtual" appears in coming-from-vue prose, not in that page's title.
+  expect(search('virtual DOM', 'en')[0]!.path).toBe('guides/coming-from-vue');
 });

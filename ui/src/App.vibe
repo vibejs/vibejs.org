@@ -42,6 +42,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
 </script>
 
 <template>
+  <a
+    href="#main"
+    class="bg-primary text-primary-foreground focus:ring-ring sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-4 focus:z-50 focus:rounded-md focus:px-3 focus:py-2 focus:ring-2"
+  >
+    {{ t('a11y.skipToContent') }}
+  </a>
   <header
     class="bg-background/80 sticky top-0 z-30 border-b pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-background/60"
   >
@@ -99,7 +105,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
     </div>
   </header>
 
-  <RouterView />
+  <div id="main" tabindex="-1" class="outline-none">
+    <RouterView />
+  </div>
 
   <nav
     class="bg-background/90 fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 gap-1 border-t px-3 pt-1.5 pb-[max(env(safe-area-inset-bottom),0.5rem)] backdrop-blur lg:hidden"

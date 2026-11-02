@@ -3,7 +3,7 @@
 // packages' messages, the CLI reference from the built CLI, and every docs page as site-linked
 // Markdown, using the checkout's own docs tooling.
 import { execFileSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -51,17 +51,29 @@ const write = (file: string, text: string) => {
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, text);
 };
-rmSync(join(site, 'content'), { recursive: true, force: true });
-for (const page of pages) {
-  write(join(site, 'content', `${page.path}.md`), `${tools.toAgentMarkdown(page, 'site')}\n`);
+const content = join(site, 'content');
+// English pages are regenerated; keep locale trees (tr/, ar/) across syncs.
+const localeBackup = mkdtempSync(join(tmpdir(), 'vibejs-locales-'));
+for (const code of ['tr', 'ar'] as const) {
+  const dir = join(content, code);
+  if (existsSync(dir)) cpSync(dir, join(localeBackup, code), { recursive: true });
 }
+rmSync(content, { recursive: true, force: true });
+for (const page of pages) {
+  write(join(content, `${page.path}.md`), `${tools.toAgentMarkdown(page, 'site')}\n`);
+}
+for (const code of ['tr', 'ar'] as const) {
+  const dir = join(localeBackup, code);
+  if (existsSync(dir)) cpSync(dir, join(content, code), { recursive: true });
+}
+rmSync(localeBackup, { recursive: true, force: true });
 const index = {
   pages: pages.map(({ path, title, description }) => ({ path, title, description })),
   sidebar: tools.sidebar(pages.filter((page) => !page.path.startsWith('errors/'))),
 };
-write(join(site, 'content', 'pages.json'), `${JSON.stringify(index, null, 2)}\n`);
+write(join(content, 'pages.json'), `${JSON.stringify(index, null, 2)}\n`);
 for (const [name, text] of Object.entries(tools.llms(pages))) {
   write(join(site, 'ui', 'public', 'v0', name), text);
 }
 rmSync(work, { recursive: true, force: true });
-console.log(`synced ${pages.length} pages from ${root}`);
+console.log(`synced ${pages.length} English pages from ${root} (locale trees restored)`);

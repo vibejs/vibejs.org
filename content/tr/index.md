@@ -7,8 +7,8 @@ Full-stack bir TypeScript framework'ü. UI, sunucu ve ikisi arasındaki sözleş
 ## Buradan başla {#start-here}
 
 1. [Başlarken](https://vibejs.org/v0/guides/getting-started) — bir uygulama oluştur, çalıştır ve denetle.
-2. [Uygulamalı eğitim](https://vibejs.org/tutorial) — `.vibe` bileşenlerini tarayıcıda, adım adım öğren.
-3. [Adım adım eğitim](https://vibejs.org/v0/guides/tutorial) — bir API kaynağı ve bir sayfa ekle, bir tip hatası yakala, sonra uygulamanın build'ini alıp sun.
+2. [Tarayıcıda öğren](https://vibejs.org/tutorial) — `.vibe` bileşenlerini kurulum olmadan, adım adım öğren.
+3. [Full-stack uygulama yap](https://vibejs.org/v0/guides/tutorial) — bir API kaynağı ve bir sayfa ekle, bir tip hatası yakala, sonra uygulamanın build'ini alıp sun.
 
 ## Bununla yaz {#build-with-it}
 

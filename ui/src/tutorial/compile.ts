@@ -1,5 +1,3 @@
-import { transform } from 'sucrase';
-
 /** One problem in a file, with a 1-based line and column when the compiler knows them. */
 export interface Problem {
   file: string;
@@ -16,10 +14,13 @@ export interface Compiled {
 }
 
 type Compiler = typeof import('@usevibejs/compiler');
+type Sucrase = typeof import('sucrase');
 
-// The oxc WASM binding is large: load the compiler (and its parser) on first compile only.
+// The oxc WASM binding and sucrase are large: load them on first compile only.
 let compiler: Promise<Compiler> | undefined;
+let sucrase: Promise<Sucrase> | undefined;
 const loadCompiler = (): Promise<Compiler> => (compiler ??= import('@usevibejs/compiler'));
+const loadSucrase = (): Promise<Sucrase> => (sucrase ??= import('sucrase'));
 
 /** The 8-hex scope id of a file, stable across compiles so styles and markup keep matching. */
 function scopeId(name: string): string {
@@ -30,7 +31,10 @@ function scopeId(name: string): string {
 
 /** Compiles a step's `.vibe` files with the vibe.js compiler and strips the types of its `.ts` files. */
 export async function compileFiles(files: Record<string, string>): Promise<Compiled> {
-  const { compile, compileStyle } = await loadCompiler();
+  const [{ compile, compileStyle }, { transform }] = await Promise.all([
+    loadCompiler(),
+    loadSucrase(),
+  ]);
   const modules: Record<string, string> = {};
   const css: string[] = [];
   const problems: Problem[] = [];

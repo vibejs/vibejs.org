@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { computed, ref, watch } from '@usevibejs/ui';
+import { computed, onMounted, ref, shallowRef, watch } from '@usevibejs/ui';
 import { RouterLink, useRoute } from '@usevibejs/ui/router';
-import CodeEditor from '../tutorial/CodeEditor.vibe';
 import PreviewFrame from '../tutorial/PreviewFrame.vibe';
 import { STEPS } from '../tutorial/steps.ts';
 import { LESSONS } from '../tutorial/lessons.ts';
 import { localizeFiles } from '../tutorial/localize.ts';
 import { locale, localePath, t } from '../i18n.ts';
 import type { MessageKey } from '../messages.ts';
+
+// CodeMirror is large: load the editor after the tutorial shell paints.
+const CodeEditor = shallowRef<typeof import('../tutorial/CodeEditor.vibe').default>();
+onMounted(() => {
+  void import('../tutorial/CodeEditor.vibe').then((mod) => {
+    CodeEditor.value = mod.default;
+  });
+});
 
 const route = useRoute();
 const index = computed(() => {
@@ -100,15 +107,15 @@ const button =
         </RouterLink>
       </div>
       <div class="bg-muted flex gap-1 rounded-lg p-1" role="tablist" :aria-label="t('tutorial.panels')">
-        <button type="button" role="tab" :aria-selected="panel === 'learn'" :class="segment('learn')" @click="panel = 'learn'">{{ t('tutorial.learn') }}</button>
-        <button type="button" role="tab" :aria-selected="panel === 'code'" :class="segment('code')" @click="panel = 'code'">{{ t('tutorial.code') }}</button>
-        <button type="button" role="tab" :aria-selected="panel === 'result'" :class="segment('result')" @click="panel = 'result'">{{ t('tutorial.result') }}</button>
+        <button type="button" id="tutorial-tab-learn" role="tab" aria-controls="tutorial-panel-learn" :aria-selected="panel === 'learn'" :class="segment('learn')" @click="panel = 'learn'">{{ t('tutorial.learn') }}</button>
+        <button type="button" id="tutorial-tab-code" role="tab" aria-controls="tutorial-panel-code" :aria-selected="panel === 'code'" :class="segment('code')" @click="panel = 'code'">{{ t('tutorial.code') }}</button>
+        <button type="button" id="tutorial-tab-result" role="tab" aria-controls="tutorial-panel-result" :aria-selected="panel === 'result'" :class="segment('result')" @click="panel = 'result'">{{ t('tutorial.result') }}</button>
       </div>
     </div>
 
     <div class="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(18rem,24rem)_minmax(0,1fr)_minmax(0,1fr)]">
       <!-- Learn -->
-      <section :class="[...panelClass('learn'), 'overflow-y-auto lg:border-e']" :aria-label="t('tutorial.lesson')">
+      <section id="tutorial-panel-learn" role="tabpanel" aria-labelledby="tutorial-tab-learn" :class="[...panelClass('learn'), 'overflow-y-auto lg:border-e']" :aria-label="t('tutorial.lesson')">
         <div class="flex-1 px-5 py-6">
           <p class="text-muted-foreground hidden text-sm lg:block">
             {{ t('tutorial.progress', { chapter, n: index + 1, total: STEPS.length }) }}
@@ -144,7 +151,7 @@ const button =
       </section>
 
       <!-- Code -->
-      <section :class="[...panelClass('code'), 'lg:border-e']" :aria-label="t('tutorial.code')" dir="ltr">
+      <section id="tutorial-panel-code" role="tabpanel" aria-labelledby="tutorial-tab-code" :class="[...panelClass('code'), 'lg:border-e']" :aria-label="t('tutorial.code')" dir="ltr">
         <div class="bg-muted/70 flex items-end gap-1 overflow-x-auto border-b px-2 pt-2">
           <button
             v-for="name in Object.keys(files)"
@@ -157,12 +164,12 @@ const button =
           </button>
         </div>
         <div class="bg-card min-h-0 flex-1">
-          <CodeEditor v-model="code" />
+          <component :is="CodeEditor" v-if="CodeEditor" v-model="code" />
         </div>
       </section>
 
       <!-- Result -->
-      <section :class="panelClass('result')" :aria-label="t('tutorial.result')">
+      <section id="tutorial-panel-result" role="tabpanel" aria-labelledby="tutorial-tab-result" :class="panelClass('result')" :aria-label="t('tutorial.result')">
         <div class="bg-muted/70 text-muted-foreground border-b px-4 py-2.5 text-sm font-medium">{{ t('tutorial.result') }}</div>
         <div class="bg-background min-h-0 flex-1">
           <PreviewFrame :files="files" />

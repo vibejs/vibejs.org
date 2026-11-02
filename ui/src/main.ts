@@ -2,6 +2,7 @@ import { createApp, isVibeError } from '@usevibejs/ui';
 import { createRouter, createWebHistory, type RouterScrollBehavior } from '@usevibejs/ui/router';
 import App from './App.vibe';
 import { applyLocale, localePath, preferredLocale, splitLocale, t } from './i18n.ts';
+import { applyRouteMeta } from './meta.ts';
 import { routes, titleOf } from './routes.ts';
 import './styles.css';
 
@@ -44,13 +45,16 @@ router.beforeEach((to) => {
   applyLocale(splitLocale(to.path).locale);
 });
 router.afterEach((to, _from, failure) => {
-  document.title = titleOf(to.fullPath);
+  const title = titleOf(to.fullPath);
+  applyRouteMeta(to.fullPath, title);
+  // Move focus to main content so screen readers land after a client-side navigation.
+  if (announceRoute) document.getElementById('main')?.focus({ preventScroll: true });
   // Skip the first load: the browser already announces the document title.
   if (failure || !announceRoute) {
     announceRoute = true;
     return;
   }
-  routeStatus.textContent = t('a11y.pageLoaded', { title: document.title });
+  routeStatus.textContent = t('a11y.pageLoaded', { title });
 });
 // After a deploy, an open tab can ask for a page chunk that is gone: load the page again.
 router.onError((error, to) => {
