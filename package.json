@@ -4,9 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite ui",
-    "build": "vite build ui",
+    "build": "node scripts/sitemap.ts && vite build ui",
     "preview": "vite preview ui",
     "check": "vibejs check",
+    "sitemap": "node scripts/sitemap.ts",
     "sync-docs": "node scripts/sync-docs.ts"
   },
   "dependencies": {

@@ -4,7 +4,7 @@ import { createHighlighter, type Highlighter, type LanguageRegistration } from '
 import type { Plugin } from 'vite';
 import type { DocModule, Heading } from '../ui/src/docs.ts';
 
-const SITE = 'https://vibejs.org/v0/';
+const SITE_ORIGIN = /href="https:\/\/(?:www\.)?vibejs\.org(\/[^"]*|)"/g;
 const LANGS = [
   'typescript',
   'js',
@@ -91,8 +91,9 @@ export function render(markdown: string, highlighter: Highlighter): DocModule {
     },
   });
   // Tables scroll sideways on their own, so a wide one never widens the page on a phone.
+  // Absolute site links become paths so the SPA router (and the current locale) can handle them.
   const html = (marked.parse(markdown) as string)
-    .replaceAll(`href="${SITE}`, 'href="/v0/')
+    .replace(SITE_ORIGIN, (_match, path: string) => `href="${path || '/'}"`)
     .replaceAll('<table>', '<div class="table-wrap"><table>')
     .replaceAll('</table>', '</table></div>');
   return { html, headings };

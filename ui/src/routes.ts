@@ -37,6 +37,8 @@ export function titleOf(fullPath: string): string {
   const SITE = 'vibe.js';
   if (path.startsWith('/tutorial')) return `${messages['title.tutorial']} | ${SITE}`;
   if (!path.startsWith('/v0')) return messages['title.home'];
-  const title = pageTitle(contentPath(path.slice(3).split('/')), locale);
+  const docsPath = contentPath(path.slice(3).split('/'));
+  if (docsPath === 'index') return `${messages['title.docs']} | ${SITE}`;
+  const title = pageTitle(docsPath, locale);
   return title ? `${title} | ${SITE}` : `${messages['title.notFound']} | ${SITE}`;
 }

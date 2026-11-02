@@ -60,14 +60,21 @@ const FACTS = [1, 2, 3, 4] as const;
             <path d="m9 6 6 6-6 6" stroke-linecap="round" />
           </svg>
         </RouterLink>
-        <h1 id="hero-title" class="text-[2.5rem] leading-[1.05] font-semibold tracking-tight text-balance sm:text-6xl sm:tracking-tighter lg:text-7xl">
+        <p class="animate-fade-up text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl [animation-delay:80ms]">
+          {{ t('home.brand') }}
+        </p>
+        <h1 id="hero-title" class="mt-3 text-[2rem] leading-[1.1] font-semibold tracking-tight text-balance sm:text-4xl sm:tracking-tighter lg:text-5xl">
           <template v-for="(word, index) in headline" :key="`${locale}-${index}`">
             <span class="animate-blur-in inline-block" :style="{ animationDelay: `${150 + index * 110}ms` }">{{ word }}</span>{{ index < headline.length - 1 ? ' ' : '' }}
           </template>
         </h1>
-        <p class="animate-fade-up text-muted-foreground mt-6 max-w-xl text-base leading-7 [animation-delay:600ms] sm:text-lg">
+        <p class="animate-fade-up text-muted-foreground mt-5 max-w-xl text-base leading-7 [animation-delay:600ms] sm:text-lg">
           {{ t('home.lede') }}
         </p>
+        <p
+          class="animate-fade-up text-muted-foreground rich mt-3 max-w-xl text-sm leading-6 [animation-delay:680ms]"
+          v-html="t('home.identity')"
+        ></p>
         <div class="animate-fade-up mt-8 max-w-xl [animation-delay:750ms]">
           <CreateCommand />
         </div>
@@ -151,7 +158,7 @@ const FACTS = [1, 2, 3, 4] as const;
     </section>
 
     <section :class="section" aria-labelledby="vibecn-title">
-      <div class="bg-card flex flex-col gap-6 rounded-2xl border p-6 shadow-xs sm:p-10 md:flex-row md:items-center md:gap-10">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-10">
         <img src="/vibecn.webp" alt="" width="64" height="64" class="size-16 shrink-0" />
         <div class="flex-1">
           <h2 id="vibecn-title" :class="heading">{{ t('home.vibecn.title') }}</h2>
@@ -159,6 +166,20 @@ const FACTS = [1, 2, 3, 4] as const;
         </div>
         <a href="https://vibecn.dev" :class="[outline, 'shrink-0']">{{ t('home.vibecn.cta') }}</a>
       </div>
+    </section>
+
+    <section :class="section" aria-labelledby="ecosystem-title">
+      <h2 id="ecosystem-title" :class="heading">{{ t('home.ecosystem.title') }}</h2>
+      <p :class="lede">{{ t('home.ecosystem.text') }}</p>
+      <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium">
+        <li><a href="https://auth.vibejs.org" class="underline underline-offset-4">{{ t('home.ecosystem.auth') }}</a></li>
+        <li><a href="https://form.vibejs.org" class="underline underline-offset-4">{{ t('home.ecosystem.form') }}</a></li>
+        <li><a href="https://query.vibejs.org" class="underline underline-offset-4">{{ t('home.ecosystem.query') }}</a></li>
+        <li><a href="https://i18n.vibejs.org" class="underline underline-offset-4">{{ t('home.ecosystem.i18n') }}</a></li>
+        <li><a href="https://table.vibejs.org" class="underline underline-offset-4">{{ t('home.ecosystem.table') }}</a></li>
+        <li><a href="https://socket.vibejs.org" class="underline underline-offset-4">{{ t('home.ecosystem.socket') }}</a></li>
+        <li><a href="https://github.com/orgs/vibejs/repositories" class="underline underline-offset-4">{{ t('home.ecosystem.more') }}</a></li>
+      </ul>
     </section>
 
     <section class="bg-muted/50 my-6 rounded-2xl border px-5 py-10 sm:px-10 sm:py-14" aria-labelledby="start-title">

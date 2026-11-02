@@ -73,15 +73,30 @@ watch(data, async () => {
   if (route.hash) document.getElementById(decodeURIComponent(route.hash.slice(1)))?.scrollIntoView();
 });
 
+/** Site paths (relative or absolute vibejs.org) navigate in the app, in the current language. */
+function sitePath(href: string): string | undefined {
+  if (href.endsWith('.txt')) return undefined;
+  if (href.startsWith('/')) return href;
+  try {
+    const url = new URL(href, 'https://vibejs.org');
+    if (url.hostname !== 'vibejs.org' && url.hostname !== 'www.vibejs.org') return undefined;
+    return `${url.pathname}${url.search}${url.hash}` || '/';
+  } catch {
+    return undefined;
+  }
+}
+
 /** Links inside the rendered Markdown navigate in the app, in the current language. */
 function onArticleClick(event: MouseEvent) {
   const anchor = (event.target as HTMLElement).closest('a');
   if (!anchor || event.defaultPrevented || event.button !== 0) return;
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
   const href = anchor.getAttribute('href');
-  if (!href || !href.startsWith('/') || href.endsWith('.txt')) return;
+  if (!href) return;
+  const path = sitePath(href);
+  if (!path) return;
   event.preventDefault();
-  void router.push(lp(href));
+  void router.push(lp(path));
 }
 
 function onMenuClick(event: MouseEvent) {

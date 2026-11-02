@@ -7,8 +7,8 @@ vibe.js: نطاقه في npm هو `@usevibejs`، وأداة سطر الأوام�
 ## ابدأ من هنا {#start-here}
 
 1. [البدء](https://vibejs.org/v0/guides/getting-started) — أنشئ تطبيقًا وشغّله وافحصه.
-2. [تعلّم بالتطبيق](https://vibejs.org/tutorial) — تعلّم مكوّنات `.vibe` في المتصفح خطوة بخطوة.
-3. [الدرس التطبيقي](https://vibejs.org/v0/guides/tutorial) — أضف موردًا إلى الـ API وصفحة تعرضه، ودع الفحص يكشف خطأ أنواع، ثم ابنِ التطبيق وشغّله.
+2. [تعلّم في المتصفح](https://vibejs.org/tutorial) — تعلّم مكوّنات `.vibe` خطوة بخطوة دون تثبيت.
+3. [ابنِ تطبيقًا متكاملًا](https://vibejs.org/v0/guides/tutorial) — أضف موردًا إلى الـ API وصفحة تعرضه، ودع الفحص يكشف خطأ أنواع، ثم ابنِ التطبيق وشغّله.
 
 ## ابنِ به {#build-with-it}
 

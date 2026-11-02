@@ -7,8 +7,8 @@ A full-stack TypeScript framework where the UI, the server and the contract betw
 ## Start here
 
 1. [Getting started](https://vibejs.org/v0/guides/getting-started) — create an app, run it and check it.
-2. [Interactive tutorial](https://vibejs.org/tutorial) — learn `.vibe` components in the browser, step by step.
-3. [Full-stack tutorial](https://vibejs.org/v0/guides/tutorial) — add an API resource and a page, catch a type error, then build and serve the app.
+2. [Learn in the browser](https://vibejs.org/tutorial) — learn `.vibe` components step by step, no install.
+3. [Build a full-stack app](https://vibejs.org/v0/guides/tutorial) — add an API resource and a page, catch a type error, then build and serve the app.
 
 ## Build with it
 

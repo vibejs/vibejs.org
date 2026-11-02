@@ -18,6 +18,7 @@ const en = {
   'theme.toLight': 'Switch to light mode',
   'theme.toDark': 'Switch to dark mode',
   'a11y.pageLoaded': '{title}, page loaded',
+  'a11y.skipToContent': 'Skip to content',
 
   'search.label': 'Search the docs',
   'search.placeholder': 'Search pages, commands and VIBE codes',
@@ -26,10 +27,13 @@ const en = {
   'search.hint': 'Try <code>check</code>, <code>contracts</code> or <code>VIBE7101</code>.',
 
   'home.badge': 'v0.1 is on npm',
+  'home.brand': 'vibe.js',
+  'home.identity':
+    'npm scope <code>@usevibejs</code>, CLI <code>vibejs</code> — not monday.com Vibe.',
   'home.title': 'If it compiles, both sides agree.',
   'home.lede':
     'vibe.js types the UI and the server from one contract, in one TypeScript package. Rename a field and the compiler points at every place on both sides, templates included.',
-  'home.tryIt': 'Try it in your browser',
+  'home.tryIt': 'Learn in the browser',
   'home.readDocs': 'Read the docs',
   'home.nodes.title': 'Change a value, touch one node.',
   'home.nodes.text':
@@ -70,6 +74,16 @@ const en = {
   'home.vibecn.text':
     'vibecn ports shadcn/ui to vibe.js: accessible components you copy into your app as .vibe source and shape to fit.',
   'home.vibecn.cta': 'Browse vibecn',
+  'home.ecosystem.title': 'Libraries around the core.',
+  'home.ecosystem.text':
+    'Auth, forms, queries, i18n and more — each a focused package that plugs into the same contracts and .vibe components.',
+  'home.ecosystem.auth': 'Auth',
+  'home.ecosystem.form': 'Forms',
+  'home.ecosystem.query': 'Queries',
+  'home.ecosystem.i18n': 'i18n',
+  'home.ecosystem.table': 'Tables',
+  'home.ecosystem.socket': 'Sockets',
+  'home.ecosystem.more': 'See every package on GitHub',
   'home.start.title': 'Start a project.',
   'home.start.requirements': 'Node.js 24.15 or newer, with pnpm, npm, yarn or bun.',
   'home.start.cta': 'Get started',
@@ -162,8 +176,15 @@ const en = {
   'chapter.Data': 'Data',
 
   'title.home': 'vibe.js: if it compiles, both sides agree',
-  'title.tutorial': 'Interactive tutorial',
+  'title.tutorial': 'Learn in the browser',
+  'title.docs': 'Docs',
   'title.notFound': 'Page not found',
+  'meta.home':
+    'vibe.js (@usevibejs, CLI vibejs) is a full-stack TypeScript framework: .vibe components, a modular server and typed contracts — not monday.com Vibe.',
+  'meta.tutorial':
+    'Learn .vibe components in the browser, step by step — the interactive vibe.js tutorial.',
+  'meta.docs':
+    'vibe.js documentation: getting started, UI, server, contracts, CLI and every VIBE error code.',
 };
 
 export type MessageKey = keyof typeof en;
@@ -188,6 +209,7 @@ const tr: Messages = {
   'theme.toLight': 'Açık temaya geç',
   'theme.toDark': 'Koyu temaya geç',
   'a11y.pageLoaded': '{title}, sayfa yüklendi',
+  'a11y.skipToContent': 'İçeriğe atla',
 
   'search.label': 'Dokümanlarda ara',
   'search.placeholder': 'Sayfa, komut ya da VIBE kodu ara',
@@ -197,10 +219,13 @@ const tr: Messages = {
     '<code>check</code>, <code>contracts</code> ya da <code>VIBE7101</code> yazmayı dene.',
 
   'home.badge': 'v0.1 npm’de yayında',
+  'home.brand': 'vibe.js',
+  'home.identity':
+    'npm scope <code>@usevibejs</code>, CLI <code>vibejs</code> — monday.com Vibe değil.',
   'home.title': 'Derleniyorsa iki taraf da aynı dili konuşuyor.',
   'home.lede':
     'vibe.js arayüzü ve sunucuyu tek bir sözleşmeden tipler; hepsi tek bir TypeScript paketinde. Bir alanın adını değiştir, derleyici iki taraftaki her kullanımı, şablonlar dahil, önüne koysun.',
-  'home.tryIt': 'Tarayıcında dene',
+  'home.tryIt': 'Tarayıcıda öğren',
   'home.readDocs': 'Dokümanları oku',
   'home.nodes.title': 'Değer değişir, yalnızca o node güncellenir.',
   'home.nodes.text':
@@ -241,6 +266,16 @@ const tr: Messages = {
   'home.vibecn.text':
     'vibecn, shadcn/ui’ı vibe.js’e taşır: uygulamana .vibe kaynağı olarak kopyalayıp istediğin gibi şekillendirdiğin erişilebilir bileşenler.',
   'home.vibecn.cta': 'vibecn’e göz at',
+  'home.ecosystem.title': 'Çekirdeğin etrafındaki kütüphaneler.',
+  'home.ecosystem.text':
+    'Auth, formlar, sorgular, i18n ve daha fazlası — aynı sözleşmelere ve .vibe bileşenlerine oturan odaklı paketler.',
+  'home.ecosystem.auth': 'Auth',
+  'home.ecosystem.form': 'Formlar',
+  'home.ecosystem.query': 'Sorgular',
+  'home.ecosystem.i18n': 'i18n',
+  'home.ecosystem.table': 'Tablolar',
+  'home.ecosystem.socket': 'Socket’ler',
+  'home.ecosystem.more': 'Tüm paketler GitHub’da',
   'home.start.title': 'Projeni başlat.',
   'home.start.requirements': 'Node.js 24.15 ya da üstü; pnpm, npm, yarn veya bun.',
   'home.start.cta': 'Başla',
@@ -333,8 +368,14 @@ const tr: Messages = {
   'chapter.Data': 'Veri',
 
   'title.home': 'vibe.js: derleniyorsa iki taraf da aynı dili konuşuyor',
-  'title.tutorial': 'Uygulamalı eğitim',
+  'title.tutorial': 'Tarayıcıda öğren',
+  'title.docs': 'Dokümanlar',
   'title.notFound': 'Sayfa bulunamadı',
+  'meta.home':
+    'vibe.js (@usevibejs, CLI vibejs) uçtan uca tipli bir full-stack TypeScript çerçevesi: .vibe bileşenleri, modüler sunucu ve sözleşmeler — monday.com Vibe değil.',
+  'meta.tutorial': 'Tarayıcıda adım adım .vibe bileşenlerini öğren — vibe.js uygulamalı eğitimi.',
+  'meta.docs':
+    'vibe.js dokümanları: başlarken, arayüz, sunucu, sözleşmeler, CLI ve her VIBE hata kodu.',
 };
 
 const ar: Messages = {
@@ -356,6 +397,7 @@ const ar: Messages = {
   'theme.toLight': 'الوضع الفاتح',
   'theme.toDark': 'الوضع الداكن',
   'a11y.pageLoaded': '{title}، تم تحميل الصفحة',
+  'a11y.skipToContent': 'تخطَّ إلى المحتوى',
 
   'search.label': 'ابحث في التوثيق',
   'search.placeholder': 'ابحث عن صفحة أو أمر أو رمز VIBE',
@@ -364,10 +406,13 @@ const ar: Messages = {
   'search.hint': 'جرّب <code>check</code> أو <code>contracts</code> أو <code>VIBE7101</code>.',
 
   'home.badge': 'الإصدار 0.1 متاح على npm',
+  'home.brand': 'vibe.js',
+  'home.identity':
+    'نطاق npm هو <code>@usevibejs</code> وواجهة الأوامر <code>vibejs</code> — وليس monday.com Vibe.',
   'home.title': 'إن نجح التجميع، فالواجهة والخادم على اتفاق.',
   'home.lede':
     'يستمد vibe.js أنواع الواجهة والخادم من عقد واحد، وكل ذلك في حزمة TypeScript واحدة. غيّر اسم حقل، فيدلّك المترجم على كل موضع يستخدمه في الطرفين، حتى داخل القوالب.',
-  'home.tryIt': 'جرّبه في المتصفح',
+  'home.tryIt': 'تعلّم في المتصفح',
   'home.readDocs': 'اقرأ التوثيق',
   'home.nodes.title': 'تتغيّر القيمة، فيتحدّث موضعها وحده.',
   'home.nodes.text':
@@ -404,6 +449,16 @@ const ar: Messages = {
   'home.vibecn.text':
     'ينقل vibecn مكتبة shadcn/ui إلى vibe.js: مكوّنات سهلة الوصول تنسخها إلى تطبيقك كمصدر .vibe وتعدّلها كما تشاء.',
   'home.vibecn.cta': 'تصفّح vibecn',
+  'home.ecosystem.title': 'مكتبات حول النواة.',
+  'home.ecosystem.text':
+    'مصادقة ونماذج واستعلامات وتدويل والمزيد — حزم مركّزة تتصل بنفس العقود ومكوّنات .vibe.',
+  'home.ecosystem.auth': 'المصادقة',
+  'home.ecosystem.form': 'النماذج',
+  'home.ecosystem.query': 'الاستعلامات',
+  'home.ecosystem.i18n': 'التدويل',
+  'home.ecosystem.table': 'الجداول',
+  'home.ecosystem.socket': 'المقابس',
+  'home.ecosystem.more': 'كل الحزم على GitHub',
   'home.start.title': 'ابدأ مشروعك.',
   'home.start.requirements': 'تحتاج Node.js 24.15 أو أحدث، مع pnpm أو npm أو yarn أو bun.',
   'home.start.cta': 'ابدأ',
@@ -495,8 +550,13 @@ const ar: Messages = {
   'chapter.Data': 'البيانات',
 
   'title.home': 'vibe.js: إن نجح التجميع، فالطرفان على اتفاق',
-  'title.tutorial': 'تعلّم بالتطبيق',
+  'title.tutorial': 'تعلّم في المتصفح',
+  'title.docs': 'التوثيق',
   'title.notFound': 'الصفحة غير موجودة',
+  'meta.home':
+    'vibe.js (@usevibejs وواجهة الأوامر vibejs) إطار TypeScript متكامل: مكوّنات .vibe وخادم وحدات وعقود ذات أنواع — وليس monday.com Vibe.',
+  'meta.tutorial': 'تعلّم مكوّنات .vibe في المتصفح خطوة بخطوة — درس vibe.js التفاعلي.',
+  'meta.docs': 'توثيق vibe.js: البدء والواجهة والخادم والعقود وسطر الأوامر وكل رمز خطأ VIBE.',
 };
 
 export const MESSAGES: Record<'en' | 'tr' | 'ar', Messages> = { en, tr, ar };
