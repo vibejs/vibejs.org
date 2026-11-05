@@ -15,6 +15,7 @@ async function render(path: string) {
 it('renders the home page with the live counter', async () => {
   const { wrapper } = await render('/');
   expect(wrapper.text()).toContain('vibe.js');
+  expect(wrapper.text()).toContain('Ecosystem');
   expect(wrapper.get('h1').text()).toBe('If it compiles, both sides agree.');
   expect(wrapper.text()).toContain('@usevibejs');
   const button = wrapper.findAll('button').find((b) => b.text().startsWith('Tapped'))!;

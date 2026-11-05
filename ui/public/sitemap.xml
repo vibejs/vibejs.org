@@ -715,6 +715,27 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://vibejs.org/v0/cli/routes"/>
   </url>
   <url>
+    <loc>https://vibejs.org/v0/ecosystem</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vibejs.org/v0/ecosystem"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://vibejs.org/tr/v0/ecosystem"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://vibejs.org/ar/v0/ecosystem"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vibejs.org/v0/ecosystem"/>
+  </url>
+  <url>
+    <loc>https://vibejs.org/tr/v0/ecosystem</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vibejs.org/v0/ecosystem"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://vibejs.org/tr/v0/ecosystem"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://vibejs.org/ar/v0/ecosystem"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vibejs.org/v0/ecosystem"/>
+  </url>
+  <url>
+    <loc>https://vibejs.org/ar/v0/ecosystem</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vibejs.org/v0/ecosystem"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://vibejs.org/tr/v0/ecosystem"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://vibejs.org/ar/v0/ecosystem"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vibejs.org/v0/ecosystem"/>
+  </url>
+  <url>
     <loc>https://vibejs.org/v0/errors/VIBE1001</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://vibejs.org/v0/errors/VIBE1001"/>
     <xhtml:link rel="alternate" hreflang="tr" href="https://vibejs.org/tr/v0/errors/VIBE1001"/>

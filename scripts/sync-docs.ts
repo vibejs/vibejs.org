@@ -3,7 +3,15 @@
 // packages' messages, the CLI reference from the built CLI, and every docs page as site-linked
 // Markdown, using the checkout's own docs tooling.
 import { execFileSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -21,6 +29,27 @@ interface DocsTools {
   sidebar(pages: readonly Page[]): unknown;
   llms(pages: readonly Page[]): Record<string, string>;
 }
+
+interface SidebarGroup {
+  text: string;
+  items: { text: string; link: string }[];
+}
+
+/** English pages this site owns. `sync-docs` regenerates the vibejs docs and must keep these. */
+const SITE_PAGES: readonly {
+  path: string;
+  title: string;
+  description: string;
+  group: string;
+}[] = [
+  {
+    path: 'ecosystem',
+    title: 'Ecosystem',
+    description:
+      'Every vibe.js package in one sentence, the install command its README shows, and the saas preset that is still coming.',
+    group: 'Ecosystem',
+  },
+];
 
 const vibejs = process.argv[2];
 if (!vibejs) {
@@ -52,6 +81,12 @@ const write = (file: string, text: string) => {
   writeFileSync(file, text);
 };
 const content = join(site, 'content');
+const siteBodies = new Map(
+  SITE_PAGES.flatMap((page) => {
+    const file = join(content, `${page.path}.md`);
+    return existsSync(file) ? [[page.path, readFileSync(file, 'utf8')] as const] : [];
+  }),
+);
 // English pages are regenerated; keep locale trees (tr/, ar/) across syncs.
 const localeBackup = mkdtempSync(join(tmpdir(), 'vibejs-locales-'));
 for (const code of ['tr', 'ar'] as const) {
@@ -67,13 +102,51 @@ for (const code of ['tr', 'ar'] as const) {
   if (existsSync(dir)) cpSync(dir, join(content, code), { recursive: true });
 }
 rmSync(localeBackup, { recursive: true, force: true });
+for (const [path, text] of siteBodies) {
+  write(join(content, `${path}.md`), text.endsWith('\n') ? text : `${text}\n`);
+}
+const sidebar = structuredClone(
+  tools.sidebar(pages.filter((page) => !page.path.startsWith('errors/'))) as SidebarGroup[],
+);
+for (const sitePage of SITE_PAGES) {
+  const link = `/${sitePage.path}`;
+  let group = sidebar.find((item) => item.text === sitePage.group);
+  if (!group) {
+    group = { text: sitePage.group, items: [] };
+    const after = sidebar.findIndex((item) => item.text === 'Getting started');
+    sidebar.splice(after + 1, 0, group);
+  }
+  if (!group.items.some((item) => item.link === link)) {
+    group.items.push({ text: sitePage.title, link });
+  }
+}
 const index = {
-  pages: pages.map(({ path, title, description }) => ({ path, title, description })),
-  sidebar: tools.sidebar(pages.filter((page) => !page.path.startsWith('errors/'))),
+  pages: [
+    ...pages.map(({ path, title, description }) => ({ path, title, description })),
+    ...SITE_PAGES.filter((sitePage) => !pages.some((page) => page.path === sitePage.path)).map(
+      ({ path, title, description }) => ({ path, title, description }),
+    ),
+  ].toSorted((a, b) => a.path.localeCompare(b.path)),
+  sidebar,
 };
 write(join(content, 'pages.json'), `${JSON.stringify(index, null, 2)}\n`);
-for (const [name, text] of Object.entries(tools.llms(pages))) {
+const llmFiles = tools.llms(pages);
+const llmLinks = SITE_PAGES.map(
+  (page) => `- [${page.title}](https://vibejs.org/v0/${page.path}): ${page.description}`,
+).join('\n');
+if (llmFiles['llms.txt']) {
+  llmFiles['llms.txt'] =
+    `${llmFiles['llms.txt'].replace(/\n*$/, '\n')}\n## Ecosystem\n\n${llmLinks}\n`;
+}
+const llmFull = [...siteBodies.values()].map((text) => text.trimEnd()).join('\n\n---\n\n');
+if (llmFull && llmFiles['llms-full.txt']) {
+  llmFiles['llms-full.txt'] =
+    `${llmFiles['llms-full.txt'].replace(/\n*$/, '\n')}\n---\n\n${llmFull}\n`;
+}
+for (const [name, text] of Object.entries(llmFiles)) {
   write(join(site, 'ui', 'public', 'v0', name), text);
 }
 rmSync(work, { recursive: true, force: true });
-console.log(`synced ${pages.length} English pages from ${root} (locale trees restored)`);
+console.log(
+  `synced ${pages.length} English pages from ${root} (${siteBodies.size} site pages kept)`,
+);
