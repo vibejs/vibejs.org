@@ -180,6 +180,9 @@ const FACTS = [1, 2, 3, 4] as const;
         <li><a href="https://socket.vibejs.org" class="underline underline-offset-4">{{ t('home.ecosystem.socket') }}</a></li>
         <li><a href="https://github.com/orgs/vibejs/repositories" class="underline underline-offset-4">{{ t('home.ecosystem.more') }}</a></li>
       </ul>
+      <RouterLink :to="lp('/v0/ecosystem')" class="mt-6 inline-block text-sm font-medium underline underline-offset-4">
+        {{ t('home.ecosystem.all') }}
+      </RouterLink>
     </section>
 
     <section class="bg-muted/50 my-6 rounded-2xl border px-5 py-10 sm:px-10 sm:py-14" aria-labelledby="start-title">
@@ -199,6 +202,7 @@ const FACTS = [1, 2, 3, 4] as const;
       <nav class="text-foreground flex flex-wrap gap-x-5 gap-y-2 font-medium" :aria-label="t('footer.label')">
         <a href="https://github.com/vibejs/vibejs" class="hover:underline">GitHub</a>
         <a href="https://www.npmjs.com/org/usevibejs" class="hover:underline">npm</a>
+        <RouterLink :to="lp('/v0/ecosystem')" class="hover:underline">{{ t('nav.ecosystem') }}</RouterLink>
         <RouterLink :to="lp('/v0/errors/')" class="hover:underline">{{ t('footer.errors') }}</RouterLink>
         <a href="/v0/llms.txt" class="hover:underline">llms.txt</a>
         <a href="https://vibecn.dev" class="hover:underline">vibecn</a>

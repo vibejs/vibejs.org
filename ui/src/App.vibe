@@ -60,6 +60,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
         <RouterLink :to="lp('/tutorial')" :class="navLink">{{ t('nav.tutorial') }}</RouterLink>
         <RouterLink :to="lp('/v0/guides/getting-started')" :class="navLink">{{ t('nav.getStarted') }}</RouterLink>
         <RouterLink :to="lp('/v0/')" :class="navLink">{{ t('nav.docs') }}</RouterLink>
+        <RouterLink :to="lp('/v0/ecosystem')" :class="navLink">{{ t('nav.ecosystem') }}</RouterLink>
         <RouterLink :to="lp('/v0/errors/')" :class="navLink">{{ t('nav.errors') }}</RouterLink>
       </nav>
       <div class="ms-auto flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-1 lg:flex-none">

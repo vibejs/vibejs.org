@@ -57,6 +57,10 @@ Offline docs for the installed version: `node_modules/@usevibejs/cli/dist/docs/`
 - [vibejs request](https://vibejs.org/v0/cli/request): Call an API route: through the running dev server, or in process when none runs.
 - [vibejs routes](https://vibejs.org/v0/cli/routes): List the API routes and the UI routes, without starting a server or running UI code.
 
+## Ecosystem
+
+- [Ecosystem](https://vibejs.org/v0/ecosystem): Every vibe.js package in one sentence, the install command its README shows, and the saas preset that is still coming.
+
 ## Optional
 
 - [Error codes](https://vibejs.org/v0/errors/): every VIBE error code with its message and fixes

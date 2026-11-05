@@ -76,6 +76,11 @@
       "description": "List the API routes and the UI routes, without starting a server or running UI code."
     },
     {
+      "path": "ecosystem",
+      "title": "Ecosystem",
+      "description": "Every vibe.js package in one sentence, the install command its README shows, and the saas preset that is still coming."
+    },
+    {
       "path": "errors/VIBE1001",
       "title": "Missing template block"
     },
@@ -1236,6 +1241,15 @@
         {
           "text": "Editor setup",
           "link": "/guides/editors"
+        }
+      ]
+    },
+    {
+      "text": "Ecosystem",
+      "items": [
+        {
+          "text": "Ecosystem",
+          "link": "/ecosystem"
         }
       ]
     },

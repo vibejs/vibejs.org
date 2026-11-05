@@ -72,5 +72,24 @@ it('ranks guides above error pages and finds codes', () => {
 
 it('matches words from the body of a guide, not only its title', () => {
   // "virtual" appears in coming-from-vue prose, not in that page's title.
-  expect(search('virtual DOM', 'en')[0]!.path).toBe('guides/coming-from-vue');
+  // The ecosystem page also contains both words, and its path sorts first on a tie.
+  const hits = search('virtual DOM', 'en').map((page) => page.path);
+  expect(hits).toContain('guides/coming-from-vue');
+  expect(hits[0]).not.toMatch(/^errors\//);
+});
+
+it('lists the ecosystem page, with install commands only for published packages', async () => {
+  expect(sidebar('en').find((group) => group.text === 'Ecosystem')!.items[0]).toEqual({
+    text: 'Ecosystem',
+    link: '/v0/ecosystem',
+  });
+  const page = await loadPage('ecosystem', 'en')!;
+  const text = page.html.replace(/<[^>]+>/g, '');
+  expect(page.html).toContain('<h1>Ecosystem</h1>');
+  expect(text).toContain('npm install @usevibejs/ui');
+  expect(text).toContain('pnpm add @usevibejs/auth better-auth');
+  expect(text).toContain('pnpm create vibejs my-app --preset saas');
+  expect(text).toContain('(coming)');
+  expect(text).not.toContain('pnpm add @usevibejs/flags');
+  expect(text).not.toContain('pnpm add @usevibejs/billing');
 });
